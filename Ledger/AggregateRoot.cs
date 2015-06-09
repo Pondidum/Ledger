@@ -9,14 +9,14 @@ namespace Ledger
 		public TKey ID { get; protected set; }
 		public int SequenceID { get; protected set; }
 
-		private readonly List<DomainEvent> _events;
+		private readonly List<DomainEvent<TKey>> _events;
  
 		protected AggregateRoot()
 		{
-			_events = new List<DomainEvent>();
+			_events = new List<DomainEvent<TKey>>();
 		}
 
-		public IEnumerable<DomainEvent> GetUncommittedEvents()
+		public IEnumerable<DomainEvent<TKey>> GetUncommittedEvents()
 		{
 			return _events;
 		}
@@ -30,9 +30,9 @@ namespace Ledger
 			}
 		}
 
-		public void LoadFromEvents(IEnumerable<DomainEvent> eventStream)
+		public void LoadFromEvents(IEnumerable<DomainEvent<TKey>> eventStream)
 		{
-			DomainEvent last = null;
+			DomainEvent<TKey> last = null;
 			var dynamic = this.AsDynamic();
 
 			eventStream
@@ -45,7 +45,7 @@ namespace Ledger
 			}
 		}
 
-		protected void ApplyEvent(DomainEvent @event)
+		protected void ApplyEvent(DomainEvent<TKey> @event)
 		{
 			this.AsDynamic().Handle(@event);
 			_events.Add(@event);
