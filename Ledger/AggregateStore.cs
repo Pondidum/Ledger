@@ -42,7 +42,6 @@ namespace Ledger
 		{
 			var events = _eventStore.LoadEvents(aggegateID);
 
-
 			var aggregate = createNew();
 			aggregate.LoadFromEvents(events);
 
