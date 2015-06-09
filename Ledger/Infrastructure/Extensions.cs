@@ -33,6 +33,15 @@ namespace Ledger.Infrastructure
 			}
 		}
 
+		public static void ForEach<T>(this IEnumerable<T> self, Action<T, int> action)
+		{
+			var i = 0;
+			foreach (var item in self)
+			{
+				action(item, i++);
+			}
+		}
+
 		public static bool None<T>(this IEnumerable<T> self)
 		{
 			return self.Any() == false;
