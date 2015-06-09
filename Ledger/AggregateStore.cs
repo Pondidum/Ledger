@@ -17,14 +17,14 @@ namespace Ledger
 		{
 			var lastStoredSequence = _eventStore.GetLatestSequenceIDFor(aggregate.ID);
 
-			if (lastStoredSequence != aggregate.SequenceID)
+			if (lastStoredSequence.HasValue && lastStoredSequence != aggregate.SequenceID)
 			{
 				throw new Exception();
 			}
 
 			var changes = aggregate
 				.GetUncommittedEvents()
-				.Apply((e, i) => e.SequenceID = aggregate.SequenceID + i + 1)
+				.Apply((e, i) => e.SequenceID = aggregate.SequenceID + i)
 				.Apply((e, i) => e.AggregateID = aggregate.ID)
 				.ToList();
 
