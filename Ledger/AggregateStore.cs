@@ -49,7 +49,7 @@ namespace Ledger
 		}
 
 		public TAggregate Load<TAggregate, TSnapshot>(TKey aggegateID, Func<TAggregate> createNew)
-			where TAggregate : AggregateRoot<TKey>, ISnapshotable<TSnapshot>
+			where TAggregate : SnapshotAggregateRoot<TKey, TSnapshot> 
 			where TSnapshot : ISnapshot
 		{
 			var snapshot = _eventStore.GetLatestSnapshotFor<TKey, TSnapshot>(aggegateID);
@@ -62,8 +62,7 @@ namespace Ledger
 			var events = _eventStore.LoadEventsSince(aggegateID, snapshot.SequenceID);
 
 			var aggregate = createNew();
-			aggregate.ApplySnapshot(snapshot);
-			aggregate.LoadFromEvents(events);
+			aggregate.LoadFromSnapshot(snapshot, events);
 
 			return aggregate;
 		}

@@ -4,7 +4,7 @@ using Ledger.Infrastructure;
 
 namespace Ledger.Tests.TestObjects
 {
-	public class SnapshotAggregate : AggregateRoot<Guid>, ISnapshotable<TestSnapshot>
+	public class SnapshotAggregate : SnapshotAggregateRoot<Guid, TestSnapshot>
 	{
 		public void AddEvent(DomainEvent<Guid> @event)
 		{
@@ -23,12 +23,12 @@ namespace Ledger.Tests.TestObjects
 			ID = Guid.NewGuid();
 		}
 
-		public TestSnapshot CreateSnapshot()
+		protected override TestSnapshot CreateSnapshot()
 		{
 			return new TestSnapshot();
 		}
 
-		public void ApplySnapshot(TestSnapshot snapshot)
+		protected override void ApplySnapshot(TestSnapshot snapshot)
 		{
 		}
 	}
