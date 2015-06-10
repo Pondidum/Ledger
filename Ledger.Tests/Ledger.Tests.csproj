@@ -61,11 +61,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AggregateStoreTests.cs" />
+    <Compile Include="AcceptanceTests\AggregateStoreTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestObjects\TestAggregate.cs" />
     <Compile Include="TestObjects\FakeEventStore.cs" />
     <Compile Include="TestObjects\TestEvent.cs" />
+    <Compile Include="AcceptanceTests\SavingMultipleEventsWithoutSnapshotting.cs" />
+    <Compile Include="AcceptanceTests\LoadingMultipleEventsWithoutSnapshotting.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
