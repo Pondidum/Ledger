@@ -47,5 +47,25 @@ namespace Ledger
 
 			return aggregate;
 		}
+
+		public TAggregate Load<TAggregate, TSnapshot>(TKey aggegateID, Func<TAggregate> createNew)
+			where TAggregate : AggregateRoot<TKey>, ISnapshotable<TSnapshot>
+			where TSnapshot : ISnapshot
+		{
+			var snapshot = _eventStore.GetLatestSnapshotFor<TKey, TSnapshot>(aggegateID);
+
+			if (snapshot == null)
+			{
+				return Load(aggegateID, createNew);
+			}
+
+			var events = _eventStore.LoadEventsSince(aggegateID, snapshot.SequenceID);
+
+			var aggregate = createNew();
+			aggregate.ApplySnapshot(snapshot);
+			aggregate.LoadFromEvents(events);
+
+			return aggregate;
+		}
 	}
 }
