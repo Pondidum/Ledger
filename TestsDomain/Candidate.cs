@@ -30,11 +30,31 @@ namespace TestsDomain
 			return candidate;
 		}
 
+		public void FixName(string newName)
+		{
+			ApplyEvent(new FixNameSpelling { NewName = newName });
+		}
+
+		public void NameChangedByDeedPoll(string newName)
+		{
+			ApplyEvent(new NameChangedByDeedPoll { NewName = newName });
+		}
+
 		private void Handle(CandidateCreated @event)
 		{
 			ID = @event.CandidateID;
 			Name = @event.CandidateName;
 			_emails.Add(@event.EmailAddress);
+		}
+
+		private void Handle(FixNameSpelling @event)
+		{
+			Name = @event.NewName;
+		}
+
+		private void Handle(NameChangedByDeedPoll @event)
+		{
+			Name = @event.NewName;
 		}
 	}
 }

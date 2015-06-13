@@ -41,6 +41,8 @@
   <ItemGroup>
     <Compile Include="Candidate.cs" />
     <Compile Include="Events\CandidateCreated.cs" />
+    <Compile Include="Events\FixNameSpelling.cs" />
+    <Compile Include="Events\NameChangedByDeedPoll.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
