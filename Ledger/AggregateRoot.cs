@@ -45,6 +45,15 @@ namespace Ledger
 			}
 		}
 
+		public void LoadFromSnapshot<TSnapshot>(TSnapshot snapshot, IEnumerable<DomainEvent<TKey>> events)
+			where TSnapshot : ISnapshot
+		{
+			this.AsDynamic().ApplySnapshot(snapshot);
+			SequenceID = snapshot.SequenceID;
+
+			LoadFromEvents(events);
+		}
+
 		protected void ApplyEvent(DomainEvent<TKey> @event)
 		{
 			this.AsDynamic().Handle(@event);

@@ -43,7 +43,7 @@ namespace Ledger
 
 			var aggregate = createNew();
 			var sni = GetSnapshotInterface<TAggregate>();
-			
+
 			if (sni == null)
 			{
 				var events = _eventStore.LoadEvents(aggregateID);
@@ -57,13 +57,10 @@ namespace Ledger
 					.GetMethod("GetLatestSnapshotFor")
 					.MakeGenericMethod(typeof(TKey), snapshotType);
 
-				var snapshot =(ISnapshot)getSnapshot.Invoke(_eventStore, new object[] { aggregateID });
+				var snapshot = (ISnapshot)getSnapshot.Invoke(_eventStore, new object[] { aggregateID });
 				var events = _eventStore.LoadEventsSince(aggregateID, snapshot.SequenceID);
 
-
-				aggregate.AsDynamic().SequenceID = snapshot.SequenceID;
-				aggregate.AsDynamic().ApplySnapshot(snapshot);
-				aggregate.LoadFromEvents(events);
+				aggregate.LoadFromSnapshot(snapshot, events);
 			}
 
 			return aggregate;
@@ -71,9 +68,9 @@ namespace Ledger
 
 		private static Type GetSnapshotInterface<TAggregate>()
 		{
-			return typeof (TAggregate)
+			return typeof(TAggregate)
 				.GetInterfaces()
-				.SingleOrDefault(i => i.GetGenericTypeDefinition() == typeof (ISnapshotable<>));
+				.SingleOrDefault(i => i.GetGenericTypeDefinition() == typeof(ISnapshotable<>));
 		}
 	}
 }
