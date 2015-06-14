@@ -22,7 +22,7 @@ namespace Ledger.Tests.AcceptanceTests
 				new TestEvent { SequenceID = 6},
 			};
 
-			_aggregate = aggregateStore.Load<SnapshotAggregate, TestSnapshot>(Guid.NewGuid(), () => new SnapshotAggregate());
+			_aggregate = aggregateStore.Load(Guid.NewGuid(), () => new SnapshotAggregate());
 		}
 
 		[Fact]

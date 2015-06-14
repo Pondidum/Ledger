@@ -37,34 +37,43 @@ namespace Ledger
 			aggregate.MarkEventsCommitted();
 		}
 
-		public TAggregate Load<TAggregate>(TKey aggegateID, Func<TAggregate> createNew)
+		public TAggregate Load<TAggregate>(TKey aggregateID, Func<TAggregate> createNew)
 			where TAggregate : AggregateRoot<TKey>
 		{
-			var events = _eventStore.LoadEvents(aggegateID);
 
 			var aggregate = createNew();
-			aggregate.LoadFromEvents(events);
+			var sni = GetSnapshotInterface<TAggregate>();
+			
+			if (sni == null)
+			{
+				var events = _eventStore.LoadEvents(aggregateID);
+				aggregate.LoadFromEvents(events);
+			}
+			else
+			{
+				var snapshotType = sni.GetGenericArguments().Single();
+				var getSnapshot = _eventStore
+					.GetType()
+					.GetMethod("GetLatestSnapshotFor")
+					.MakeGenericMethod(typeof(TKey), snapshotType);
+
+				var snapshot =(ISnapshot)getSnapshot.Invoke(_eventStore, new object[] { aggregateID });
+				var events = _eventStore.LoadEventsSince(aggregateID, snapshot.SequenceID);
+
+
+				aggregate.AsDynamic().SequenceID = snapshot.SequenceID;
+				aggregate.AsDynamic().ApplySnapshot(snapshot);
+				aggregate.LoadFromEvents(events);
+			}
 
 			return aggregate;
 		}
 
-		public TAggregate Load<TAggregate, TSnapshot>(TKey aggegateID, Func<TAggregate> createNew)
-			where TAggregate : SnapshotAggregateRoot<TKey, TSnapshot> 
-			where TSnapshot : ISnapshot
+		private static Type GetSnapshotInterface<TAggregate>()
 		{
-			var snapshot = _eventStore.GetLatestSnapshotFor<TKey, TSnapshot>(aggegateID);
-
-			if (snapshot == null)
-			{
-				return Load(aggegateID, createNew);
-			}
-
-			var events = _eventStore.LoadEventsSince(aggegateID, snapshot.SequenceID);
-
-			var aggregate = createNew();
-			aggregate.LoadFromSnapshot(snapshot, events);
-
-			return aggregate;
+			return typeof (TAggregate)
+				.GetInterfaces()
+				.SingleOrDefault(i => i.GetGenericTypeDefinition() == typeof (ISnapshotable<>));
 		}
 	}
 }
