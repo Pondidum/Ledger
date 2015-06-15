@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Ledger.Infrastructure;
 using Ledger.Tests.TestObjects;
 using Shouldly;
@@ -55,6 +56,12 @@ namespace Ledger.Tests.AcceptanceTests
 		public void The_snapshot_should_be_saved()
 		{
 			_eventStore.Snapshot.ShouldNotBe(null);
+		}
+
+		[Fact]
+		public void The_snapshot_should_have_the_latest_sequnce_id()
+		{
+			_eventStore.Snapshot.SequenceID.ShouldBe(_events.Count() - 1);
 		}
 	}
 }

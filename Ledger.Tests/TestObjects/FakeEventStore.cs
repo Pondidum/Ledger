@@ -8,7 +8,7 @@ namespace Ledger.Tests.TestObjects
 		public int? LatestSequenceID { get; set; }
 		public List<object> WrittenToEvents { get; set; }
 		public List<object> ReadFromEvents { get; set; }
-		public object Snapshot { get; set; }
+		public ISnapshot Snapshot { get; set; }
 
 		public FakeEventStore()
 		{
@@ -43,7 +43,7 @@ namespace Ledger.Tests.TestObjects
 			return (TSnapshot) Snapshot;
 		}
 
-		public void SaveSnapshot(object snapshot)
+		public void SaveSnapshot<TKey>(TKey aggregateID, ISnapshot snapshot)
 		{
 			Snapshot = snapshot;
 		}

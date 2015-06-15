@@ -38,13 +38,18 @@ namespace Ledger
 
 			if (sni != null)
 			{
-				var snapshot = aggregate.AsDynamic().CreateSnapshot();
+				var createSnapshot = aggregate
+					.GetType()
+					.GetMethod("CreateSnapshot");
 
-				_eventStore.SaveSnapshot(snapshot);
+				var snapshot = (ISnapshot)createSnapshot.Invoke(aggregate, new object[] { });
+				snapshot.SequenceID = changes.Last().SequenceID;
+
+				_eventStore.SaveSnapshot(aggregate.ID, snapshot);
 			}
 
 			_eventStore.SaveEvents(aggregate.ID, changes);
-			
+
 			aggregate.MarkEventsCommitted();
 
 		}
