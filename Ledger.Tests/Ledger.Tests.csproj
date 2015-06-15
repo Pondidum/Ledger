@@ -63,6 +63,7 @@
   <ItemGroup>
     <Compile Include="AcceptanceTests\AggregateStoreTests.cs" />
     <Compile Include="AcceptanceTests\LoadingMultipleEventsWithSnapshotting.cs" />
+    <Compile Include="AcceptanceTests\SavingMultipleEventsWithSnapshotting.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Scratchpad.cs" />
     <Compile Include="TestObjects\SnapshotAggregate.cs" />

@@ -11,5 +11,6 @@ namespace Ledger
 		IEnumerable<DomainEvent<TKey>> LoadEventsSince<TKey>(TKey aggegateID, int sequenceID);
 
 		TSnapshot GetLatestSnapshotFor<TKey, TSnapshot>(TKey aggegateID);
+		void SaveSnapshot(object snapshot);
 	}
 }

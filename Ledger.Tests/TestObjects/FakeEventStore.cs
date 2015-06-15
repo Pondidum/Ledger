@@ -14,6 +14,8 @@ namespace Ledger.Tests.TestObjects
 		{
 			WrittenToEvents = new List<object>();
 			ReadFromEvents = new List<object>();
+			LatestSequenceID = null;
+			Snapshot = null;
 		}
 
 		public int? GetLatestSequenceIDFor<TKey>(TKey aggegateID)
@@ -39,6 +41,11 @@ namespace Ledger.Tests.TestObjects
 		public TSnapshot GetLatestSnapshotFor<TKey, TSnapshot>(TKey aggegateID)
 		{
 			return (TSnapshot) Snapshot;
+		}
+
+		public void SaveSnapshot(object snapshot)
+		{
+			Snapshot = snapshot;
 		}
 	}
 }

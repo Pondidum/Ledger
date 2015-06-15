@@ -13,7 +13,8 @@ namespace Ledger
 			_eventStore = eventStore;
 		}
 
-		public void Save(AggregateRoot<TKey> aggregate)
+		public void Save<TAggregate>(TAggregate aggregate)
+			where TAggregate : AggregateRoot<TKey>
 		{
 			var lastStoredSequence = _eventStore.GetLatestSequenceIDFor(aggregate.ID);
 
@@ -33,8 +34,19 @@ namespace Ledger
 				return;
 			}
 
+			var sni = GetSnapshotInterface<TAggregate>();
+
+			if (sni != null)
+			{
+				var snapshot = aggregate.AsDynamic().CreateSnapshot();
+
+				_eventStore.SaveSnapshot(snapshot);
+			}
+
 			_eventStore.SaveEvents(aggregate.ID, changes);
+			
 			aggregate.MarkEventsCommitted();
+
 		}
 
 		public TAggregate Load<TAggregate>(TKey aggregateID, Func<TAggregate> createNew)
