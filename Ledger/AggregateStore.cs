@@ -34,9 +34,7 @@ namespace Ledger
 				return;
 			}
 
-			var sni = GetSnapshotInterface<TAggregate>();
-
-			if (sni != null)
+			if (ImplementsSnapshottable<TAggregate>())
 			{
 				var createSnapshot = aggregate
 					.GetType()
@@ -59,29 +57,28 @@ namespace Ledger
 		{
 
 			var aggregate = createNew();
-			var sni = GetSnapshotInterface<TAggregate>();
 
-			if (sni == null)
-			{
-				var events = _eventStore.LoadEvents(aggregateID);
-				aggregate.LoadFromEvents(events);
-			}
-			else
+			if (ImplementsSnapshottable<TAggregate>())
 			{
 				var snapshot = _eventStore.GetLatestSnapshotFor(aggregate.ID);
 				var events = _eventStore.LoadEventsSince(aggregateID, snapshot.SequenceID);
 
 				aggregate.LoadFromSnapshot(snapshot, events);
 			}
+			else
+			{
+				var events = _eventStore.LoadEvents(aggregateID);
+				aggregate.LoadFromEvents(events);
+			}
 
 			return aggregate;
 		}
 
-		private static Type GetSnapshotInterface<TAggregate>()
+		private static bool ImplementsSnapshottable<TAggregate>()
 		{
 			return typeof(TAggregate)
 				.GetInterfaces()
-				.SingleOrDefault(i => i.GetGenericTypeDefinition() == typeof(ISnapshotable<>));
+				.Any(i => i.GetGenericTypeDefinition() == typeof(ISnapshotable<>));
 		}
 	}
 }
