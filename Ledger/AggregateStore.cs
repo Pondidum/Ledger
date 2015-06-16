@@ -7,10 +7,12 @@ namespace Ledger
 	public class AggregateStore<TKey>
 	{
 		private readonly IEventStore _eventStore;
+		public int DefaultSnapshotInterval { get; set; }
 
 		public AggregateStore(IEventStore eventStore)
 		{
 			_eventStore = eventStore;
+			DefaultSnapshotInterval = 10;
 		}
 
 		public void Save<TAggregate>(TAggregate aggregate)
@@ -34,7 +36,7 @@ namespace Ledger
 				return;
 			}
 
-			if (ImplementsSnapshottable<TAggregate>())
+			if (ImplementsSnapshottable<TAggregate>() && NeedsSnapshot(aggregate, changes.Last().SequenceID))
 			{
 				var createSnapshot = aggregate
 					.GetType()
@@ -50,6 +52,20 @@ namespace Ledger
 
 			aggregate.MarkEventsCommitted();
 
+		}
+
+		private bool NeedsSnapshot<TAggregate>(TAggregate aggregate, int sequenceID)
+		{
+			var interval = DefaultSnapshotInterval;
+			var control = aggregate as ISnapshotControl;
+
+			if (control != null)
+			{
+				interval = control.SnapshotInterval;
+			}
+
+			// +1 due to 0 based index
+			return (sequenceID + 1) % interval == 0;
 		}
 
 		public TAggregate Load<TAggregate>(TKey aggregateID, Func<TAggregate> createNew)

@@ -20,7 +20,10 @@ namespace Ledger.Tests.AcceptanceTests
 			var aggregateStore = new AggregateStore<Guid>(_eventStore);
 
 			_aggregate = new SnapshotAggregate();
-			_events = new[] { new TestEvent(), new TestEvent() };
+			_events = Enumerable
+				.Range(0, aggregateStore.DefaultSnapshotInterval)
+				.Select(i => new TestEvent())
+				.ToArray();
 
 			_aggregate.GenerateID();
 			_aggregate.AddEvents(_events);
