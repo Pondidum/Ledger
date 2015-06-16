@@ -38,9 +38,9 @@ namespace Ledger.Tests.TestObjects
 			return ReadFromEvents.Cast<DomainEvent<TKey>>().Where(x => x.SequenceID > sequenceID);
 		}
 
-		public TSnapshot GetLatestSnapshotFor<TKey, TSnapshot>(TKey aggegateID)
+		public ISnapshot GetLatestSnapshotFor<TKey>(TKey aggegateID)
 		{
-			return (TSnapshot) Snapshot;
+			return Snapshot;
 		}
 
 		public void SaveSnapshot<TKey>(TKey aggregateID, ISnapshot snapshot)

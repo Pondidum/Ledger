@@ -68,13 +68,7 @@ namespace Ledger
 			}
 			else
 			{
-				var snapshotType = sni.GetGenericArguments().Single();
-				var getSnapshot = _eventStore
-					.GetType()
-					.GetMethod("GetLatestSnapshotFor")
-					.MakeGenericMethod(typeof(TKey), snapshotType);
-
-				var snapshot = (ISnapshot)getSnapshot.Invoke(_eventStore, new object[] { aggregateID });
+				var snapshot = _eventStore.GetLatestSnapshotFor(aggregate.ID);
 				var events = _eventStore.LoadEventsSince(aggregateID, snapshot.SequenceID);
 
 				aggregate.LoadFromSnapshot(snapshot, events);
