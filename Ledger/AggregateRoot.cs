@@ -46,7 +46,7 @@ namespace Ledger
 		}
 
 		public void LoadFromSnapshot<TSnapshot>(TSnapshot snapshot, IEnumerable<DomainEvent<TKey>> events)
-			where TSnapshot : ISnapshot
+			where TSnapshot : ISequenced
 		{
 			this.AsDynamic().ApplySnapshot(snapshot);
 			SequenceID = snapshot.SequenceID;

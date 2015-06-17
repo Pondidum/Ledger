@@ -46,7 +46,7 @@
     <Compile Include="IEventStore.cs" />
     <Compile Include="Infrastructure\Extensions.cs" />
     <Compile Include="Infrastructure\PrivateReflectionDynamicObject.cs" />
-    <Compile Include="ISnapshot.cs" />
+    <Compile Include="ISequenced.cs" />
     <Compile Include="ISnapshotable.cs" />
     <Compile Include="ISnapshotControl.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

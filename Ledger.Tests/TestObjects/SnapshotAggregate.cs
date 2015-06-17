@@ -33,7 +33,7 @@ namespace Ledger.Tests.TestObjects
 		}
 	}
 
-	public class TestSnapshot : ISnapshot
+	public class TestSnapshot : ISequenced
 	{
 		public int SequenceID { get; set; }
 	}

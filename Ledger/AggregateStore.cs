@@ -42,7 +42,7 @@ namespace Ledger
 					.GetType()
 					.GetMethod("CreateSnapshot");
 
-				var snapshot = (ISnapshot)createSnapshot.Invoke(aggregate, new object[] { });
+				var snapshot = (ISequenced)createSnapshot.Invoke(aggregate, new object[] { });
 				snapshot.SequenceID = changes.Last().SequenceID;
 
 				_eventStore.SaveSnapshot(aggregate.ID, snapshot);

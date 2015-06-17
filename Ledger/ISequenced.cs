@@ -1,6 +1,6 @@
 ﻿namespace Ledger
 {
-	public interface ISnapshot
+	public interface ISequenced
 	{
 		int SequenceID { get; set; }
 	}
