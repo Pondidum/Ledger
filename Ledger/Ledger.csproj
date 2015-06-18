@@ -45,6 +45,7 @@
     <Compile Include="DomainEvent.cs" />
     <Compile Include="IEventStore.cs" />
     <Compile Include="Infrastructure\Extensions.cs" />
+    <Compile Include="Infrastructure\MethodName.cs" />
     <Compile Include="Infrastructure\PrivateReflectionDynamicObject.cs" />
     <Compile Include="ISequenced.cs" />
     <Compile Include="ISnapshotable.cs" />

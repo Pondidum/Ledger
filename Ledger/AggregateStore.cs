@@ -38,9 +38,11 @@ namespace Ledger
 
 			if (ImplementsSnapshottable<TAggregate>() && NeedsSnapshot(aggregate, changes.Last().SequenceID))
 			{
+				var methodName = MethodName.GetMethodName<ISnapshotable<ISequenced>>(x => x.CreateSnapshot());
+
 				var createSnapshot = aggregate
 					.GetType()
-					.GetMethod("CreateSnapshot");
+					.GetMethod(methodName);
 
 				var snapshot = (ISequenced)createSnapshot.Invoke(aggregate, new object[] { });
 				snapshot.SequenceID = changes.Last().SequenceID;
