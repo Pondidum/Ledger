@@ -21,7 +21,7 @@ namespace Ledger
 			return _events;
 		}
 
-		public void MarkEventsCommitted()
+		internal void MarkEventsCommitted()
 		{
 			if (_events.Any())
 			{
@@ -30,7 +30,7 @@ namespace Ledger
 			}
 		}
 
-		public void LoadFromEvents(IEnumerable<DomainEvent> eventStream)
+		internal void LoadFromEvents(IEnumerable<DomainEvent> eventStream)
 		{
 			DomainEvent last = null;
 			var dynamic = this.AsDynamic();
@@ -45,7 +45,7 @@ namespace Ledger
 			}
 		}
 
-		public void LoadFromSnapshot<TSnapshot>(TSnapshot snapshot, IEnumerable<DomainEvent> events)
+		internal void LoadFromSnapshot<TSnapshot>(TSnapshot snapshot, IEnumerable<DomainEvent> events)
 			where TSnapshot : ISequenced
 		{
 			this.AsDynamic().ApplySnapshot(snapshot);
