@@ -11,7 +11,7 @@ namespace Ledger.Tests.AcceptanceTests
 	{
 		private readonly FakeEventStore _eventStore;
 		private readonly TestAggregate _aggregate;
-		private readonly IEnumerable<DomainEvent<Guid>> _events;
+		private readonly IEnumerable<DomainEvent> _events;
 
 		public SavingMultipleEventsWithoutSnapshotting()
 		{
@@ -37,12 +37,6 @@ namespace Ledger.Tests.AcceptanceTests
 		public void The_events_should_be_in_sequence()
 		{
 			_events.ForEach((e, i) => e.SequenceID.ShouldBe(i));
-		}
-
-		[Fact]
-		public void The_events_should_have_the_aggregateID_set()
-		{
-			_events.ForEach(e => e.AggregateID.ShouldBe(_aggregate.ID));
 		}
 
 		[Fact]

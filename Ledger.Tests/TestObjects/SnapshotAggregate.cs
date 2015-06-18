@@ -6,12 +6,12 @@ namespace Ledger.Tests.TestObjects
 {
 	public class SnapshotAggregate : AggregateRoot<Guid>, ISnapshotable<TestSnapshot>
 	{
-		public void AddEvent(DomainEvent<Guid> @event)
+		public void AddEvent(DomainEvent @event)
 		{
 			ApplyEvent(@event);
 		}
 
-		public void AddEvents(IEnumerable<DomainEvent<Guid>> events)
+		public void AddEvents(IEnumerable<DomainEvent> events)
 		{
 			events.ForEach(AddEvent);
 		}

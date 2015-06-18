@@ -23,19 +23,19 @@ namespace Ledger.Tests.TestObjects
 			return LatestSequenceID;
 		}
 
-		public void SaveEvents<TKey>(TKey aggegateID, IEnumerable<DomainEvent<TKey>> changes)
+		public void SaveEvents<TKey>(TKey aggegateID, IEnumerable<DomainEvent> changes)
 		{
 			WrittenToEvents.AddRange(changes);
 		}
 
-		public IEnumerable<DomainEvent<TKey>> LoadEvents<TKey>(TKey aggegateID)
+		public IEnumerable<DomainEvent> LoadEvents<TKey>(TKey aggegateID)
 		{
-			return ReadFromEvents.Cast<DomainEvent<TKey>>();
+			return ReadFromEvents.Cast<DomainEvent>();
 		}
 
-		public IEnumerable<DomainEvent<TKey>> LoadEventsSince<TKey>(TKey aggegateID, int sequenceID)
+		public IEnumerable<DomainEvent> LoadEventsSince<TKey>(TKey aggegateID, int sequenceID)
 		{
-			return ReadFromEvents.Cast<DomainEvent<TKey>>().Where(x => x.SequenceID > sequenceID);
+			return ReadFromEvents.Cast<DomainEvent>().Where(x => x.SequenceID > sequenceID);
 		}
 
 		public ISequenced GetLatestSnapshotFor<TKey>(TKey aggegateID)

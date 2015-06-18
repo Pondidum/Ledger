@@ -28,7 +28,6 @@ namespace Ledger
 			var changes = aggregate
 				.GetUncommittedEvents()
 				.Apply((e, i) => e.SequenceID = aggregate.SequenceID + i)
-				.Apply((e, i) => e.AggregateID = aggregate.ID)
 				.ToList();
 
 			if (changes.None())

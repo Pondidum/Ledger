@@ -3,7 +3,7 @@ using Ledger;
 
 namespace TestsDomain.Events
 {
-	public class CandidateCreated : DomainEvent<Guid>
+	public class CandidateCreated : DomainEvent
 	{
 		public Guid CandidateID { get; set; }
 		public string CandidateName { get; set; }
