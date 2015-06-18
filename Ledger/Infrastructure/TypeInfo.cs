@@ -3,7 +3,7 @@ using System.Linq.Expressions;
 
 namespace Ledger.Infrastructure
 {
-	public class MethodName
+	public class TypeInfo
 	{
 		private static string GetMethodInfoInternal(dynamic expression)
 		{
