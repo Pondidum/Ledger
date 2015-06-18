@@ -1,6 +1,6 @@
 ﻿namespace Ledger
 {
-	public class DomainEvent
+	public class DomainEvent : ISequenced
 	{
 		public int SequenceID { get; set; }
 	}
