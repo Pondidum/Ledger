@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using Ledger.Infrastructure;
 using Newtonsoft.Json;
@@ -14,21 +15,48 @@ namespace Ledger.Stores.Fs
 			_directory = directory;
 		}
 
+		private string EventFile<TKey>()
+		{
+			return Path.Combine(_directory, typeof(TKey).Name + ".events.json");
+		}
+
+		private string SnapshotFile<TKey>()
+		{
+			return Path.Combine(_directory, typeof(TKey).Name + ".snapshots.json");
+		}
+
+		private void AppendTo(string filepath, Action<StreamWriter> action)
+		{
+			using(var fs = new FileStream(filepath, FileMode.Append))
+			using (var sw = new StreamWriter(fs))
+			{
+				action(sw);
+			}
+		}
+
 		public void SaveEvents<TKey>(TKey aggegateID, IEnumerable<DomainEvent> changes)
 		{
-			var eventFile = Path.Combine(_directory, typeof(TKey).Name + ".events.json");
-
-			using (var fs = new FileStream(eventFile, FileMode.Append))
-			using (var sw = new StreamWriter(fs))
+			AppendTo(EventFile<TKey>(), file =>
 			{
 				changes.ForEach(change =>
 				{
-					var dto = new EventDto<TKey> { ID = aggegateID, Event = change };
+					var dto = new EventDto<TKey> {ID = aggegateID, Event = change};
 					var json = JsonConvert.SerializeObject(dto);
 
-					sw.WriteLine(json);
+					file.WriteLine(json);
 				});
-			}
+			});
+		}
+
+		public void SaveSnapshot<TKey>(TKey aggregateID, ISequenced snapshot)
+		{
+			AppendTo(SnapshotFile<TKey>(), file =>
+			{
+				var dto = new SnapshotDto<TKey> {ID = aggregateID, Snapshot = snapshot};
+				var json = JsonConvert.SerializeObject(dto);
+
+				file.WriteLine(json);
+			});
 		}
 
 		public int? GetLatestSequenceIDFor<TKey>(TKey aggegateID)
@@ -51,9 +79,5 @@ namespace Ledger.Stores.Fs
 			throw new System.NotImplementedException();
 		}
 
-		public void SaveSnapshot<TKey>(TKey aggregateID, ISequenced snapshot)
-		{
-			throw new System.NotImplementedException();
-		}
 	}
 }
