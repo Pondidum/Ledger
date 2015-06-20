@@ -11,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestsDomain", "TestsDomain\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ledger.Stores.Postgres", "Ledger.Stores.Postgres\Ledger.Stores.Postgres.csproj", "{FD8BD913-A719-4879-A596-EE6EDE930E5F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ledger.Stores.File", "Ledger.Stores.File\Ledger.Stores.File.csproj", "{B7AE096A-E650-47F9-BD95-F9C29E839D57}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ledger.Stores.Fs", "Ledger.Stores.Fs\Ledger.Stores.Fs.csproj", "{B7AE096A-E650-47F9-BD95-F9C29E839D57}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
