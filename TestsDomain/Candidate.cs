@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Ledger;
 using TestsDomain.Events;
 
@@ -40,6 +41,16 @@ namespace TestsDomain
 			ApplyEvent(new NameChangedByDeedPoll { NewName = newName });
 		}
 
+		public void AddNewEmail(string email)
+		{
+			if (_emails.Any(e => string.Equals(e, email, StringComparison.OrdinalIgnoreCase)))
+			{
+				throw new DomainException(string.Format("A {0} cannot have duplicate emails.", GetType().Name));
+			}
+
+			ApplyEvent(new AddEmailAddress { Email = email});
+		}
+
 		private void Handle(CandidateCreated @event)
 		{
 			ID = @event.CandidateID;
@@ -55,6 +66,11 @@ namespace TestsDomain
 		private void Handle(NameChangedByDeedPoll @event)
 		{
 			Name = @event.NewName;
+		}
+
+		private void Handle(AddEmailAddress e)
+		{
+			_emails.Add(e.Email);
 		}
 	}
 }
