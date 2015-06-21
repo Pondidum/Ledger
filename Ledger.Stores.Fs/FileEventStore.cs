@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Ledger.Infrastructure;
 using Newtonsoft.Json;
 
@@ -34,6 +35,19 @@ namespace Ledger.Stores.Fs
 			}
 		}
 
+		private IEnumerable<TDto> ReadFrom<TDto>(string filepath)
+		{
+			using (var fs = new FileStream(filepath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+			using (var sr = new StreamReader(fs))
+			{
+				string line;
+				while ((line = sr.ReadLine()) != null)
+				{
+					yield return JsonConvert.DeserializeObject<TDto>(line);
+				}
+			}
+		}
+
 		public void SaveEvents<TKey>(TKey aggegateID, IEnumerable<DomainEvent> changes)
 		{
 			AppendTo(EventFile<TKey>(), file =>
@@ -61,23 +75,31 @@ namespace Ledger.Stores.Fs
 
 		public int? GetLatestSequenceIDFor<TKey>(TKey aggegateID)
 		{
-			throw new System.NotImplementedException();
+			return LoadEvents(aggegateID)
+				.Select(e => (int?) e.SequenceID)
+				.Max();
 		}
 
 		public IEnumerable<DomainEvent> LoadEvents<TKey>(TKey aggegateID)
 		{
-			throw new System.NotImplementedException();
+			return ReadFrom<EventDto<TKey>>(EventFile<TKey>())
+				.Where(dto => Equals(dto.ID, aggegateID))
+				.Select(dto => dto.Event);
 		}
 
 		public IEnumerable<DomainEvent> LoadEventsSince<TKey>(TKey aggegateID, int sequenceID)
 		{
-			throw new System.NotImplementedException();
+			return LoadEvents(aggegateID)
+				.Where(e => e.SequenceID > sequenceID);
 		}
 
 		public ISequenced GetLatestSnapshotFor<TKey>(TKey aggegateID)
 		{
-			throw new System.NotImplementedException();
+			return ReadFrom<SnapshotDto<TKey>>(SnapshotFile<TKey>())
+				.Where(dto => Equals(dto.ID, aggegateID))
+				.Select(dto => dto.Snapshot)
+				.Cast<ISequenced>()
+				.Last();
 		}
-
 	}
 }
