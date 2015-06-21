@@ -37,6 +37,16 @@ namespace Ledger.Stores.Fs
 
 		private IEnumerable<TDto> ReadFrom<TDto>(string filepath)
 		{
+			if (File.Exists(filepath) == false)
+			{
+				return Enumerable.Empty<TDto>();
+			}
+
+			return ReadFromImpl<TDto>(filepath);
+		}
+
+		private IEnumerable<TDto> ReadFromImpl<TDto>(string filepath)
+		{
 			using (var fs = new FileStream(filepath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
 			using (var sr = new StreamReader(fs))
 			{

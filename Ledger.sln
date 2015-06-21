@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ledger.Stores.Postgres", "L
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ledger.Stores.Fs", "Ledger.Stores.Fs\Ledger.Stores.Fs.csproj", "{B7AE096A-E650-47F9-BD95-F9C29E839D57}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ledger.Stores.Fs.Tests", "Ledger.Stores.Fs.Tests\Ledger.Stores.Fs.Tests.csproj", "{1E41BEB2-DA68-41C2-A326-F24B94F1493D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{B7AE096A-E650-47F9-BD95-F9C29E839D57}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B7AE096A-E650-47F9-BD95-F9C29E839D57}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B7AE096A-E650-47F9-BD95-F9C29E839D57}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1E41BEB2-DA68-41C2-A326-F24B94F1493D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1E41BEB2-DA68-41C2-A326-F24B94F1493D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1E41BEB2-DA68-41C2-A326-F24B94F1493D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1E41BEB2-DA68-41C2-A326-F24B94F1493D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
