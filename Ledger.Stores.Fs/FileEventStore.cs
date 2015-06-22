@@ -9,10 +9,17 @@ namespace Ledger.Stores.Fs
 {
 	public class FileEventStore : IEventStore
 	{
+		private readonly IFileSystem _fileSystem;
 		private readonly string _directory;
 
 		public FileEventStore(string directory)
+			: this(null, directory)
 		{
+		}
+
+		public FileEventStore(IFileSystem fs, string directory)
+		{
+			_fileSystem = fs;
 			_directory = directory;
 		}
 
@@ -28,7 +35,7 @@ namespace Ledger.Stores.Fs
 
 		private void AppendTo(string filepath, Action<StreamWriter> action)
 		{
-			using(var fs = new FileStream(filepath, FileMode.Append))
+			using(var fs = _fileSystem.AppendTo(filepath))
 			using (var sw = new StreamWriter(fs))
 			{
 				action(sw);
@@ -37,7 +44,7 @@ namespace Ledger.Stores.Fs
 
 		private IEnumerable<TDto> ReadFrom<TDto>(string filepath)
 		{
-			if (File.Exists(filepath) == false)
+			if (_fileSystem.FileExists(filepath) == false)
 			{
 				return Enumerable.Empty<TDto>();
 			}
@@ -47,7 +54,7 @@ namespace Ledger.Stores.Fs
 
 		private IEnumerable<TDto> ReadFromImpl<TDto>(string filepath)
 		{
-			using (var fs = new FileStream(filepath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+			using (var fs = _fileSystem.ReadFile(filepath))
 			using (var sr = new StreamReader(fs))
 			{
 				string line;

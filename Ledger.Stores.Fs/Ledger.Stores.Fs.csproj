@@ -45,6 +45,8 @@
   <ItemGroup>
     <Compile Include="EventDto.cs" />
     <Compile Include="FileEventStore.cs" />
+    <Compile Include="IFileSystem.cs" />
+    <Compile Include="PhysicalFileSystem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SnapshotDto.cs" />
   </ItemGroup>
