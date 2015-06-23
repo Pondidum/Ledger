@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Ledger.Infrastructure;
 
@@ -35,7 +36,7 @@ namespace Ledger
 				return;
 			}
 
-			if (ImplementsSnapshottable(aggregate) && NeedsSnapshot(aggregate, changes.Last().SequenceID))
+			if (ImplementsSnapshottable(aggregate) && NeedsSnapshot(aggregate, changes))
 			{
 				var methodName = TypeInfo.GetMethodName<ISnapshotable<ISequenced>>(x => x.CreateSnapshot());
 
@@ -55,18 +56,23 @@ namespace Ledger
 
 		}
 
-		private bool NeedsSnapshot<TAggregate>(TAggregate aggregate, int sequenceID)
+		private bool NeedsSnapshot<TAggregate>(TAggregate aggregate, IReadOnlyCollection<DomainEvent> changes)
+			where TAggregate : AggregateRoot<TKey>
 		{
-			var interval = DefaultSnapshotInterval;
 			var control = aggregate as ISnapshotControl;
 
-			if (control != null)
+			var interval = control != null
+				? control.SnapshotInterval
+				: DefaultSnapshotInterval;
+
+			if (changes.Count >= interval)
 			{
-				interval = control.SnapshotInterval;
+				return true;
 			}
 
-			// +1 due to 0 based index
-			return (sequenceID + 1) % interval == 0;
+			var snapshotID = _eventStore.GetLatestSnapshotIDFor(aggregate.ID);
+
+			return snapshotID.HasValue && changes.Last().SequenceID >= snapshotID.Value + interval;
 		}
 
 		public TAggregate Load<TAggregate>(TKey aggregateID, Func<TAggregate> createNew)

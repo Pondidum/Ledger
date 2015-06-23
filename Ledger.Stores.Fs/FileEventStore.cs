@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using Ledger.Infrastructure;
 using Newtonsoft.Json;
 
@@ -97,6 +98,15 @@ namespace Ledger.Stores.Fs
 				.Max();
 		}
 
+		public int? GetLatestSnapshotIDFor<TKey>(TKey aggregateID)
+		{
+			var snapshot = GetLatestSnapshotFor(aggregateID);
+
+			return snapshot != null
+				? snapshot.SequenceID
+				: (int?)null;
+		}
+
 		public IEnumerable<DomainEvent> LoadEvents<TKey>(TKey aggegateID)
 		{
 			return ReadFrom<EventDto<TKey>>(EventFile<TKey>())
@@ -116,7 +126,7 @@ namespace Ledger.Stores.Fs
 				.Where(dto => Equals(dto.ID, aggegateID))
 				.Select(dto => dto.Snapshot)
 				.Cast<ISequenced>()
-				.Last();
+				.LastOrDefault();
 		}
 	}
 }

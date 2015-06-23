@@ -5,6 +5,7 @@ namespace Ledger
 	public interface IEventStore
 	{
 		int? GetLatestSequenceIDFor<TKey>(TKey aggegateID);
+		int? GetLatestSnapshotIDFor<TKey>(TKey aggregateID);
 		
 		void SaveEvents<TKey>(TKey aggegateID, IEnumerable<DomainEvent> changes);
 		IEnumerable<DomainEvent> LoadEvents<TKey>(TKey aggegateID);

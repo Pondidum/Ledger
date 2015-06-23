@@ -6,6 +6,7 @@ namespace Ledger.Tests.TestObjects
 	public class FakeEventStore : IEventStore
 	{
 		public int? LatestSequenceID { get; set; }
+		public int? LatestSnapshotID { get; set; }
 		public List<object> WrittenToEvents { get; set; }
 		public List<object> ReadFromEvents { get; set; }
 		public ISequenced Snapshot { get; set; }
@@ -21,6 +22,11 @@ namespace Ledger.Tests.TestObjects
 		public int? GetLatestSequenceIDFor<TKey>(TKey aggegateID)
 		{
 			return LatestSequenceID;
+		}
+
+		public int? GetLatestSnapshotIDFor<TKey>(TKey aggregateID)
+		{
+			return LatestSnapshotID;
 		}
 
 		public void SaveEvents<TKey>(TKey aggegateID, IEnumerable<DomainEvent> changes)
