@@ -6,7 +6,7 @@ using TestsDomain.Events;
 
 namespace TestsDomain
 {
-	public class Candidate : AggregateRoot<Guid>
+	public class Candidate : AggregateRoot<Guid>, ISnapshotable<CandidateMemento>
 	{
 		public string Name { get; private set; }
 		public IEnumerable<string> Emails { get { return _emails; } }
@@ -29,6 +29,22 @@ namespace TestsDomain
 			});
 
 			return candidate;
+		}
+
+		public CandidateMemento CreateSnapshot()
+		{
+			return new CandidateMemento
+			{
+				Name = Name,
+				Emails = _emails
+			};
+		}
+
+		public void ApplySnapshot(CandidateMemento snapshot)
+		{
+			Name = snapshot.Name;
+			_emails.Clear();
+			_emails.AddRange(snapshot.Emails);
 		}
 
 		public void FixName(string newName)
@@ -72,5 +88,6 @@ namespace TestsDomain
 		{
 			_emails.Add(e.Email);
 		}
+
 	}
 }

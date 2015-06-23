@@ -40,6 +40,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Candidate.cs" />
+    <Compile Include="CandidateMemento.cs" />
     <Compile Include="DomainException.cs" />
     <Compile Include="Events\AddEmailAddress.cs" />
     <Compile Include="Events\CandidateCreated.cs" />
