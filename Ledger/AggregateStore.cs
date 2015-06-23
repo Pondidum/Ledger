@@ -35,7 +35,7 @@ namespace Ledger
 				return;
 			}
 
-			if (ImplementsSnapshottable<TAggregate>() && NeedsSnapshot(aggregate, changes.Last().SequenceID))
+			if (ImplementsSnapshottable(aggregate) && NeedsSnapshot(aggregate, changes.Last().SequenceID))
 			{
 				var methodName = TypeInfo.GetMethodName<ISnapshotable<ISequenced>>(x => x.CreateSnapshot());
 
@@ -75,7 +75,7 @@ namespace Ledger
 
 			var aggregate = createNew();
 
-			if (ImplementsSnapshottable<TAggregate>())
+			if (ImplementsSnapshottable(aggregate))
 			{
 				var snapshot = _eventStore.GetLatestSnapshotFor(aggregate.ID);
 				var events = _eventStore.LoadEventsSince(aggregateID, snapshot.SequenceID);
@@ -91,9 +91,10 @@ namespace Ledger
 			return aggregate;
 		}
 
-		private static bool ImplementsSnapshottable<TAggregate>()
+		private static bool ImplementsSnapshottable(AggregateRoot<TKey> aggregate)
 		{
-			return typeof(TAggregate)
+			return aggregate
+				.GetType()
 				.GetInterfaces()
 				.Any(i => i.GetGenericTypeDefinition() == typeof(ISnapshotable<>));
 		}
