@@ -46,8 +46,9 @@ namespace Ledger.Stores.Fs.Tests
 			var snapshots = ToStream(Snapshots);
 
 			var fileSystem = Substitute.For<IFileSystem>();
-			fileSystem.AppendTo("fs\\Guid.events.json").Returns(events);
-			fileSystem.AppendTo("fs\\Guid.snapshots.json").Returns(snapshots);
+			fileSystem.ReadFile("fs\\Guid.events.json").Returns(events);
+			fileSystem.ReadFile("fs\\Guid.snapshots.json").Returns(snapshots);
+			fileSystem.FileExists(Arg.Any<string>()).Returns(true);
 
 			var fs = new FileEventStore(fileSystem, "fs");
 			var store = new AggregateStore<Guid>(fs);
@@ -75,7 +76,9 @@ namespace Ledger.Stores.Fs.Tests
 
 			items.ForEach(x => sw.WriteLine(x));
 
+			sw.Flush();
 			ms.Position = 0;
+
 			return ms;
 		}
 
