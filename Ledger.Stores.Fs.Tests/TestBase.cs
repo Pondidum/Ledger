@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Ledger.Infrastructure;
 using NSubstitute;
+using TestsDomain;
 
 namespace Ledger.Stores.Fs.Tests
 {
@@ -38,6 +40,21 @@ namespace Ledger.Stores.Fs.Tests
 			Snapshots.AddRange(FromStream(snapshots));
 		}
 
+		protected Candidate Load(Guid id)
+		{
+			var events = ToStream(Events);
+			var snapshots = ToStream(Snapshots);
+
+			var fileSystem = Substitute.For<IFileSystem>();
+			fileSystem.AppendTo("fs\\Guid.events.json").Returns(events);
+			fileSystem.AppendTo("fs\\Guid.snapshots.json").Returns(snapshots);
+
+			var fs = new FileEventStore(fileSystem, "fs");
+			var store = new AggregateStore<Guid>(fs);
+
+			return store.Load(id, () => new Candidate());
+		}
+
 		private static List<string> FromStream(MemoryStream stream)
 		{
 			var copy = new MemoryStream(stream.ToArray());
@@ -49,6 +66,17 @@ namespace Ledger.Stores.Fs.Tests
 					.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries)
 					.ToList();
 			}
+		}
+
+		private static Stream ToStream(IEnumerable<string> items)
+		{
+			var ms = new MemoryStream();
+			var sw = new StreamWriter(ms);
+
+			items.ForEach(x => sw.WriteLine(x));
+
+			ms.Position = 0;
+			return ms;
 		}
 
 	}

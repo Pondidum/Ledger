@@ -13,7 +13,7 @@ namespace TestsDomain
 
 		private readonly List<string> _emails;
 
-		private Candidate()
+		public Candidate()
 		{
 			_emails = new List<string>();
 		}
