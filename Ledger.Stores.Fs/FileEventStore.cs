@@ -12,6 +12,7 @@ namespace Ledger.Stores.Fs
 	{
 		private readonly IFileSystem _fileSystem;
 		private readonly string _directory;
+		private readonly JsonSerializerSettings _jsonSettings;
 
 		public FileEventStore(string directory)
 			: this(new PhysicalFileSystem(), directory)
@@ -22,6 +23,7 @@ namespace Ledger.Stores.Fs
 		{
 			_fileSystem = fs;
 			_directory = directory;
+			_jsonSettings = new JsonSerializerSettings {TypeNameHandling = TypeNameHandling.Objects};
 		}
 
 		private string EventFile<TKey>()
@@ -61,7 +63,7 @@ namespace Ledger.Stores.Fs
 				string line;
 				while ((line = sr.ReadLine()) != null)
 				{
-					yield return JsonConvert.DeserializeObject<TDto>(line);
+					yield return JsonConvert.DeserializeObject<TDto>(line, _jsonSettings);
 				}
 			}
 		}
@@ -73,7 +75,7 @@ namespace Ledger.Stores.Fs
 				changes.ForEach(change =>
 				{
 					var dto = new EventDto<TKey> {ID = aggegateID, Event = change};
-					var json = JsonConvert.SerializeObject(dto);
+					var json = JsonConvert.SerializeObject(dto, _jsonSettings);
 
 					file.WriteLine(json);
 				});
@@ -85,7 +87,7 @@ namespace Ledger.Stores.Fs
 			AppendTo(SnapshotFile<TKey>(), file =>
 			{
 				var dto = new SnapshotDto<TKey> {ID = aggregateID, Snapshot = snapshot};
-				var json = JsonConvert.SerializeObject(dto);
+				var json = JsonConvert.SerializeObject(dto, _jsonSettings);
 
 				file.WriteLine(json);
 			});
