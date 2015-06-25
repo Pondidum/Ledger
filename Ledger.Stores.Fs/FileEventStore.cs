@@ -14,7 +14,7 @@ namespace Ledger.Stores.Fs
 		private readonly string _directory;
 
 		public FileEventStore(string directory)
-			: this(null, directory)
+			: this(new PhysicalFileSystem(), directory)
 		{
 		}
 
