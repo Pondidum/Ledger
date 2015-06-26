@@ -55,7 +55,7 @@ namespace Ledger.Stores.Fs.Tests
 			store.SaveSnapshot(id, new CandidateMemento { SequenceID = 5 });
 
 			store
-				.GetLatestSnapshotIDFor(id)
+				.GetLatestSnapshotSequenceFor(id)
 				.ShouldBe(5);
 		}
 

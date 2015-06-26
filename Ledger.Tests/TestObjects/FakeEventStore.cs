@@ -19,12 +19,12 @@ namespace Ledger.Tests.TestObjects
 			Snapshot = null;
 		}
 
-		public int? GetLatestSequenceIDFor<TKey>(TKey aggegateID)
+		public int? GetLatestSequenceFor<TKey>(TKey aggegateID)
 		{
 			return LatestSequenceID;
 		}
 
-		public int? GetLatestSnapshotIDFor<TKey>(TKey aggregateID)
+		public int? GetLatestSnapshotSequenceFor<TKey>(TKey aggregateID)
 		{
 			return LatestSnapshotID;
 		}

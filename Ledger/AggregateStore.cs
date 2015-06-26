@@ -19,7 +19,7 @@ namespace Ledger
 		public void Save<TAggregate>(TAggregate aggregate)
 			where TAggregate : AggregateRoot<TKey>
 		{
-			var lastStoredSequence = _eventStore.GetLatestSequenceIDFor(aggregate.ID);
+			var lastStoredSequence = _eventStore.GetLatestSequenceFor(aggregate.ID);
 
 			if (lastStoredSequence.HasValue && lastStoredSequence != aggregate.SequenceID)
 			{
@@ -70,7 +70,7 @@ namespace Ledger
 				return true;
 			}
 
-			var snapshotID = _eventStore.GetLatestSnapshotIDFor(aggregate.ID);
+			var snapshotID = _eventStore.GetLatestSnapshotSequenceFor(aggregate.ID);
 
 			return snapshotID.HasValue && changes.Last().SequenceID >= snapshotID.Value + interval;
 		}
