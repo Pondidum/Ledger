@@ -63,6 +63,7 @@
   <ItemGroup>
     <Compile Include="EventSaveLoadTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SnapshotSaveLoadTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Ledger.Stores.Fs\Ledger.Stores.Fs.csproj">
