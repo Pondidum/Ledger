@@ -48,8 +48,11 @@ namespace Ledger
 		internal void LoadFromSnapshot<TSnapshot>(TSnapshot snapshot, IEnumerable<DomainEvent> events)
 			where TSnapshot : ISequenced
 		{
-			this.AsDynamic().ApplySnapshot(snapshot);
-			SequenceID = snapshot.SequenceID;
+			if (snapshot != null)
+			{
+				this.AsDynamic().ApplySnapshot(snapshot);
+				SequenceID = snapshot.SequenceID;
+			}
 
 			LoadFromEvents(events);
 		}
