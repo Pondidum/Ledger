@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ledger.Stores.Fs", "Ledger.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ledger.Stores.Fs.Tests", "Ledger.Stores.Fs.Tests\Ledger.Stores.Fs.Tests.csproj", "{1E41BEB2-DA68-41C2-A326-F24B94F1493D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ledger.Stores.Memory", "Ledger.Stores.Memory\Ledger.Stores.Memory.csproj", "{08F3B991-276E-4196-BA29-EE0C537FD7CB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{1E41BEB2-DA68-41C2-A326-F24B94F1493D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1E41BEB2-DA68-41C2-A326-F24B94F1493D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1E41BEB2-DA68-41C2-A326-F24B94F1493D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{08F3B991-276E-4196-BA29-EE0C537FD7CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{08F3B991-276E-4196-BA29-EE0C537FD7CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{08F3B991-276E-4196-BA29-EE0C537FD7CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{08F3B991-276E-4196-BA29-EE0C537FD7CB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

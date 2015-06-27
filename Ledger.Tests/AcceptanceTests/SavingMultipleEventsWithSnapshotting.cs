@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Ledger.Infrastructure;
+using Ledger.Stores.Memory;
 using Ledger.Tests.TestObjects;
 using Shouldly;
 using Xunit;
@@ -14,7 +15,7 @@ namespace Ledger.Tests.AcceptanceTests
 
 		public SavingMultipleEventsWithSnapshotting()
 		{
-			EventStore = new FakeEventStore();
+			EventStore = new InMemoryEventStore();
 			var aggregateStore = new AggregateStore<Guid>(EventStore);
 
 			Aggregate = new SnapshotAggregate();

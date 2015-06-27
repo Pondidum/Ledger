@@ -1,16 +1,16 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace Ledger.Tests.TestObjects
+namespace Ledger.Stores.Memory
 {
-	public class FakeEventStore : IEventStore
+	public class InMemoryEventStore : IEventStore
 	{
 		public int? LatestSequenceID { get; set; }
 		public int? LatestSnapshotID { get; set; }
 		public List<object> Events { get; set; }
 		public ISequenced Snapshot { get; set; }
 
-		public FakeEventStore()
+		public InMemoryEventStore()
 		{
 			Events = new List<object>();
 			Events = new List<object>();

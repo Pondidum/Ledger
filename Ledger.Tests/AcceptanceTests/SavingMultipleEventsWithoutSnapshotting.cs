@@ -13,7 +13,6 @@ namespace Ledger.Tests.AcceptanceTests
 
 		public SavingMultipleEventsWithoutSnapshotting()
 		{
-			EventStore = new FakeEventStore();
 			var aggregateStore = new AggregateStore<Guid>(EventStore);
 
 			Aggregate = new TestAggregate();
