@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Ledger.Infrastructure;
 using Ledger.Tests.TestObjects;
 using Shouldly;
@@ -9,17 +10,14 @@ namespace Ledger.Tests.AcceptanceTests
 {
 	public class SavingMultipleEventsWithoutSnapshotting : AcceptanceBase<TestAggregate>
 	{
-		private readonly IEnumerable<DomainEvent> _events;
-
 		public SavingMultipleEventsWithoutSnapshotting()
 		{
 			var aggregateStore = new AggregateStore<Guid>(EventStore);
 
 			Aggregate = new TestAggregate();
-			_events = new[] { new TestEvent(), new TestEvent() };
 
 			Aggregate.GenerateID();
-			Aggregate.AddEvents(_events);
+			Aggregate.AddEvents(new[] { new TestEvent(), new TestEvent() });
 		
 			aggregateStore.Save(Aggregate);
 		}
@@ -27,13 +25,18 @@ namespace Ledger.Tests.AcceptanceTests
 		[Fact]
 		public void The_events_should_be_written()
 		{
-			EventStore.LoadEvents(Aggregate.ID).ShouldBe(_events);
+			EventStore.LoadEvents(Aggregate.ID).Count().ShouldBe(2);
 		}
 
 		[Fact]
 		public void The_events_should_be_in_sequence()
 		{
-			_events.ForEach((e, i) => e.SequenceID.ShouldBe(i));
+			var events = EventStore.LoadEvents(Aggregate.ID).ToList();
+
+			events.ShouldSatisfyAllConditions(
+				() => events[0].SequenceID.ShouldBe(0),
+				() => events[1].SequenceID.ShouldBe(1)
+			);
 		}
 
 		[Fact]
