@@ -5,52 +5,75 @@ namespace Ledger.Stores.Memory
 {
 	public class InMemoryEventStore : IEventStore
 	{
-		public int? LatestSequenceID { get; set; }
-		public int? LatestSnapshotID { get; set; }
-		public List<object> Events { get; set; }
-		public ISequenced Snapshot { get; set; }
+		private readonly Dictionary<object, List<DomainEvent>> _events;
+		private readonly Dictionary<object, List<ISequenced>> _snapshots;
 
 		public InMemoryEventStore()
 		{
-			Events = new List<object>();
-			Events = new List<object>();
-			LatestSequenceID = null;
-			Snapshot = null;
+			_events = new Dictionary<object, List<DomainEvent>>();
+			_snapshots = new Dictionary<object, List<ISequenced>>();
 		}
 
-		public int? GetLatestSequenceFor<TKey>(TKey aggegateID)
+		public int? GetLatestSequenceFor<TKey>(TKey aggregateID)
 		{
-			return LatestSequenceID;
+			var last = LoadEvents(aggregateID).LastOrDefault();
+
+			return last != null
+				? last.SequenceID
+				: (int?) null;
 		}
 
 		public int? GetLatestSnapshotSequenceFor<TKey>(TKey aggregateID)
 		{
-			return LatestSnapshotID;
+			var last = LoadLatestSnapshotFor(aggregateID);
+
+			return last != null
+				? last.SequenceID
+				: (int?) null;
 		}
 
-		public void SaveEvents<TKey>(TKey aggegateID, IEnumerable<DomainEvent> changes)
+		public void SaveEvents<TKey>(TKey aggregateID, IEnumerable<DomainEvent> changes)
 		{
-			Events.AddRange(changes);
+			if (_events.ContainsKey(aggregateID) == false)
+			{
+				_events[aggregateID] = new List<DomainEvent>();
+			}
+
+			_events[aggregateID].AddRange(changes);
 		}
 
-		public IEnumerable<DomainEvent> LoadEvents<TKey>(TKey aggegateID)
+		public IEnumerable<DomainEvent> LoadEvents<TKey>(TKey aggregateID)
 		{
-			return Events.Cast<DomainEvent>();
+			List<DomainEvent> events;
+
+			return _events.TryGetValue(aggregateID, out events)
+				? events
+				: Enumerable.Empty<DomainEvent>();
 		}
 
-		public IEnumerable<DomainEvent> LoadEventsSince<TKey>(TKey aggegateID, int sequenceID)
+		public IEnumerable<DomainEvent> LoadEventsSince<TKey>(TKey aggregateID, int sequenceID)
 		{
-			return Events.Cast<DomainEvent>().Where(x => x.SequenceID > sequenceID);
+			return LoadEvents(aggregateID)
+				.Where(e => e.SequenceID > sequenceID);
 		}
 
-		public ISequenced LoadLatestSnapshotFor<TKey>(TKey aggegateID)
+		public ISequenced LoadLatestSnapshotFor<TKey>(TKey aggregateID)
 		{
-			return Snapshot;
+			List<ISequenced> snapshots;
+
+			return _snapshots.TryGetValue(aggregateID, out snapshots) 
+				? snapshots.LastOrDefault() 
+				: null;
 		}
 
 		public void SaveSnapshot<TKey>(TKey aggregateID, ISequenced snapshot)
 		{
-			Snapshot = snapshot;
+			if (_snapshots.ContainsKey(aggregateID) == false)
+			{
+				_snapshots[aggregateID] = new List<ISequenced>();
+			}
+
+			_snapshots[aggregateID].Add(snapshot);
 		}
 	}
 }
