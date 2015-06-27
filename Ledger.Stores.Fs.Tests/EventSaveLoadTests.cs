@@ -89,6 +89,17 @@ namespace Ledger.Stores.Fs.Tests
 			loaded.Select(x => x.SequenceID).ShouldBe(new[] { 5, 6 });
 		}
 
+		[Fact]
+		public void When_there_is_no_event_file_and_load_is_called()
+		{
+			var id = Guid.NewGuid();
+			var store = new FileEventStore(_root);
+
+			var loaded = store.LoadEventsSince(id, 4);
+			
+			loaded.ShouldBeEmpty();
+		}
+
 		public void Dispose()
 		{
 			try

@@ -59,6 +59,18 @@ namespace Ledger.Stores.Fs.Tests
 				.ShouldBe(5);
 		}
 
+
+		[Fact]
+		public void When_there_is_no_snapshot_file_and_load_is_called()
+		{
+			var id = Guid.NewGuid();
+			var store = new FileEventStore(_root);
+
+			var loaded = store.GetLatestSnapshotFor(id);
+
+			loaded.ShouldBe(null);
+		}
+
 		public void Dispose()
 		{
 			try
