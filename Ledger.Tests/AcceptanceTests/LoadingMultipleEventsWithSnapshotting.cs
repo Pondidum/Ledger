@@ -1,40 +1,37 @@
 ﻿using System;
-using System.Collections.Generic;
 using Ledger.Tests.TestObjects;
 using Shouldly;
 using Xunit;
 
 namespace Ledger.Tests.AcceptanceTests
 {
-	public class LoadingMultipleEventsWithSnapshotting
+	public class LoadingMultipleEventsWithSnapshotting : AcceptanceBase<SnapshotAggregate>
 	{
-		private readonly SnapshotAggregate _aggregate;
-
 		public LoadingMultipleEventsWithSnapshotting()
 		{
-			var eventStore = new FakeEventStore();
-			var aggregateStore = new AggregateStore<Guid>(eventStore);
+			var aggregateStore = new AggregateStore<Guid>(EventStore);
+			var id = Guid.NewGuid();
 
-			eventStore.Snapshot = new TestSnapshot() {SequenceID = 10};
-			eventStore.ReadFromEvents = new List<object>
+			EventStore.SaveSnapshot(id, new TestSnapshot {SequenceID = 10});
+			EventStore.SaveEvents(id, new []
 			{
 				new TestEvent { SequenceID = 5},
 				new TestEvent { SequenceID = 6},
-			};
+			});
 
-			_aggregate = aggregateStore.Load(Guid.NewGuid(), () => new SnapshotAggregate());
+			Aggregate = aggregateStore.Load(id, () => new SnapshotAggregate());
 		}
 
 		[Fact]
 		public void The_uncommitted_changes_should_be_empty()
 		{
-			_aggregate.GetUncommittedEvents().ShouldBeEmpty();
+			Aggregate.GetUncommittedEvents().ShouldBeEmpty();
 		}
 
 		[Fact]
 		public void The_sequence_id_should_be_the_last_events()
 		{
-			_aggregate.SequenceID.ShouldBe(10);
+			Aggregate.SequenceID.ShouldBe(10);
 		}
 
 	}

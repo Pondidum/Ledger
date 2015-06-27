@@ -7,30 +7,28 @@ using Xunit;
 
 namespace Ledger.Tests.AcceptanceTests
 {
-	public class SavingMultipleEventsWithoutSnapshotting
+	public class SavingMultipleEventsWithoutSnapshotting : AcceptanceBase<TestAggregate>
 	{
-		private readonly FakeEventStore _eventStore;
-		private readonly TestAggregate _aggregate;
 		private readonly IEnumerable<DomainEvent> _events;
 
 		public SavingMultipleEventsWithoutSnapshotting()
 		{
-			_eventStore = new FakeEventStore();
-			var aggregateStore = new AggregateStore<Guid>(_eventStore);
+			EventStore = new FakeEventStore();
+			var aggregateStore = new AggregateStore<Guid>(EventStore);
 
-			_aggregate = new TestAggregate();
+			Aggregate = new TestAggregate();
 			_events = new[] { new TestEvent(), new TestEvent() };
 
-			_aggregate.GenerateID();
-			_aggregate.AddEvents(_events);
+			Aggregate.GenerateID();
+			Aggregate.AddEvents(_events);
 		
-			aggregateStore.Save(_aggregate);
+			aggregateStore.Save(Aggregate);
 		}
 
 		[Fact]
 		public void The_events_should_be_written()
 		{
-			_eventStore.WrittenToEvents.ShouldBe(_events);
+			EventStore.LoadEvents(Aggregate.ID).ShouldBe(_events);
 		}
 
 		[Fact]
@@ -42,7 +40,7 @@ namespace Ledger.Tests.AcceptanceTests
 		[Fact]
 		public void The_uncommitted_changes_should_be_cleared()
 		{
-			_aggregate.GetUncommittedEvents().ShouldBeEmpty();
+			Aggregate.GetUncommittedEvents().ShouldBeEmpty();
 		}
 	}
 }

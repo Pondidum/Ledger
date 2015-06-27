@@ -61,6 +61,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AcceptanceTests\AcceptanceBase.cs" />
     <Compile Include="AcceptanceTests\AggregateStoreTests.cs" />
     <Compile Include="AcceptanceTests\LoadingMultipleEventsWithSnapshotting.cs" />
     <Compile Include="AcceptanceTests\SavingMultipleEventsWithSnapshotting.cs" />

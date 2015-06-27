@@ -7,14 +7,13 @@ namespace Ledger.Tests.TestObjects
 	{
 		public int? LatestSequenceID { get; set; }
 		public int? LatestSnapshotID { get; set; }
-		public List<object> WrittenToEvents { get; set; }
-		public List<object> ReadFromEvents { get; set; }
+		public List<object> Events { get; set; }
 		public ISequenced Snapshot { get; set; }
 
 		public FakeEventStore()
 		{
-			WrittenToEvents = new List<object>();
-			ReadFromEvents = new List<object>();
+			Events = new List<object>();
+			Events = new List<object>();
 			LatestSequenceID = null;
 			Snapshot = null;
 		}
@@ -31,17 +30,17 @@ namespace Ledger.Tests.TestObjects
 
 		public void SaveEvents<TKey>(TKey aggegateID, IEnumerable<DomainEvent> changes)
 		{
-			WrittenToEvents.AddRange(changes);
+			Events.AddRange(changes);
 		}
 
 		public IEnumerable<DomainEvent> LoadEvents<TKey>(TKey aggegateID)
 		{
-			return ReadFromEvents.Cast<DomainEvent>();
+			return Events.Cast<DomainEvent>();
 		}
 
 		public IEnumerable<DomainEvent> LoadEventsSince<TKey>(TKey aggegateID, int sequenceID)
 		{
-			return ReadFromEvents.Cast<DomainEvent>().Where(x => x.SequenceID > sequenceID);
+			return Events.Cast<DomainEvent>().Where(x => x.SequenceID > sequenceID);
 		}
 
 		public ISequenced GetLatestSnapshotFor<TKey>(TKey aggegateID)

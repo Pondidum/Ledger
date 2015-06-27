@@ -23,7 +23,7 @@ namespace Ledger.Tests.AcceptanceTests
 
 			_aggregateStore.Save(new TestAggregate());
 
-			_eventStore.WrittenToEvents.ShouldBeEmpty();
+			_eventStore.Events.ShouldBeEmpty();
 		}
 
 		[Fact]

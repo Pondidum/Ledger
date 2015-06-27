@@ -8,57 +8,65 @@ using Xunit;
 
 namespace Ledger.Tests.AcceptanceTests
 {
-	public class SavingMultipleEventsWithSnapshotting
+	public class SavingMultipleEventsWithSnapshotting : AcceptanceBase<SnapshotAggregate>
 	{
-		private readonly FakeEventStore _eventStore;
-		private readonly SnapshotAggregate _aggregate;
 		private readonly IEnumerable<DomainEvent> _events;
 
 		public SavingMultipleEventsWithSnapshotting()
 		{
-			_eventStore = new FakeEventStore();
-			var aggregateStore = new AggregateStore<Guid>(_eventStore);
+			EventStore = new FakeEventStore();
+			var aggregateStore = new AggregateStore<Guid>(EventStore);
 
-			_aggregate = new SnapshotAggregate();
+			Aggregate = new SnapshotAggregate();
 			_events = Enumerable
 				.Range(0, aggregateStore.DefaultSnapshotInterval)
 				.Select(i => new TestEvent())
 				.ToArray();
 
-			_aggregate.GenerateID();
-			_aggregate.AddEvents(_events);
+			Aggregate.GenerateID();
+			Aggregate.AddEvents(_events);
 
-			aggregateStore.Save(_aggregate);
+			aggregateStore.Save(Aggregate);
 		}
 
 		[Fact]
 		public void The_events_should_be_written()
 		{
-			_eventStore.WrittenToEvents.ShouldBe(_events);
+			EventStore
+				.LoadEvents(Aggregate.ID)
+				.ShouldBe(_events);
 		}
 
 		[Fact]
 		public void The_events_should_be_in_sequence()
 		{
-			_events.ForEach((e, i) => e.SequenceID.ShouldBe(i));
+			_events
+				.ForEach((e, i) => e.SequenceID.ShouldBe(i));
 		}
 
 		[Fact]
 		public void The_uncommitted_changes_should_be_cleared()
 		{
-			_aggregate.GetUncommittedEvents().ShouldBeEmpty();
+			Aggregate
+				.GetUncommittedEvents()
+				.ShouldBeEmpty();
 		}
 
 		[Fact]
 		public void The_snapshot_should_be_saved()
 		{
-			_eventStore.Snapshot.ShouldNotBe(null);
+			EventStore
+				.GetLatestSnapshotFor(Aggregate.ID)
+				.ShouldNotBe(null);
 		}
 
 		[Fact]
 		public void The_snapshot_should_have_the_latest_sequnce_id()
 		{
-			_eventStore.Snapshot.SequenceID.ShouldBe(_events.Count() - 1);
+			EventStore
+				.GetLatestSnapshotFor(Aggregate.ID)
+				.SequenceID
+				.ShouldBe(_events.Count() - 1);
 		}
 	}
 }
