@@ -83,7 +83,7 @@ namespace Ledger
 
 			if (ImplementsSnapshottable(aggregate))
 			{
-				var snapshot = _eventStore.GetLatestSnapshotFor(aggregateID);
+				var snapshot = _eventStore.LoadLatestSnapshotFor(aggregateID);
 				var since = snapshot != null
 					? snapshot.SequenceID
 					: -1;

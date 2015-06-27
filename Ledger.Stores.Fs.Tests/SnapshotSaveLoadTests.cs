@@ -25,7 +25,7 @@ namespace Ledger.Stores.Fs.Tests
 
 			store.SaveSnapshot(id, new CandidateMemento());
 
-			var loaded = store.GetLatestSnapshotFor(id);
+			var loaded = store.LoadLatestSnapshotFor(id);
 
 			loaded.ShouldBeOfType<CandidateMemento>();
 		}
@@ -40,7 +40,7 @@ namespace Ledger.Stores.Fs.Tests
 			store.SaveSnapshot(id, new CandidateMemento { SequenceID = 5 });
 
 			store
-				.GetLatestSnapshotFor(id)
+				.LoadLatestSnapshotFor(id)
 				.SequenceID
 				.ShouldBe(5);
 		}
@@ -66,7 +66,7 @@ namespace Ledger.Stores.Fs.Tests
 			var id = Guid.NewGuid();
 			var store = new FileEventStore(_root);
 
-			var loaded = store.GetLatestSnapshotFor(id);
+			var loaded = store.LoadLatestSnapshotFor(id);
 
 			loaded.ShouldBe(null);
 		}

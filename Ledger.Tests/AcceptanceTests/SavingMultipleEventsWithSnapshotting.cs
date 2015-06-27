@@ -56,7 +56,7 @@ namespace Ledger.Tests.AcceptanceTests
 		public void The_snapshot_should_be_saved()
 		{
 			EventStore
-				.GetLatestSnapshotFor(Aggregate.ID)
+				.LoadLatestSnapshotFor(Aggregate.ID)
 				.ShouldNotBe(null);
 		}
 
@@ -64,7 +64,7 @@ namespace Ledger.Tests.AcceptanceTests
 		public void The_snapshot_should_have_the_latest_sequnce_id()
 		{
 			EventStore
-				.GetLatestSnapshotFor(Aggregate.ID)
+				.LoadLatestSnapshotFor(Aggregate.ID)
 				.SequenceID
 				.ShouldBe(_events.Count() - 1);
 		}

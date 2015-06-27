@@ -43,7 +43,7 @@ namespace Ledger.Tests.TestObjects
 			return Events.Cast<DomainEvent>().Where(x => x.SequenceID > sequenceID);
 		}
 
-		public ISequenced GetLatestSnapshotFor<TKey>(TKey aggegateID)
+		public ISequenced LoadLatestSnapshotFor<TKey>(TKey aggegateID)
 		{
 			return Snapshot;
 		}

@@ -101,7 +101,7 @@ namespace Ledger.Stores.Fs
 
 		public int? GetLatestSnapshotSequenceFor<TKey>(TKey aggregateID)
 		{
-			var snapshot = GetLatestSnapshotFor(aggregateID);
+			var snapshot = LoadLatestSnapshotFor(aggregateID);
 
 			return snapshot != null
 				? snapshot.SequenceID
@@ -121,7 +121,7 @@ namespace Ledger.Stores.Fs
 				.Where(e => e.SequenceID > sequenceID);
 		}
 
-		public ISequenced GetLatestSnapshotFor<TKey>(TKey aggegateID)
+		public ISequenced LoadLatestSnapshotFor<TKey>(TKey aggegateID)
 		{
 			return ReadFrom<SnapshotDto<TKey>>(SnapshotFile<TKey>())
 				.Where(dto => Equals(dto.ID, aggegateID))
