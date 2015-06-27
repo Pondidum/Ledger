@@ -78,6 +78,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Ledger.Stores.Fs\Ledger.Stores.Fs.csproj">
+      <Project>{b7ae096a-e650-47f9-bd95-f9c29e839d57}</Project>
+      <Name>Ledger.Stores.Fs</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Ledger\Ledger.csproj">
       <Project>{4ed2a64f-414e-47ab-870a-4e34aa25ffbd}</Project>
       <Name>Ledger</Name>
