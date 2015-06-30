@@ -75,6 +75,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CreateGuidKeyedTablesCommandTests.cs" />
+    <Compile Include="EventSaveLoadTests.cs" />
     <Compile Include="PostgresTestBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -85,6 +86,14 @@
     <ProjectReference Include="..\Ledger.Stores.Postgres\Ledger.Stores.Postgres.csproj">
       <Project>{fd8bd913-a719-4879-a596-ee6ede930e5f}</Project>
       <Name>Ledger.Stores.Postgres</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Ledger\Ledger.csproj">
+      <Project>{4ED2A64F-414E-47AB-870A-4E34AA25FFBD}</Project>
+      <Name>Ledger</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TestsDomain\TestsDomain.csproj">
+      <Project>{C0080E1D-4AA9-4333-ACDB-BDEDC6A6A8AD}</Project>
+      <Name>TestsDomain</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

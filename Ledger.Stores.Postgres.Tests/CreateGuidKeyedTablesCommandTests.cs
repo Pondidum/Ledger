@@ -13,16 +13,6 @@ namespace Ledger.Stores.Postgres.Tests
 			CleanupTables();
 		}
 
-		private void CleanupTables()
-		{
-			using (var connection = new NpgsqlConnection(ConnectionString))
-			{
-				connection.Open();
-				connection.Execute("drop table if exists events_guid");
-				connection.Execute("drop table if exists snapshots_guid");
-			}
-		}
-
 		[Fact]
 		public void The_tables_should_be_created()
 		{
