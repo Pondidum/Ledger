@@ -84,5 +84,16 @@ namespace Ledger.Stores.Postgres.Tests
 
 			loaded.Select(x => x.SequenceID).ShouldBe(new[] { 5, 6 });
 		}
+
+		[Fact]
+		public void When_there_are_no_events_and_load_is_called()
+		{
+			var id = Guid.NewGuid();
+			var store = new PostgresEventStore<Guid>(ConnectionString);
+
+			var loaded = store.LoadEventsSince(id, 4);
+
+			loaded.ShouldBeEmpty();
+		}
 	}
 }
