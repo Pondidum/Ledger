@@ -48,5 +48,21 @@ namespace Ledger.Stores.Postgres.Tests
 
 			loaded.Single().ShouldBeOfType<FixNameSpelling>();
 		}
+
+		[Fact]
+		public void Only_the_latest_sequence_is_returned()
+		{
+			var first = Guid.NewGuid();
+			var second = Guid.NewGuid();
+
+			var store = new PostgresEventStore<Guid>(ConnectionString);
+			store.SaveEvents(first, new[] { new FixNameSpelling { SequenceID = 4 } });
+			store.SaveEvents(first, new[] { new FixNameSpelling { SequenceID = 5 } });
+			store.SaveEvents(second, new[] { new NameChangedByDeedPoll { SequenceID = 6 } });
+
+			store
+				.GetLatestSequenceFor(first)
+				.ShouldBe(5);
+		}
 	}
 }

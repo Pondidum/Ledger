@@ -28,7 +28,12 @@ namespace Ledger.Stores.Postgres
 
 		public int? GetLatestSequenceFor(TKey aggegateID)
 		{
-			throw new System.NotImplementedException();
+			var sql = "select max(sequence) from events_guid where aggregateID = @id";
+
+			using (var connection = Open())
+			{
+				return connection.ExecuteScalar<int>(sql, new {ID = aggegateID});
+			}
 		}
 
 		public int? GetLatestSnapshotSequenceFor(TKey aggregateID)
