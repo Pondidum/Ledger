@@ -1,16 +1,25 @@
-﻿using Npgsql;
+﻿using System;
+using Dapper;
+using Npgsql;
+using Shouldly;
 using Xunit;
 
 namespace Ledger.Stores.Postgres.Tests
 {
-	public class CreateGuidKeyedTablesCommandTests : PostgresTestBase
+	public class CreateGuidKeyedTablesCommandTests : PostgresTestBase, IDisposable
 	{
 		public CreateGuidKeyedTablesCommandTests()
+		{
+			CleanupTables();
+		}
+
+		private void CleanupTables()
 		{
 			using (var connection = new NpgsqlConnection(ConnectionString))
 			{
 				connection.Open();
-				Checkpoint.Reset(connection);
+				connection.Execute("drop table if exists events_guid");
+				connection.Execute("drop table if exists snapshots_guid");
 			}
 		}
 
@@ -19,6 +28,24 @@ namespace Ledger.Stores.Postgres.Tests
 		{
 			var command = new CreateGuidKeyedTablesCommand(ConnectionString);
 			command.Execute();
+
+			using (var connection = new NpgsqlConnection(ConnectionString))
+			{
+				connection.Open();
+
+				connection
+					.ExecuteScalar<bool>("select exists(select * from information_schema.tables where table_name = 'events_guid')")
+					.ShouldBe(true);
+
+				connection
+					.ExecuteScalar<bool>("select exists(select * from information_schema.tables where table_name = 'snapshots_guid')")
+					.ShouldBe(true);
+			}
+		}
+
+		public void Dispose()
+		{
+			CleanupTables();
 		}
 	}
 }

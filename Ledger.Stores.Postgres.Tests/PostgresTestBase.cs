@@ -13,7 +13,7 @@ namespace Ledger.Stores.Postgres.Tests
 
 		protected static Checkpoint Checkpoint = new Checkpoint
 		{
-			SchemasToInclude = new[] {  "postgres"},
+			SchemasToInclude = new[] { "postgres"},
 			DbAdapter = DbAdapter.Postgres
 		};
 	}
