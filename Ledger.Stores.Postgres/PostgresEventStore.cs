@@ -73,7 +73,14 @@ namespace Ledger.Stores.Postgres
 
 		public IEnumerable<DomainEvent> LoadEventsSince(TKey aggegateID, int sequenceID)
 		{
-			throw new System.NotImplementedException();
+			var sql = "select event from events_guid where aggregateID = @id and sequence > @last order by sequence asc";
+
+			using (var connection = Open())
+			{
+				return connection
+					.Query<string>(sql, new { ID = aggegateID, Last = sequenceID })
+					.Select(json => JsonConvert.DeserializeObject<DomainEvent>(json, _jsonSettings));
+			}
 		}
 
 		public ISequenced LoadLatestSnapshotFor(TKey aggegateID)

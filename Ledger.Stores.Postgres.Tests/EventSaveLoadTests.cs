@@ -64,5 +64,25 @@ namespace Ledger.Stores.Postgres.Tests
 				.GetLatestSequenceFor(first)
 				.ShouldBe(5);
 		}
+		
+		[Fact]
+		public void Loading_events_since_only_gets_events_after_the_sequence()
+		{
+			var toSave = new DomainEvent[]
+			{
+				new NameChangedByDeedPoll { SequenceID = 3 },
+				new FixNameSpelling { SequenceID = 4 },
+				new FixNameSpelling { SequenceID = 5 },
+				new FixNameSpelling { SequenceID = 6 },
+			};
+
+			var id = Guid.NewGuid();
+			var store = new PostgresEventStore<Guid>(ConnectionString);
+			store.SaveEvents(id, toSave);
+
+			var loaded = store.LoadEventsSince(id, 4);
+
+			loaded.Select(x => x.SequenceID).ShouldBe(new[] { 5, 6 });
+		}
 	}
 }
