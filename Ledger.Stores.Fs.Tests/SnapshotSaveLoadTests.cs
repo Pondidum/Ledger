@@ -21,7 +21,7 @@ namespace Ledger.Stores.Fs.Tests
 		public void A_snapshot_should_maintain_type()
 		{
 			var id = Guid.NewGuid();
-			var store = new FileEventStore(_root);
+			var store = new FileEventStore<Guid>(_root);
 
 			store.SaveSnapshot(id, new CandidateMemento());
 
@@ -34,7 +34,7 @@ namespace Ledger.Stores.Fs.Tests
 		public void Only_the_latest_snapshot_should_be_loaded()
 		{
 			var id = Guid.NewGuid();
-			var store = new FileEventStore(_root);
+			var store = new FileEventStore<Guid>(_root);
 
 			store.SaveSnapshot(id, new CandidateMemento { SequenceID = 4 });
 			store.SaveSnapshot(id, new CandidateMemento { SequenceID = 5 });
@@ -49,7 +49,7 @@ namespace Ledger.Stores.Fs.Tests
 		public void The_most_recent_snapshot_id_should_be_found()
 		{
 			var id = Guid.NewGuid();
-			var store = new FileEventStore(_root);
+			var store = new FileEventStore<Guid>(_root);
 
 			store.SaveSnapshot(id, new CandidateMemento { SequenceID = 4 });
 			store.SaveSnapshot(id, new CandidateMemento { SequenceID = 5 });
@@ -64,7 +64,7 @@ namespace Ledger.Stores.Fs.Tests
 		public void When_there_is_no_snapshot_file_and_load_is_called()
 		{
 			var id = Guid.NewGuid();
-			var store = new FileEventStore(_root);
+			var store = new FileEventStore<Guid>(_root);
 
 			var loaded = store.LoadLatestSnapshotFor(id);
 

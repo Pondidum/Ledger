@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 namespace Ledger.Stores.Fs
 {
-	public class FileEventStore : IEventStore
+	public class FileEventStore<TKey> : IEventStore<TKey>
 	{
 		private readonly IFileSystem _fileSystem;
 		private readonly string _directory;
@@ -25,12 +25,12 @@ namespace Ledger.Stores.Fs
 			_jsonSettings = new JsonSerializerSettings {TypeNameHandling = TypeNameHandling.Objects};
 		}
 
-		private string EventFile<TKey>()
+		private string EventFile()
 		{
 			return Path.Combine(_directory, typeof(TKey).Name + ".events.json");
 		}
 
-		private string SnapshotFile<TKey>()
+		private string SnapshotFile()
 		{
 			return Path.Combine(_directory, typeof(TKey).Name + ".snapshots.json");
 		}
@@ -67,9 +67,9 @@ namespace Ledger.Stores.Fs
 			}
 		}
 
-		public void SaveEvents<TKey>(TKey aggegateID, IEnumerable<DomainEvent> changes)
+		public void SaveEvents(TKey aggegateID, IEnumerable<DomainEvent> changes)
 		{
-			AppendTo(EventFile<TKey>(), file =>
+			AppendTo(EventFile(), file =>
 			{
 				changes.ForEach(change =>
 				{
@@ -81,9 +81,9 @@ namespace Ledger.Stores.Fs
 			});
 		}
 
-		public void SaveSnapshot<TKey>(TKey aggregateID, ISequenced snapshot)
+		public void SaveSnapshot(TKey aggregateID, ISequenced snapshot)
 		{
-			AppendTo(SnapshotFile<TKey>(), file =>
+			AppendTo(SnapshotFile(), file =>
 			{
 				var dto = new SnapshotDto<TKey> {ID = aggregateID, Snapshot = snapshot};
 				var json = JsonConvert.SerializeObject(dto, _jsonSettings);
@@ -92,14 +92,14 @@ namespace Ledger.Stores.Fs
 			});
 		}
 
-		public int? GetLatestSequenceFor<TKey>(TKey aggegateID)
+		public int? GetLatestSequenceFor(TKey aggegateID)
 		{
 			return LoadEvents(aggegateID)
 				.Select(e => (int?) e.SequenceID)
 				.Max();
 		}
 
-		public int? GetLatestSnapshotSequenceFor<TKey>(TKey aggregateID)
+		public int? GetLatestSnapshotSequenceFor(TKey aggregateID)
 		{
 			var snapshot = LoadLatestSnapshotFor(aggregateID);
 
@@ -108,22 +108,22 @@ namespace Ledger.Stores.Fs
 				: (int?)null;
 		}
 
-		public IEnumerable<DomainEvent> LoadEvents<TKey>(TKey aggegateID)
+		public IEnumerable<DomainEvent> LoadEvents(TKey aggegateID)
 		{
-			return ReadFrom<EventDto<TKey>>(EventFile<TKey>())
+			return ReadFrom<EventDto<TKey>>(EventFile())
 				.Where(dto => Equals(dto.ID, aggegateID))
 				.Select(dto => dto.Event);
 		}
 
-		public IEnumerable<DomainEvent> LoadEventsSince<TKey>(TKey aggegateID, int sequenceID)
+		public IEnumerable<DomainEvent> LoadEventsSince(TKey aggegateID, int sequenceID)
 		{
 			return LoadEvents(aggegateID)
 				.Where(e => e.SequenceID > sequenceID);
 		}
 
-		public ISequenced LoadLatestSnapshotFor<TKey>(TKey aggegateID)
+		public ISequenced LoadLatestSnapshotFor(TKey aggegateID)
 		{
-			return ReadFrom<SnapshotDto<TKey>>(SnapshotFile<TKey>())
+			return ReadFrom<SnapshotDto<TKey>>(SnapshotFile())
 				.Where(dto => Equals(dto.ID, aggegateID))
 				.Select(dto => dto.Snapshot)
 				.Cast<ISequenced>()

@@ -9,11 +9,11 @@ namespace Ledger.Tests.AcceptanceTests
 	public class AcceptanceBase<TAggregate>
 	{
 		public TAggregate Aggregate { get; set; }
-		public IEventStore EventStore { get; set; }
+		public IEventStore<Guid> EventStore { get; set; }
 
 		public AcceptanceBase()
 		{
-			EventStore = new InMemoryEventStore();
+			EventStore = new InMemoryEventStore<Guid>();
 		}
 
 		//comment out the ctor above and uncomment this to run

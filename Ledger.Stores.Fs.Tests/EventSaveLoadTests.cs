@@ -29,7 +29,7 @@ namespace Ledger.Stores.Fs.Tests
 			};
 
 			var id = Guid.NewGuid();
-			var store = new FileEventStore(_root);
+			var store = new FileEventStore<Guid>(_root);
 			store.SaveEvents(id, toSave);
 
 			var loaded = store.LoadEvents(id);
@@ -44,7 +44,7 @@ namespace Ledger.Stores.Fs.Tests
 			var first = Guid.NewGuid();
 			var second = Guid.NewGuid();
 
-			var store = new FileEventStore(_root);
+			var store = new FileEventStore<Guid>(_root);
 			store.SaveEvents(first, new[] { new FixNameSpelling { NewName = "Fix" } });
 			store.SaveEvents(second, new[] { new NameChangedByDeedPoll { NewName = "Deed" } });
 
@@ -59,7 +59,7 @@ namespace Ledger.Stores.Fs.Tests
 			var first = Guid.NewGuid();
 			var second = Guid.NewGuid();
 
-			var store = new FileEventStore(_root);
+			var store = new FileEventStore<Guid>(_root);
 			store.SaveEvents(first, new[] { new FixNameSpelling { SequenceID = 4 } });
 			store.SaveEvents(first, new[] { new FixNameSpelling { SequenceID = 5 } });
 			store.SaveEvents(second, new[] { new NameChangedByDeedPoll { SequenceID = 6 } });
@@ -81,7 +81,7 @@ namespace Ledger.Stores.Fs.Tests
 			};
 
 			var id = Guid.NewGuid();
-			var store = new FileEventStore(_root);
+			var store = new FileEventStore<Guid>(_root);
 			store.SaveEvents(id, toSave);
 
 			var loaded = store.LoadEventsSince(id, 4);
@@ -93,7 +93,7 @@ namespace Ledger.Stores.Fs.Tests
 		public void When_there_is_no_event_file_and_load_is_called()
 		{
 			var id = Guid.NewGuid();
-			var store = new FileEventStore(_root);
+			var store = new FileEventStore<Guid>(_root);
 
 			var loaded = store.LoadEventsSince(id, 4);
 			

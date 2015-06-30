@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Ledger.Stores.Memory
 {
-	public class InMemoryEventStore : IEventStore
+	public class InMemoryEventStore<TKey> : IEventStore<TKey>
 	{
 		private readonly Dictionary<object, List<DomainEvent>> _events;
 		private readonly Dictionary<object, List<ISequenced>> _snapshots;
@@ -14,7 +14,7 @@ namespace Ledger.Stores.Memory
 			_snapshots = new Dictionary<object, List<ISequenced>>();
 		}
 
-		public int? GetLatestSequenceFor<TKey>(TKey aggregateID)
+		public int? GetLatestSequenceFor(TKey aggregateID)
 		{
 			var last = LoadEvents(aggregateID).LastOrDefault();
 
@@ -23,7 +23,7 @@ namespace Ledger.Stores.Memory
 				: (int?) null;
 		}
 
-		public int? GetLatestSnapshotSequenceFor<TKey>(TKey aggregateID)
+		public int? GetLatestSnapshotSequenceFor(TKey aggregateID)
 		{
 			var last = LoadLatestSnapshotFor(aggregateID);
 
@@ -32,7 +32,7 @@ namespace Ledger.Stores.Memory
 				: (int?) null;
 		}
 
-		public void SaveEvents<TKey>(TKey aggregateID, IEnumerable<DomainEvent> changes)
+		public void SaveEvents(TKey aggregateID, IEnumerable<DomainEvent> changes)
 		{
 			if (_events.ContainsKey(aggregateID) == false)
 			{
@@ -42,7 +42,7 @@ namespace Ledger.Stores.Memory
 			_events[aggregateID].AddRange(changes);
 		}
 
-		public IEnumerable<DomainEvent> LoadEvents<TKey>(TKey aggregateID)
+		public IEnumerable<DomainEvent> LoadEvents(TKey aggregateID)
 		{
 			List<DomainEvent> events;
 
@@ -51,13 +51,13 @@ namespace Ledger.Stores.Memory
 				: Enumerable.Empty<DomainEvent>();
 		}
 
-		public IEnumerable<DomainEvent> LoadEventsSince<TKey>(TKey aggregateID, int sequenceID)
+		public IEnumerable<DomainEvent> LoadEventsSince(TKey aggregateID, int sequenceID)
 		{
 			return LoadEvents(aggregateID)
 				.Where(e => e.SequenceID > sequenceID);
 		}
 
-		public ISequenced LoadLatestSnapshotFor<TKey>(TKey aggregateID)
+		public ISequenced LoadLatestSnapshotFor(TKey aggregateID)
 		{
 			List<ISequenced> snapshots;
 
@@ -66,7 +66,7 @@ namespace Ledger.Stores.Memory
 				: null;
 		}
 
-		public void SaveSnapshot<TKey>(TKey aggregateID, ISequenced snapshot)
+		public void SaveSnapshot(TKey aggregateID, ISequenced snapshot)
 		{
 			if (_snapshots.ContainsKey(aggregateID) == false)
 			{

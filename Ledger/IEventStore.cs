@@ -2,16 +2,16 @@ using System.Collections.Generic;
 
 namespace Ledger
 {
-	public interface IEventStore
+	public interface IEventStore<TKey>
 	{
-		int? GetLatestSequenceFor<TKey>(TKey aggegateID);
-		int? GetLatestSnapshotSequenceFor<TKey>(TKey aggregateID);
+		int? GetLatestSequenceFor(TKey aggegateID);
+		int? GetLatestSnapshotSequenceFor(TKey aggregateID);
 		
-		void SaveEvents<TKey>(TKey aggegateID, IEnumerable<DomainEvent> changes);
-		IEnumerable<DomainEvent> LoadEvents<TKey>(TKey aggegateID);
-		IEnumerable<DomainEvent> LoadEventsSince<TKey>(TKey aggegateID, int sequenceID);
+		void SaveEvents(TKey aggegateID, IEnumerable<DomainEvent> changes);
+		IEnumerable<DomainEvent> LoadEvents(TKey aggegateID);
+		IEnumerable<DomainEvent> LoadEventsSince(TKey aggegateID, int sequenceID);
 
-		ISequenced LoadLatestSnapshotFor<TKey>(TKey aggegateID);
-		void SaveSnapshot<TKey>(TKey aggregateID, ISequenced snapshot);
+		ISequenced LoadLatestSnapshotFor(TKey aggegateID);
+		void SaveSnapshot(TKey aggregateID, ISequenced snapshot);
 	}
 }

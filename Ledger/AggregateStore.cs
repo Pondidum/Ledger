@@ -7,10 +7,10 @@ namespace Ledger
 {
 	public class AggregateStore<TKey>
 	{
-		private readonly IEventStore _eventStore;
+		private readonly IEventStore<TKey> _eventStore;
 		public int DefaultSnapshotInterval { get; set; }
 
-		public AggregateStore(IEventStore eventStore)
+		public AggregateStore(IEventStore<TKey> eventStore)
 		{
 			_eventStore = eventStore;
 			DefaultSnapshotInterval = 10;
