@@ -8,11 +8,16 @@ namespace Ledger.Stores.Postgres.Tests
 {
 	public class EventSaveLoadTests : PostgresTestBase
 	{
+		private readonly PostgresEventStore<Guid> _store;
+
 		public EventSaveLoadTests()
 		{
 			CleanupTables();
+			
 			var create = new CreateGuidKeyedTablesCommand(ConnectionString);
 			create.Execute();
+
+			_store = new PostgresEventStore<Guid>(ConnectionString);
 		}
 
 		[Fact]
@@ -25,10 +30,9 @@ namespace Ledger.Stores.Postgres.Tests
 			};
 
 			var id = Guid.NewGuid();
-			var store = new PostgresEventStore<Guid>(ConnectionString);
-			store.SaveEvents(id, toSave);
+			_store.SaveEvents(id, toSave);
 
-			var loaded = store.LoadEvents(id);
+			var loaded = _store.LoadEvents(id);
 
 			loaded.First().ShouldBeOfType<NameChangedByDeedPoll>();
 			loaded.Last().ShouldBeOfType<FixNameSpelling>();
@@ -40,11 +44,10 @@ namespace Ledger.Stores.Postgres.Tests
 			var first = Guid.NewGuid();
 			var second = Guid.NewGuid();
 
-			var store = new PostgresEventStore<Guid>(ConnectionString);
-			store.SaveEvents(first, new[] { new FixNameSpelling { NewName = "Fix" } });
-			store.SaveEvents(second, new[] { new NameChangedByDeedPoll { NewName = "Deed" } });
+			_store.SaveEvents(first, new[] { new FixNameSpelling { NewName = "Fix" } });
+			_store.SaveEvents(second, new[] { new NameChangedByDeedPoll { NewName = "Deed" } });
 
-			var loaded = store.LoadEvents(first);
+			var loaded = _store.LoadEvents(first);
 
 			loaded.Single().ShouldBeOfType<FixNameSpelling>();
 		}
@@ -55,12 +58,11 @@ namespace Ledger.Stores.Postgres.Tests
 			var first = Guid.NewGuid();
 			var second = Guid.NewGuid();
 
-			var store = new PostgresEventStore<Guid>(ConnectionString);
-			store.SaveEvents(first, new[] { new FixNameSpelling { SequenceID = 4 } });
-			store.SaveEvents(first, new[] { new FixNameSpelling { SequenceID = 5 } });
-			store.SaveEvents(second, new[] { new NameChangedByDeedPoll { SequenceID = 6 } });
+			_store.SaveEvents(first, new[] { new FixNameSpelling { SequenceID = 4 } });
+			_store.SaveEvents(first, new[] { new FixNameSpelling { SequenceID = 5 } });
+			_store.SaveEvents(second, new[] { new NameChangedByDeedPoll { SequenceID = 6 } });
 
-			store
+			_store
 				.GetLatestSequenceFor(first)
 				.ShouldBe(5);
 		}
@@ -77,10 +79,10 @@ namespace Ledger.Stores.Postgres.Tests
 			};
 
 			var id = Guid.NewGuid();
-			var store = new PostgresEventStore<Guid>(ConnectionString);
-			store.SaveEvents(id, toSave);
 
-			var loaded = store.LoadEventsSince(id, 4);
+			_store.SaveEvents(id, toSave);
+
+			var loaded = _store.LoadEventsSince(id, 4);
 
 			loaded.Select(x => x.SequenceID).ShouldBe(new[] { 5, 6 });
 		}
@@ -89,9 +91,9 @@ namespace Ledger.Stores.Postgres.Tests
 		public void When_there_are_no_events_and_load_is_called()
 		{
 			var id = Guid.NewGuid();
-			var store = new PostgresEventStore<Guid>(ConnectionString);
 
-			var loaded = store.LoadEventsSince(id, 4);
+
+			var loaded = _store.LoadEventsSince(id, 4);
 
 			loaded.ShouldBeEmpty();
 		}
