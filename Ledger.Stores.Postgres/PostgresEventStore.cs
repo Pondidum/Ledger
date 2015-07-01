@@ -26,19 +26,24 @@ namespace Ledger.Stores.Postgres
 			return connection;
 		}
 
-		public int? GetLatestSequenceFor(TKey aggegateID)
+		public int? GetLatestSequenceFor(TKey aggregateID)
 		{
 			var sql = "select max(sequence) from events_guid where aggregateID = @id";
 
 			using (var connection = Open())
 			{
-				return connection.ExecuteScalar<int>(sql, new {ID = aggegateID});
+				return connection.ExecuteScalar<int>(sql, new { ID = aggregateID });
 			}
 		}
 
 		public int? GetLatestSnapshotSequenceFor(TKey aggregateID)
 		{
-			throw new System.NotImplementedException();
+			var sql = "select max(sequence) from snapshots_guid where aggregateID = @id";
+
+			using (var connection = Open())
+			{
+				return connection.ExecuteScalar<int>(sql, new { ID = aggregateID });
+			}
 		}
 
 		public void SaveEvents(TKey aggegateID, IEnumerable<DomainEvent> changes)
@@ -85,12 +90,30 @@ namespace Ledger.Stores.Postgres
 
 		public ISequenced LoadLatestSnapshotFor(TKey aggegateID)
 		{
-			throw new System.NotImplementedException();
+			var sql = "select snapshot from snapshots_guid where aggregateID = @id order by sequence desc limit 1";
+
+			using (var connection = Open())
+			{
+				return connection
+					.Query<string>(sql, new {ID = aggegateID})
+					.Select(json => JsonConvert.DeserializeObject<ISequenced>(json, _jsonSettings))
+					.FirstOrDefault();
+			}
 		}
 
 		public void SaveSnapshot(TKey aggregateID, ISequenced snapshot)
 		{
-			throw new System.NotImplementedException();
+			var sql = "insert into snapshots_guid (aggregateID, sequence, snapshot) values (@id, @sequence, @snapshot::json);";
+
+			using (var connection = Open())
+			{
+				connection.Execute(sql, new
+				{
+					ID = aggregateID,
+					Sequence = snapshot.SequenceID,
+					Snapshot = JsonConvert.SerializeObject(snapshot, _jsonSettings)
+				});
+			}
 		}
 	}
 }
