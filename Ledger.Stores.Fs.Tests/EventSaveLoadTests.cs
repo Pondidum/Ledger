@@ -11,12 +11,14 @@ namespace Ledger.Stores.Fs.Tests
 	public class EventSaveLoadTests : IDisposable
 	{
 		private readonly string _root;
+		private readonly FileEventStore<Guid> _store;
 
 		public EventSaveLoadTests()
 		{
 			_root = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
 
 			Directory.CreateDirectory(_root);
+			_store = new FileEventStore<Guid>(_root);
 		}
 
 		[Fact]
@@ -29,10 +31,9 @@ namespace Ledger.Stores.Fs.Tests
 			};
 
 			var id = Guid.NewGuid();
-			var store = new FileEventStore<Guid>(_root);
-			store.SaveEvents(id, toSave);
+			_store.SaveEvents(id, toSave);
 
-			var loaded = store.LoadEvents(id);
+			var loaded = _store.LoadEvents(id);
 
 			loaded.First().ShouldBeOfType<NameChangedByDeedPoll>();
 			loaded.Last().ShouldBeOfType<FixNameSpelling>();
@@ -44,11 +45,10 @@ namespace Ledger.Stores.Fs.Tests
 			var first = Guid.NewGuid();
 			var second = Guid.NewGuid();
 
-			var store = new FileEventStore<Guid>(_root);
-			store.SaveEvents(first, new[] { new FixNameSpelling { NewName = "Fix" } });
-			store.SaveEvents(second, new[] { new NameChangedByDeedPoll { NewName = "Deed" } });
+			_store.SaveEvents(first, new[] { new FixNameSpelling { NewName = "Fix" } });
+			_store.SaveEvents(second, new[] { new NameChangedByDeedPoll { NewName = "Deed" } });
 
-			var loaded = store.LoadEvents(first);
+			var loaded = _store.LoadEvents(first);
 
 			loaded.Single().ShouldBeOfType<FixNameSpelling>();
 		}
@@ -59,12 +59,12 @@ namespace Ledger.Stores.Fs.Tests
 			var first = Guid.NewGuid();
 			var second = Guid.NewGuid();
 
-			var store = new FileEventStore<Guid>(_root);
-			store.SaveEvents(first, new[] { new FixNameSpelling { SequenceID = 4 } });
-			store.SaveEvents(first, new[] { new FixNameSpelling { SequenceID = 5 } });
-			store.SaveEvents(second, new[] { new NameChangedByDeedPoll { SequenceID = 6 } });
 
-			store
+			_store.SaveEvents(first, new[] { new FixNameSpelling { SequenceID = 4 } });
+			_store.SaveEvents(first, new[] { new FixNameSpelling { SequenceID = 5 } });
+			_store.SaveEvents(second, new[] { new NameChangedByDeedPoll { SequenceID = 6 } });
+
+			_store
 				.GetLatestSequenceFor(first)
 				.ShouldBe(5);
 		}
@@ -81,10 +81,10 @@ namespace Ledger.Stores.Fs.Tests
 			};
 
 			var id = Guid.NewGuid();
-			var store = new FileEventStore<Guid>(_root);
-			store.SaveEvents(id, toSave);
 
-			var loaded = store.LoadEventsSince(id, 4);
+			_store.SaveEvents(id, toSave);
+
+			var loaded = _store.LoadEventsSince(id, 4);
 
 			loaded.Select(x => x.SequenceID).ShouldBe(new[] { 5, 6 });
 		}
@@ -93,9 +93,9 @@ namespace Ledger.Stores.Fs.Tests
 		public void When_there_is_no_event_file_and_load_is_called()
 		{
 			var id = Guid.NewGuid();
-			var store = new FileEventStore<Guid>(_root);
 
-			var loaded = store.LoadEventsSince(id, 4);
+
+			var loaded = _store.LoadEventsSince(id, 4);
 			
 			loaded.ShouldBeEmpty();
 		}
