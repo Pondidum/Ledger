@@ -46,7 +46,7 @@ namespace Ledger.Stores.Postgres
 			}
 		}
 
-		public void SaveEvents(TKey aggegateID, IEnumerable<DomainEvent> changes)
+		public void SaveEvents(TKey aggregateID, IEnumerable<DomainEvent> changes)
 		{
 			var sql = "insert into events_guid (aggregateID, sequence, event) values (@id, @sequence, @event::json);";
 
@@ -56,7 +56,7 @@ namespace Ledger.Stores.Postgres
 				{
 					connection.Execute(sql, new
 					{
-						ID = aggegateID,
+						ID = aggregateID,
 						Sequence = change.Sequence,
  						Event = JsonConvert.SerializeObject(change, _jsonSettings)
 					});
@@ -64,38 +64,38 @@ namespace Ledger.Stores.Postgres
 			}
 		}
 
-		public IEnumerable<DomainEvent> LoadEvents(TKey aggegateID)
+		public IEnumerable<DomainEvent> LoadEvents(TKey aggregateID)
 		{
 			var sql = "select event from events_guid where aggregateID = @id order by sequence asc";
 
 			using (var connection = Open())
 			{
 				return connection
-					.Query<string>(sql, new { ID = aggegateID})
+					.Query<string>(sql, new { ID = aggregateID})
 					.Select(json => JsonConvert.DeserializeObject<DomainEvent>(json, _jsonSettings));
 			}
 		}
 
-		public IEnumerable<DomainEvent> LoadEventsSince(TKey aggegateID, int sequenceID)
+		public IEnumerable<DomainEvent> LoadEventsSince(TKey aggregateID, int sequenceID)
 		{
 			var sql = "select event from events_guid where aggregateID = @id and sequence > @last order by sequence asc";
 
 			using (var connection = Open())
 			{
 				return connection
-					.Query<string>(sql, new { ID = aggegateID, Last = sequenceID })
+					.Query<string>(sql, new { ID = aggregateID, Last = sequenceID })
 					.Select(json => JsonConvert.DeserializeObject<DomainEvent>(json, _jsonSettings));
 			}
 		}
 
-		public ISequenced LoadLatestSnapshotFor(TKey aggegateID)
+		public ISequenced LoadLatestSnapshotFor(TKey aggregateID)
 		{
 			var sql = "select snapshot from snapshots_guid where aggregateID = @id order by sequence desc limit 1";
 
 			using (var connection = Open())
 			{
 				return connection
-					.Query<string>(sql, new {ID = aggegateID})
+					.Query<string>(sql, new {ID = aggregateID})
 					.Select(json => JsonConvert.DeserializeObject<ISequenced>(json, _jsonSettings))
 					.FirstOrDefault();
 			}

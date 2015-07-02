@@ -4,14 +4,14 @@ namespace Ledger
 {
 	public interface IEventStore<TKey>
 	{
-		int? GetLatestSequenceFor(TKey aggegateID);
+		int? GetLatestSequenceFor(TKey aggregateID);
 		int? GetLatestSnapshotSequenceFor(TKey aggregateID);
 		
-		void SaveEvents(TKey aggegateID, IEnumerable<DomainEvent> changes);
-		IEnumerable<DomainEvent> LoadEvents(TKey aggegateID);
-		IEnumerable<DomainEvent> LoadEventsSince(TKey aggegateID, int sequenceID);
+		void SaveEvents(TKey aggregateID, IEnumerable<DomainEvent> changes);
+		IEnumerable<DomainEvent> LoadEvents(TKey aggregateID);
+		IEnumerable<DomainEvent> LoadEventsSince(TKey aggregateID, int sequenceID);
 
-		ISequenced LoadLatestSnapshotFor(TKey aggegateID);
+		ISequenced LoadLatestSnapshotFor(TKey aggregateID);
 		void SaveSnapshot(TKey aggregateID, ISequenced snapshot);
 	}
 }
