@@ -8,14 +8,14 @@ namespace Ledger.Stores.Postgres
 		private const string Sql = @"
 create extension if not exists ""uuid-ossp"";
 
-create table events_guid (
+create table if not exists events_guid (
 	id uuid primary key default uuid_generate_v4(),
 	aggregateID uuid not null,
 	sequence integer not null,
 	event json not null
 );
 
-create table snapshots_guid (
+create table if not exists snapshots_guid (
 	id uuid primary key default uuid_generate_v4(),
 	aggregateID uuid not null,
 	sequence integer not null,

@@ -12,11 +12,6 @@ namespace Ledger.Stores.Postgres.Tests
 
 		public SnapshotSaveLoadTests()
 		{
-			CleanupTables();
-
-			var create = new CreateGuidKeyedTablesCommand(ConnectionString);
-			create.Execute();
-
 			_store = new PostgresEventStore<Guid>(ConnectionString);
 		}
 
