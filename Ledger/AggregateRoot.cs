@@ -25,7 +25,7 @@ namespace Ledger
 		{
 			if (_events.Any())
 			{
-				SequenceID = _events.Last().SequenceID;
+				SequenceID = _events.Last().Sequence;
 				_events.Clear();
 			}
 		}
@@ -41,7 +41,7 @@ namespace Ledger
 
 			if (last != null)
 			{
-				SequenceID = last.SequenceID;
+				SequenceID = last.Sequence;
 			}
 		}
 
@@ -51,7 +51,7 @@ namespace Ledger
 			if (snapshot != null)
 			{
 				this.AsDynamic().ApplySnapshot(snapshot);
-				SequenceID = snapshot.SequenceID;
+				SequenceID = snapshot.Sequence;
 			}
 
 			LoadFromEvents(events);

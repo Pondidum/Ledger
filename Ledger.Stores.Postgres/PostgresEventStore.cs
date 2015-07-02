@@ -57,7 +57,7 @@ namespace Ledger.Stores.Postgres
 					connection.Execute(sql, new
 					{
 						ID = aggegateID,
-						Sequence = change.SequenceID,
+						Sequence = change.Sequence,
  						Event = JsonConvert.SerializeObject(change, _jsonSettings)
 					});
 				}
@@ -110,7 +110,7 @@ namespace Ledger.Stores.Postgres
 				connection.Execute(sql, new
 				{
 					ID = aggregateID,
-					Sequence = snapshot.SequenceID,
+					Sequence = snapshot.Sequence,
 					Snapshot = JsonConvert.SerializeObject(snapshot, _jsonSettings)
 				});
 			}

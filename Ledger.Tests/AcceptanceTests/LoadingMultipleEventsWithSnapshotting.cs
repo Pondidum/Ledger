@@ -12,11 +12,11 @@ namespace Ledger.Tests.AcceptanceTests
 			var aggregateStore = new AggregateStore<Guid>(EventStore);
 			var id = Guid.NewGuid();
 
-			EventStore.SaveSnapshot(id, new TestSnapshot {SequenceID = 10});
+			EventStore.SaveSnapshot(id, new TestSnapshot {Sequence = 10});
 			EventStore.SaveEvents(id, new []
 			{
-				new TestEvent { SequenceID = 5},
-				new TestEvent { SequenceID = 6},
+				new TestEvent { Sequence = 5},
+				new TestEvent { Sequence = 6},
 			});
 
 			Aggregate = aggregateStore.Load(id, () => new SnapshotAggregate());

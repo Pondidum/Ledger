@@ -2,6 +2,6 @@
 {
 	public class DomainEvent : ISequenced
 	{
-		public int SequenceID { get; set; }
+		public int Sequence { get; set; }
 	}
 }

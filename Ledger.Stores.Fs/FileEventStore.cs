@@ -95,7 +95,7 @@ namespace Ledger.Stores.Fs
 		public int? GetLatestSequenceFor(TKey aggegateID)
 		{
 			return LoadEvents(aggegateID)
-				.Select(e => (int?) e.SequenceID)
+				.Select(e => (int?) e.Sequence)
 				.Max();
 		}
 
@@ -104,7 +104,7 @@ namespace Ledger.Stores.Fs
 			var snapshot = LoadLatestSnapshotFor(aggregateID);
 
 			return snapshot != null
-				? snapshot.SequenceID
+				? snapshot.Sequence
 				: (int?)null;
 		}
 
@@ -118,7 +118,7 @@ namespace Ledger.Stores.Fs
 		public IEnumerable<DomainEvent> LoadEventsSince(TKey aggegateID, int sequenceID)
 		{
 			return LoadEvents(aggegateID)
-				.Where(e => e.SequenceID > sequenceID);
+				.Where(e => e.Sequence > sequenceID);
 		}
 
 		public ISequenced LoadLatestSnapshotFor(TKey aggegateID)

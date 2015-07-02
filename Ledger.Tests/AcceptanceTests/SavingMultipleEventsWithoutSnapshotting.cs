@@ -34,8 +34,8 @@ namespace Ledger.Tests.AcceptanceTests
 			var events = EventStore.LoadEvents(Aggregate.ID).ToList();
 
 			events.ShouldSatisfyAllConditions(
-				() => events[0].SequenceID.ShouldBe(0),
-				() => events[1].SequenceID.ShouldBe(1)
+				() => events[0].Sequence.ShouldBe(0),
+				() => events[1].Sequence.ShouldBe(1)
 			);
 		}
 

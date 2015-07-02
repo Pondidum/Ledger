@@ -28,7 +28,7 @@ namespace Ledger
 
 			var changes = aggregate
 				.GetUncommittedEvents()
-				.Apply((e, i) => e.SequenceID = aggregate.SequenceID + i)
+				.Apply((e, i) => e.Sequence = aggregate.SequenceID + i)
 				.ToList();
 
 			if (changes.None())
@@ -45,7 +45,7 @@ namespace Ledger
 					.GetMethod(methodName);
 
 				var snapshot = (ISequenced)createSnapshot.Invoke(aggregate, new object[] { });
-				snapshot.SequenceID = changes.Last().SequenceID;
+				snapshot.Sequence = changes.Last().Sequence;
 
 				_eventStore.SaveSnapshot(aggregate.ID, snapshot);
 			}
@@ -72,7 +72,7 @@ namespace Ledger
 
 			var snapshotID = _eventStore.GetLatestSnapshotSequenceFor(aggregate.ID);
 
-			return snapshotID.HasValue && changes.Last().SequenceID >= snapshotID.Value + interval;
+			return snapshotID.HasValue && changes.Last().Sequence >= snapshotID.Value + interval;
 		}
 
 		public TAggregate Load<TAggregate>(TKey aggregateID, Func<TAggregate> createNew)
@@ -85,7 +85,7 @@ namespace Ledger
 			{
 				var snapshot = _eventStore.LoadLatestSnapshotFor(aggregateID);
 				var since = snapshot != null
-					? snapshot.SequenceID
+					? snapshot.Sequence
 					: -1;
 
 				var events = _eventStore.LoadEventsSince(aggregateID, since);

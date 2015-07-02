@@ -19,7 +19,7 @@ namespace Ledger.Stores.Memory
 			var last = LoadEvents(aggregateID).LastOrDefault();
 
 			return last != null
-				? last.SequenceID
+				? last.Sequence
 				: (int?) null;
 		}
 
@@ -28,7 +28,7 @@ namespace Ledger.Stores.Memory
 			var last = LoadLatestSnapshotFor(aggregateID);
 
 			return last != null
-				? last.SequenceID
+				? last.Sequence
 				: (int?) null;
 		}
 
@@ -54,7 +54,7 @@ namespace Ledger.Stores.Memory
 		public IEnumerable<DomainEvent> LoadEventsSince(TKey aggregateID, int sequenceID)
 		{
 			return LoadEvents(aggregateID)
-				.Where(e => e.SequenceID > sequenceID);
+				.Where(e => e.Sequence > sequenceID);
 		}
 
 		public ISequenced LoadLatestSnapshotFor(TKey aggregateID)

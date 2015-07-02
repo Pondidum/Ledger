@@ -60,9 +60,9 @@ namespace Ledger.Stores.Fs.Tests
 			var second = Guid.NewGuid();
 
 
-			_store.SaveEvents(first, new[] { new FixNameSpelling { SequenceID = 4 } });
-			_store.SaveEvents(first, new[] { new FixNameSpelling { SequenceID = 5 } });
-			_store.SaveEvents(second, new[] { new NameChangedByDeedPoll { SequenceID = 6 } });
+			_store.SaveEvents(first, new[] { new FixNameSpelling { Sequence = 4 } });
+			_store.SaveEvents(first, new[] { new FixNameSpelling { Sequence = 5 } });
+			_store.SaveEvents(second, new[] { new NameChangedByDeedPoll { Sequence = 6 } });
 
 			_store
 				.GetLatestSequenceFor(first)
@@ -74,10 +74,10 @@ namespace Ledger.Stores.Fs.Tests
 		{
 			var toSave = new DomainEvent[]
 			{
-				new NameChangedByDeedPoll { SequenceID = 3 },
-				new FixNameSpelling { SequenceID = 4 },
-				new FixNameSpelling { SequenceID = 5 },
-				new FixNameSpelling { SequenceID = 6 },
+				new NameChangedByDeedPoll { Sequence = 3 },
+				new FixNameSpelling { Sequence = 4 },
+				new FixNameSpelling { Sequence = 5 },
+				new FixNameSpelling { Sequence = 6 },
 			};
 
 			var id = Guid.NewGuid();
@@ -86,7 +86,7 @@ namespace Ledger.Stores.Fs.Tests
 
 			var loaded = _store.LoadEventsSince(id, 4);
 
-			loaded.Select(x => x.SequenceID).ShouldBe(new[] { 5, 6 });
+			loaded.Select(x => x.Sequence).ShouldBe(new[] { 5, 6 });
 		}
 
 		[Fact]

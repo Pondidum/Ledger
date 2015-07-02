@@ -25,10 +25,10 @@ namespace Ledger.Stores.Postgres.Tests
 		{
 			var id = Guid.NewGuid();
 
-			_store.SaveSnapshot(id, new CandidateMemento{SequenceID = 0});
-			_store.SaveSnapshot(id, new CandidateMemento { SequenceID = 1 });
-			_store.SaveSnapshot(id, new CandidateMemento { SequenceID = 2 });
-			_store.SaveSnapshot(id, new CandidateMemento { SequenceID = 3 });
+			_store.SaveSnapshot(id, new CandidateMemento{Sequence = 0});
+			_store.SaveSnapshot(id, new CandidateMemento { Sequence = 1 });
+			_store.SaveSnapshot(id, new CandidateMemento { Sequence = 2 });
+			_store.SaveSnapshot(id, new CandidateMemento { Sequence = 3 });
 
 			var loaded = _store.LoadLatestSnapshotFor(id);
 
@@ -40,12 +40,12 @@ namespace Ledger.Stores.Postgres.Tests
 		{
 			var id = Guid.NewGuid();
 
-			_store.SaveSnapshot(id, new CandidateMemento { SequenceID = 4 });
-			_store.SaveSnapshot(id, new CandidateMemento { SequenceID = 5 });
+			_store.SaveSnapshot(id, new CandidateMemento { Sequence = 4 });
+			_store.SaveSnapshot(id, new CandidateMemento { Sequence = 5 });
 
 			_store
 				.LoadLatestSnapshotFor(id)
-				.SequenceID
+				.Sequence
 				.ShouldBe(5);
 		}
 
@@ -54,8 +54,8 @@ namespace Ledger.Stores.Postgres.Tests
 		{
 			var id = Guid.NewGuid();
 
-			_store.SaveSnapshot(id, new CandidateMemento { SequenceID = 4 });
-			_store.SaveSnapshot(id, new CandidateMemento { SequenceID = 5 });
+			_store.SaveSnapshot(id, new CandidateMemento { Sequence = 4 });
+			_store.SaveSnapshot(id, new CandidateMemento { Sequence = 5 });
 
 			_store
 				.GetLatestSnapshotSequenceFor(id)

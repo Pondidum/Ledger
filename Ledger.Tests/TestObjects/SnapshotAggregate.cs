@@ -35,6 +35,6 @@ namespace Ledger.Tests.TestObjects
 
 	public class TestSnapshot : ISequenced
 	{
-		public int SequenceID { get; set; }
+		public int Sequence { get; set; }
 	}
 }

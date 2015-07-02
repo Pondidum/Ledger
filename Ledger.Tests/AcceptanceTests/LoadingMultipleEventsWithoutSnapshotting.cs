@@ -14,8 +14,8 @@ namespace Ledger.Tests.AcceptanceTests
 
 			EventStore.SaveEvents(id, new[] 
 			{
-				new TestEvent { SequenceID = 5},
-				new TestEvent { SequenceID = 6},
+				new TestEvent { Sequence = 5},
+				new TestEvent { Sequence = 6},
 			});
 
 			Aggregate = aggregateStore.Load(id, () => new TestAggregate());

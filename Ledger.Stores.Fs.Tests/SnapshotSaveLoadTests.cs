@@ -36,12 +36,12 @@ namespace Ledger.Stores.Fs.Tests
 		{
 			var id = Guid.NewGuid();
 
-			_store.SaveSnapshot(id, new CandidateMemento { SequenceID = 4 });
-			_store.SaveSnapshot(id, new CandidateMemento { SequenceID = 5 });
+			_store.SaveSnapshot(id, new CandidateMemento { Sequence = 4 });
+			_store.SaveSnapshot(id, new CandidateMemento { Sequence = 5 });
 
 			_store
 				.LoadLatestSnapshotFor(id)
-				.SequenceID
+				.Sequence
 				.ShouldBe(5);
 		}
 
@@ -50,8 +50,8 @@ namespace Ledger.Stores.Fs.Tests
 		{
 			var id = Guid.NewGuid();
 
-			_store.SaveSnapshot(id, new CandidateMemento { SequenceID = 4 });
-			_store.SaveSnapshot(id, new CandidateMemento { SequenceID = 5 });
+			_store.SaveSnapshot(id, new CandidateMemento { Sequence = 4 });
+			_store.SaveSnapshot(id, new CandidateMemento { Sequence = 5 });
 
 			_store
 				.GetLatestSnapshotSequenceFor(id)

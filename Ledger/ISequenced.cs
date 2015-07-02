@@ -2,6 +2,6 @@
 {
 	public interface ISequenced
 	{
-		int SequenceID { get; set; }
+		int Sequence { get; set; }
 	}
 }

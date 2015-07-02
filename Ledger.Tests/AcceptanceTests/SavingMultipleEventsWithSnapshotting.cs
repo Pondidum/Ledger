@@ -40,7 +40,7 @@ namespace Ledger.Tests.AcceptanceTests
 		public void The_events_should_be_in_sequence()
 		{
 			_events
-				.ForEach((e, i) => e.SequenceID.ShouldBe(i));
+				.ForEach((e, i) => e.Sequence.ShouldBe(i));
 		}
 
 		[Fact]
@@ -64,7 +64,7 @@ namespace Ledger.Tests.AcceptanceTests
 		{
 			EventStore
 				.LoadLatestSnapshotFor(Aggregate.ID)
-				.SequenceID
+				.Sequence
 				.ShouldBe(_events.Count() - 1);
 		}
 	}
