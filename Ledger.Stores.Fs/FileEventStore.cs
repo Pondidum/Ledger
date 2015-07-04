@@ -25,6 +25,8 @@ namespace Ledger.Stores.Fs
 			_jsonSettings = new JsonSerializerSettings {TypeNameHandling = TypeNameHandling.Objects};
 		}
 
+		public string Directory { get { return _directory; } }
+
 		private string EventFile()
 		{
 			return Path.Combine(_directory, typeof(TKey).Name + ".events.json");
