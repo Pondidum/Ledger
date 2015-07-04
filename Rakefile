@@ -5,6 +5,7 @@ require_relative 'tools/semver.rb'
 
 ci_build = ENV['APPVEYOR_BUILD_VERSION'] ||= "0"
 ci_commit = ENV['APPVEYOR_REPO_COMMIT'] ||= "0"
+ci_run = ENV['APPVEYOR'] || false
 
 tool_nuget = 'tools/nuget/nuget.exe'
 tool_xunit = 'tools/xunit/xunit.console.exe'
@@ -41,9 +42,14 @@ end
 
 desc 'Run all unit test assemblies'
 test_runner :test do |xunit|
+
   xunit.exe = tool_xunit
+
   xunit.files = FileList['**/bin/*/*.tests.dll']
+  xunit.files.exclude(/Postgres/) if ci_run
+
   xunit.add_parameter '-quiet'
+
 end
 
 desc 'Build all nuget packages'
