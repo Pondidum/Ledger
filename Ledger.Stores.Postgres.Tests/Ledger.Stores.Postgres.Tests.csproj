@@ -70,6 +70,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AcceptanceTests\FsLoadingMultipleEventsWithoutSnapshotting.cs" />
+    <Compile Include="AcceptanceTests\FsLoadingMultipleEventsWithSnapshotting.cs" />
+    <Compile Include="AcceptanceTests\FsSavingMultipleEventsWithoutSnapshotting.cs" />
+    <Compile Include="AcceptanceTests\FsSavingMultipleEventsWithSnapshotting.cs" />
     <Compile Include="EventSaveLoadTests.cs" />
     <Compile Include="PostgresTestBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -82,6 +86,10 @@
     <ProjectReference Include="..\Ledger.Stores.Postgres\Ledger.Stores.Postgres.csproj">
       <Project>{fd8bd913-a719-4879-a596-ee6ede930e5f}</Project>
       <Name>Ledger.Stores.Postgres</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Ledger.Tests\Ledger.Tests.csproj">
+      <Project>{d783268b-95c1-419e-bc33-ee81a8740ba4}</Project>
+      <Name>Ledger.Tests</Name>
     </ProjectReference>
     <ProjectReference Include="..\Ledger\Ledger.csproj">
       <Project>{4ED2A64F-414E-47AB-870A-4E34AA25FFBD}</Project>
