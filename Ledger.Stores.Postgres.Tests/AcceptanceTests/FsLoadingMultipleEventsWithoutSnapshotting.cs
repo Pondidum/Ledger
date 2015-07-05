@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using Ledger.Tests.AcceptanceTests;
+using Npgsql;
 
 namespace Ledger.Stores.Postgres.Tests.AcceptanceTests
 {
@@ -12,7 +13,7 @@ namespace Ledger.Stores.Postgres.Tests.AcceptanceTests
 		{
 			get
 			{
-				_store = _store ?? new PostgresEventStore<Guid>(PostgresTestBase.ConnectionString);
+				_store = _store ?? new PostgresEventStore<Guid>(new NpgsqlConnection(PostgresTestBase.ConnectionString));
 				return _store;
 			}
 		}

@@ -12,7 +12,7 @@ namespace Ledger.Stores.Postgres.Tests
 
 		public SnapshotSaveLoadTests()
 		{
-			_store = new PostgresEventStore<Guid>(ConnectionString);
+			_store = new PostgresEventStore<Guid>(Connection);
 		}
 
 		[Fact]

@@ -22,20 +22,16 @@ create table if not exists snapshots_guid (
 	snapshot json not null
 );
 ";
-		private readonly string _connection;
+		private readonly NpgsqlConnection _connection;
 
-		public CreateGuidKeyedTablesCommand(string connection)
+		public CreateGuidKeyedTablesCommand(NpgsqlConnection connection)
 		{
 			_connection = connection;
 		}
 
 		public void Execute()
 		{
-			using (var connection = new NpgsqlConnection(_connection))
-			{
-				connection.Open();
-				connection.Execute(Sql);
-			}
+			_connection.Execute(Sql);
 		}
 	}
 }
