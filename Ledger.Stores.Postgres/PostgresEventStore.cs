@@ -116,6 +116,11 @@ namespace Ledger.Stores.Postgres
 			}
 		}
 
+		public IEventStore<TKey> BeginTransaction()
+		{
+			return this;
+		}
+
 		public void Dispose()
 		{
 		}

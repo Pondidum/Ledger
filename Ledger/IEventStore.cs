@@ -14,5 +14,7 @@ namespace Ledger
 
 		ISequenced LoadLatestSnapshotFor(TKey aggregateID);
 		void SaveSnapshot(TKey aggregateID, ISequenced snapshot);
+
+		IEventStore<TKey> BeginTransaction();
 	}
 }

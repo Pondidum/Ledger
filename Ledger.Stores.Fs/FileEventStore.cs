@@ -94,6 +94,11 @@ namespace Ledger.Stores.Fs
 			});
 		}
 
+		public IEventStore<TKey> BeginTransaction()
+		{
+			return this;
+		}
+
 		public int? GetLatestSequenceFor(TKey aggregateID)
 		{
 			return LoadEvents(aggregateID)

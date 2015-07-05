@@ -76,6 +76,11 @@ namespace Ledger.Stores.Memory
 			_snapshots[aggregateID].Add(snapshot);
 		}
 
+		public IEventStore<TKey> BeginTransaction()
+		{
+			return this;
+		}
+
 		public void Dispose()
 		{
 		}

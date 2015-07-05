@@ -19,44 +19,46 @@ namespace Ledger
 		public void Save<TAggregate>(TAggregate aggregate)
 			where TAggregate : AggregateRoot<TKey>
 		{
-			var lastStoredSequence = _eventStore.GetLatestSequenceFor(aggregate.ID);
-
-			if (lastStoredSequence.HasValue && lastStoredSequence != aggregate.SequenceID)
+			using (var store = _eventStore.BeginTransaction())
 			{
-				throw new Exception();
+				var lastStoredSequence = store.GetLatestSequenceFor(aggregate.ID);
+
+				if (lastStoredSequence.HasValue && lastStoredSequence != aggregate.SequenceID)
+				{
+					throw new Exception();
+				}
+
+				var changes = aggregate
+					.GetUncommittedEvents()
+					.Apply((e, i) => e.Sequence = aggregate.SequenceID + i)
+					.ToList();
+
+				if (changes.None())
+				{
+					return;
+				}
+
+				if (ImplementsSnapshottable(aggregate) && NeedsSnapshot(store, aggregate, changes))
+				{
+					var methodName = TypeInfo.GetMethodName<ISnapshotable<ISequenced>>(x => x.CreateSnapshot());
+
+					var createSnapshot = aggregate
+						.GetType()
+						.GetMethod(methodName);
+
+					var snapshot = (ISequenced)createSnapshot.Invoke(aggregate, new object[] { });
+					snapshot.Sequence = changes.Last().Sequence;
+
+					store.SaveSnapshot(aggregate.ID, snapshot);
+				}
+
+				store.SaveEvents(aggregate.ID, changes);
+
+				aggregate.MarkEventsCommitted();
 			}
-
-			var changes = aggregate
-				.GetUncommittedEvents()
-				.Apply((e, i) => e.Sequence = aggregate.SequenceID + i)
-				.ToList();
-
-			if (changes.None())
-			{
-				return;
-			}
-
-			if (ImplementsSnapshottable(aggregate) && NeedsSnapshot(aggregate, changes))
-			{
-				var methodName = TypeInfo.GetMethodName<ISnapshotable<ISequenced>>(x => x.CreateSnapshot());
-
-				var createSnapshot = aggregate
-					.GetType()
-					.GetMethod(methodName);
-
-				var snapshot = (ISequenced)createSnapshot.Invoke(aggregate, new object[] { });
-				snapshot.Sequence = changes.Last().Sequence;
-
-				_eventStore.SaveSnapshot(aggregate.ID, snapshot);
-			}
-
-			_eventStore.SaveEvents(aggregate.ID, changes);
-
-			aggregate.MarkEventsCommitted();
-
 		}
 
-		private bool NeedsSnapshot<TAggregate>(TAggregate aggregate, IReadOnlyCollection<DomainEvent> changes)
+		private bool NeedsSnapshot<TAggregate>(IEventStore<TKey> store, TAggregate aggregate, IReadOnlyCollection<DomainEvent> changes)
 			where TAggregate : AggregateRoot<TKey>
 		{
 			var control = aggregate as ISnapshotControl;
@@ -70,7 +72,7 @@ namespace Ledger
 				return true;
 			}
 
-			var snapshotID = _eventStore.GetLatestSnapshotSequenceFor(aggregate.ID);
+			var snapshotID = store.GetLatestSnapshotSequenceFor(aggregate.ID);
 
 			return snapshotID.HasValue && changes.Last().Sequence >= snapshotID.Value + interval;
 		}
@@ -78,27 +80,29 @@ namespace Ledger
 		public TAggregate Load<TAggregate>(TKey aggregateID, Func<TAggregate> createNew)
 			where TAggregate : AggregateRoot<TKey>
 		{
-
-			var aggregate = createNew();
-
-			if (ImplementsSnapshottable(aggregate))
+			using (var store = _eventStore.BeginTransaction())
 			{
-				var snapshot = _eventStore.LoadLatestSnapshotFor(aggregateID);
-				var since = snapshot != null
-					? snapshot.Sequence
-					: -1;
+				var aggregate = createNew();
 
-				var events = _eventStore.LoadEventsSince(aggregateID, since);
+				if (ImplementsSnapshottable(aggregate))
+				{
+					var snapshot = store.LoadLatestSnapshotFor(aggregateID);
+					var since = snapshot != null
+						? snapshot.Sequence
+						: -1;
 
-				aggregate.LoadFromSnapshot(snapshot, events);
+					var events = store.LoadEventsSince(aggregateID, since);
+
+					aggregate.LoadFromSnapshot(snapshot, events);
+				}
+				else
+				{
+					var events = store.LoadEvents(aggregateID);
+					aggregate.LoadFromEvents(events);
+				}
+
+				return aggregate;
 			}
-			else
-			{
-				var events = _eventStore.LoadEvents(aggregateID);
-				aggregate.LoadFromEvents(events);
-			}
-
-			return aggregate;
 		}
 
 		private static bool ImplementsSnapshottable(AggregateRoot<TKey> aggregate)
