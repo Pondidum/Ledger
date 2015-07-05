@@ -44,7 +44,7 @@ desc 'Run all unit test assemblies'
 test_runner :test do |xunit|
 
   files = FileList['**/bin/*/*.tests.dll']
-  files.exclude(/Postgres/) if ci_run
+  files.exclude(/.*Postgres.*/) if ci_run
 
   xunit.exe = tool_xunit
   xunit.files = files
