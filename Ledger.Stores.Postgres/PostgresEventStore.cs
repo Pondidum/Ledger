@@ -115,5 +115,9 @@ namespace Ledger.Stores.Postgres
 				});
 			}
 		}
+
+		public void Dispose()
+		{
+		}
 	}
 }

@@ -1,8 +1,9 @@
+using System;
 using System.Collections.Generic;
 
 namespace Ledger
 {
-	public interface IEventStore<TKey>
+	public interface IEventStore<TKey> : IDisposable
 	{
 		int? GetLatestSequenceFor(TKey aggregateID);
 		int? GetLatestSnapshotSequenceFor(TKey aggregateID);

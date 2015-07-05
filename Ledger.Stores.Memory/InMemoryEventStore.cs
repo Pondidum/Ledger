@@ -75,5 +75,9 @@ namespace Ledger.Stores.Memory
 
 			_snapshots[aggregateID].Add(snapshot);
 		}
+
+		public void Dispose()
+		{
+		}
 	}
 }

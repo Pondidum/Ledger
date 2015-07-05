@@ -131,5 +131,9 @@ namespace Ledger.Stores.Fs
 				.Cast<ISequenced>()
 				.LastOrDefault();
 		}
+
+		public void Dispose()
+		{
+		}
 	}
 }
