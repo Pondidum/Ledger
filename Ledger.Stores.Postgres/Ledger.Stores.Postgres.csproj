@@ -56,7 +56,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CreateGuidAggregateTablesCommand.cs" />
+    <Compile Include="CreateIntAggregateTablesCommand.cs" />
     <Compile Include="ITableName.cs" />
+    <Compile Include="KeyTypeTableName.cs" />
     <Compile Include="PostgresEventStore.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
