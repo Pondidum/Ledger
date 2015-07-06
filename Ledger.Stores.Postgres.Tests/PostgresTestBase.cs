@@ -16,7 +16,7 @@ namespace Ledger.Stores.Postgres.Tests
 
 			Connection.Open();
 			
-			var create = new CreateGuidKeyedTablesCommand(Connection);
+			var create = new CreateGuidAggregateTablesCommand(Connection);
 			create.Execute();
 		}
 

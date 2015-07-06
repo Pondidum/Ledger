@@ -55,7 +55,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CreateGuidKeyedTablesCommand.cs" />
+    <Compile Include="CreateGuidAggregateTablesCommand.cs" />
     <Compile Include="ITableName.cs" />
     <Compile Include="PostgresEventStore.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

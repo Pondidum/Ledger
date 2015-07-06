@@ -3,7 +3,7 @@ using Npgsql;
 
 namespace Ledger.Stores.Postgres
 {
-	public class CreateGuidKeyedTablesCommand
+	public class CreateGuidAggregateTablesCommand
 	{
 		private const string Sql = @"
 create extension if not exists ""uuid-ossp"";
@@ -24,7 +24,7 @@ create table if not exists snapshots_guid (
 ";
 		private readonly NpgsqlConnection _connection;
 
-		public CreateGuidKeyedTablesCommand(NpgsqlConnection connection)
+		public CreateGuidAggregateTablesCommand(NpgsqlConnection connection)
 		{
 			_connection = connection;
 		}
