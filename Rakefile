@@ -7,6 +7,8 @@ ci_build = ENV['APPVEYOR_BUILD_VERSION'] ||= "0"
 ci_commit = ENV['APPVEYOR_REPO_COMMIT'] ||= "0"
 ci_run = ENV['APPVEYOR'] || false
 
+puts ci_build, ci_commit, ci_run
+
 tool_nuget = 'tools/nuget/nuget.exe'
 tool_xunit = 'tools/xunit/xunit.console.exe'
 
