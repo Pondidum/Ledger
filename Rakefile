@@ -45,6 +45,7 @@ test_runner :test do |xunit|
 
   files = FileList['**/bin/*/*.tests.dll']
   if ci_run
+    puts "exclude Postgres"
     files.exclude(/.*Postgres.*/)
   end
 
