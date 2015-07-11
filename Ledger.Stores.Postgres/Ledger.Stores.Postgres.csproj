@@ -61,6 +61,7 @@
     <Compile Include="KeyTypeTableName.cs" />
     <Compile Include="PostgresEventStore.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TableBuilder.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Ledger\Ledger.csproj">

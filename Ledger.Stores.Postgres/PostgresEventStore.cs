@@ -32,6 +32,12 @@ namespace Ledger.Stores.Postgres
 			_jsonSettings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Objects };
 		}
 
+		public void CreateTable()
+		{
+			var builder = new TableBuilder(_connection, _tableName);
+			builder.CreateTable<TKey>();
+		}
+
 		private string Events(string sql)
 		{
 			return sql.Replace("{table}", _tableName.ForEvents<TKey>());
