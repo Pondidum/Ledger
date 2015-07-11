@@ -1,6 +1,4 @@
-﻿using Ledger;
-
-namespace TestsDomain.Events
+﻿namespace Ledger.Tests.TestDomain.Events
 {
 	public class AddEmailAddress : DomainEvent
 	{

@@ -1,5 +1,4 @@
 ﻿using Npgsql;
-using TestsDomain.Events;
 using Xunit;
 
 namespace Ledger.Stores.Postgres.Tests

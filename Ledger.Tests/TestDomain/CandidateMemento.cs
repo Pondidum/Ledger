@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using Ledger;
+﻿using System.Collections.Generic;
 
-namespace TestsDomain
+namespace Ledger.Tests.TestDomain
 {
 	public class CandidateMemento : ISequenced
 	{

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
+using Ledger.Tests.TestDomain.Events;
 using Shouldly;
-using TestsDomain.Events;
 using Xunit;
 
 namespace Ledger.Stores.Postgres.Tests

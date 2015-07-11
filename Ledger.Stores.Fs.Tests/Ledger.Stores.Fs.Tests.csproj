@@ -83,10 +83,6 @@
       <Project>{4ed2a64f-414e-47ab-870a-4e34aa25ffbd}</Project>
       <Name>Ledger</Name>
     </ProjectReference>
-    <ProjectReference Include="..\TestsDomain\TestsDomain.csproj">
-      <Project>{c0080e1d-4aa9-4333-acdb-bdedc6a6a8ad}</Project>
-      <Name>TestsDomain</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

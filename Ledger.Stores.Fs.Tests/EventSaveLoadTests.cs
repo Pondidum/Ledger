@@ -1,9 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using Ledger.Tests.TestDomain.Events;
 using NSubstitute;
 using Shouldly;
-using TestsDomain.Events;
 using Xunit;
 
 namespace Ledger.Stores.Fs.Tests

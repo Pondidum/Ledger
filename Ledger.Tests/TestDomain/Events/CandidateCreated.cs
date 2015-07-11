@@ -1,7 +1,6 @@
 ﻿using System;
-using Ledger;
 
-namespace TestsDomain.Events
+namespace Ledger.Tests.TestDomain.Events
 {
 	public class CandidateCreated : DomainEvent
 	{

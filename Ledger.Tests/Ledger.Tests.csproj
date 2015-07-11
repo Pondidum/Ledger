@@ -68,6 +68,13 @@
     <Compile Include="AcceptanceTests\SavingMultipleEventsWithSnapshotting.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Scratchpad.cs" />
+    <Compile Include="TestDomain\Candidate.cs" />
+    <Compile Include="TestDomain\CandidateMemento.cs" />
+    <Compile Include="TestDomain\DomainException.cs" />
+    <Compile Include="TestDomain\Events\AddEmailAddress.cs" />
+    <Compile Include="TestDomain\Events\CandidateCreated.cs" />
+    <Compile Include="TestDomain\Events\FixNameSpelling.cs" />
+    <Compile Include="TestDomain\Events\NameChangedByDeedPoll.cs" />
     <Compile Include="TestObjects\SnapshotAggregate.cs" />
     <Compile Include="TestObjects\TestAggregate.cs" />
     <Compile Include="TestObjects\TestEvent.cs" />
