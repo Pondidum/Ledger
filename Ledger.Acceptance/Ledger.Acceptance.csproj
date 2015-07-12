@@ -93,10 +93,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Ledger.Stores.Memory\Ledger.Stores.Memory.csproj">
-      <Project>{08f3b991-276e-4196-ba29-ee0c537fd7cb}</Project>
-      <Name>Ledger.Stores.Memory</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Ledger\Ledger.csproj">
       <Project>{4ed2a64f-414e-47ab-870a-4e34aa25ffbd}</Project>
       <Name>Ledger</Name>
