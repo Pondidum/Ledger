@@ -137,7 +137,7 @@ namespace Ledger.Stores.Fs
 				.LastOrDefault();
 		}
 
-		public void Dispose()
+		public virtual void Dispose()
 		{
 		}
 	}

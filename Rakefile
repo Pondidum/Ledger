@@ -45,13 +45,13 @@ end
 desc 'Run all unit test assemblies'
 test_runner :test do |xunit|
 
-  files = FileList['**/bin/*/*.tests.dll']
+  files = FileList['**.Tests/bin/*/*.{acceptance,tests}.dll']
   files.exclude(/.*Postgres.*/) if ci_run
 
   xunit.exe = tool_xunit
   xunit.files = files
-  xunit.add_parameter '-quiet'
-
+  xunit.add_parameter '-quiet' if ci_run
+  xunit.add_parameter '-nologo'
 end
 
 desc 'Build all nuget packages'

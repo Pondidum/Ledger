@@ -40,6 +40,14 @@
       <HintPath>..\packages\Shouldly.2.5.0\lib\net40\Shouldly.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="StructureMap, Version=3.1.6.186, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\structuremap.3.1.6.186\lib\net40\StructureMap.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="StructureMap.Net4, Version=3.1.6.186, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\structuremap.3.1.6.186\lib\net40\StructureMap.Net4.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -61,12 +69,17 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AcceptanceRegistry.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Ledger.Acceptance\Ledger.Acceptance.csproj">
+      <Project>{d783268b-95c1-419e-bc33-ee81a8740ba4}</Project>
+      <Name>Ledger.Acceptance</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Ledger.Stores.Memory\Ledger.Stores.Memory.csproj">
       <Project>{08f3b991-276e-4196-ba29-ee0c537fd7cb}</Project>
       <Name>Ledger.Stores.Memory</Name>
