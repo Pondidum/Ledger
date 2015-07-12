@@ -63,7 +63,7 @@ nugets_pack :pack do |n|
   n.exe = tool_nuget
   n.out = package_output
 
-  n.files = FileList["{#{project_name},#{project_name}.Tests}/*.csproj"]
+  n.files = FileList["{#{project_name},#{project_name}.acceptance}/*.csproj"]
 
   n.with_metadata do |m|
     m.description = 'A lightweight EventSourcing library'
