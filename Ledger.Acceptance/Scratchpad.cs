@@ -4,7 +4,7 @@ using System.Linq;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Ledger.Tests
+namespace Ledger.Acceptance
 {
 	public class Scratchpad
 	{

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq;
-using Ledger.Tests.TestDomain.Events;
+using Ledger.Acceptance.TestDomain.Events;
 using Shouldly;
 using Xunit;
 
@@ -61,7 +61,7 @@ namespace Ledger.Stores.Postgres.Tests
 				.GetLatestSequenceFor(first)
 				.ShouldBe(5);
 		}
-		
+
 		[Fact]
 		public void Loading_events_since_only_gets_events_after_the_sequence()
 		{

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using Ledger.Tests.TestDomain.Events;
+using Ledger.Acceptance.TestDomain.Events;
 using NSubstitute;
 using Shouldly;
 using Xunit;
@@ -96,7 +96,7 @@ namespace Ledger.Stores.Fs.Tests
 
 
 			var loaded = _store.LoadEventsSince(id, 4);
-			
+
 			loaded.ShouldBeEmpty();
 		}
 

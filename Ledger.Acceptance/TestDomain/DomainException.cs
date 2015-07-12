@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Ledger.Tests.TestDomain
+namespace Ledger.Acceptance.TestDomain
 {
 	public class DomainException : Exception
 	{

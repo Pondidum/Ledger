@@ -1,13 +1,13 @@
 ﻿using System;
 using System.IO;
-using Ledger.Tests.AcceptanceTests;
+using Ledger.Acceptance.AcceptanceTests;
 
 namespace Ledger.Stores.Fs.Tests.AcceptanceTests
 {
 	public class FsLoadingMultipleEventsWithoutSnapshotting : LoadingMultipleEventsWithoutSnapshotting, IDisposable
 	{
 		private FileEventStore<Guid> _store;
- 
+
 		protected override IEventStore<Guid> EventStore
 		{
 			get

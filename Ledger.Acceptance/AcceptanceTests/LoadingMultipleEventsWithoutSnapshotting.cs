@@ -1,9 +1,9 @@
 using System;
-using Ledger.Tests.TestObjects;
+using Ledger.Acceptance.TestObjects;
 using Shouldly;
 using Xunit;
 
-namespace Ledger.Tests.AcceptanceTests
+namespace Ledger.Acceptance.AcceptanceTests
 {
 	public class LoadingMultipleEventsWithoutSnapshotting : AcceptanceBase<TestAggregate>
 	{
@@ -12,7 +12,7 @@ namespace Ledger.Tests.AcceptanceTests
 			var aggregateStore = new AggregateStore<Guid>(EventStore);
 			var id = Guid.NewGuid();
 
-			EventStore.SaveEvents(id, new[] 
+			EventStore.SaveEvents(id, new[]
 			{
 				new TestEvent { Sequence = 5},
 				new TestEvent { Sequence = 6},

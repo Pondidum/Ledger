@@ -1,9 +1,9 @@
 ﻿using System;
-using Ledger.Tests.TestObjects;
+using Ledger.Acceptance.TestObjects;
 using Shouldly;
 using Xunit;
 
-namespace Ledger.Tests.AcceptanceTests
+namespace Ledger.Acceptance.AcceptanceTests
 {
 	public class LoadingMultipleEventsWithSnapshotting : AcceptanceBase<SnapshotAggregate>
 	{

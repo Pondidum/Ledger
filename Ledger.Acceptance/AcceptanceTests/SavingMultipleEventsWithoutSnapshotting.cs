@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Ledger.Infrastructure;
-using Ledger.Tests.TestObjects;
+using Ledger.Acceptance.TestObjects;
 using Shouldly;
 using Xunit;
 
-namespace Ledger.Tests.AcceptanceTests
+namespace Ledger.Acceptance.AcceptanceTests
 {
 	public class SavingMultipleEventsWithoutSnapshotting : AcceptanceBase<TestAggregate>
 	{
@@ -18,7 +18,7 @@ namespace Ledger.Tests.AcceptanceTests
 
 			Aggregate.GenerateID();
 			Aggregate.AddEvents(new[] { new TestEvent(), new TestEvent() });
-		
+
 			aggregateStore.Save(Aggregate);
 		}
 

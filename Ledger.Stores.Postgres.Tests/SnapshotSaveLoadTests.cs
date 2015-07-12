@@ -1,6 +1,6 @@
 ﻿using System;
 using System.IO;
-using Ledger.Tests.TestDomain;
+using Ledger.Acceptance.TestDomain;
 using Shouldly;
 using Xunit;
 

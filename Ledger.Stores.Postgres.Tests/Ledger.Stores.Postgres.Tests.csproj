@@ -88,9 +88,9 @@
       <Project>{fd8bd913-a719-4879-a596-ee6ede930e5f}</Project>
       <Name>Ledger.Stores.Postgres</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Ledger.Tests\Ledger.Tests.csproj">
+    <ProjectReference Include="..\Ledger.Acceptance\Ledger.Acceptance.csproj">
       <Project>{d783268b-95c1-419e-bc33-ee81a8740ba4}</Project>
-      <Name>Ledger.Tests</Name>
+      <Name>Ledger.Acceptance</Name>
     </ProjectReference>
     <ProjectReference Include="..\Ledger\Ledger.csproj">
       <Project>{4ED2A64F-414E-47AB-870A-4E34AA25FFBD}</Project>
@@ -104,7 +104,7 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\xunit.core.2.0.0\build\portable-net45+win+wpa81+wp80+monotouch+monoandroid+Xamarin.iOS\xunit.core.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\xunit.core.2.0.0\build\portable-net45+win+wpa81+wp80+monotouch+monoandroid+Xamarin.iOS\xunit.core.props'))" />
   </Target>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>

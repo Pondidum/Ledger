@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Ledger.Tests.TestDomain.Events;
+using Ledger.Acceptance.TestDomain.Events;
 
-namespace Ledger.Tests.TestDomain
+namespace Ledger.Acceptance.TestDomain
 {
 	public class Candidate : AggregateRoot<Guid>, ISnapshotable<CandidateMemento>
 	{

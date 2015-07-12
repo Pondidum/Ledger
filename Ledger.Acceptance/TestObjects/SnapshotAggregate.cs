@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using Ledger.Infrastructure;
 
-namespace Ledger.Tests.TestObjects
+namespace Ledger.Acceptance.TestObjects
 {
-	public class TestAggregate : AggregateRoot<Guid>
+	public class SnapshotAggregate : AggregateRoot<Guid>, ISnapshotable<TestSnapshot>
 	{
 		public void AddEvent(DomainEvent @event)
 		{
@@ -22,5 +22,19 @@ namespace Ledger.Tests.TestObjects
 		{
 			ID = Guid.NewGuid();
 		}
+
+		public TestSnapshot CreateSnapshot()
+		{
+			return new TestSnapshot();
+		}
+
+		public void ApplySnapshot(TestSnapshot snapshot)
+		{
+		}
+	}
+
+	public class TestSnapshot : ISequenced
+	{
+		public int Sequence { get; set; }
 	}
 }

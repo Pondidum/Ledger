@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Ledger.Tests.TestObjects
+namespace Ledger.Acceptance.TestObjects
 {
 	public class TestEvent : DomainEvent
 	{

@@ -1,4 +1,4 @@
-﻿namespace Ledger.Tests.TestDomain.Events
+﻿namespace Ledger.Acceptance.TestDomain.Events
 {
 	public class NameChangedByDeedPoll : DomainEvent
 	{

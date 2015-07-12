@@ -1,6 +1,6 @@
 using System;
 using System.IO;
-using Ledger.Tests.AcceptanceTests;
+using Ledger.Acceptance.AcceptanceTests;
 
 namespace Ledger.Stores.Fs.Tests.AcceptanceTests
 {
