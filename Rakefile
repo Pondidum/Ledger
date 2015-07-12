@@ -22,6 +22,8 @@ desc 'Restore nuget packages for all projects'
 nugets_restore :restore do |n|
   n.exe = tool_nuget
   n.out = 'packages'
+
+  n.parameters << %W[-configFile nuget.config]
 end
 
 desc 'Set the assembly version number'
