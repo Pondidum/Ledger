@@ -32,6 +32,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Ledger, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Ledger.1.0.0\lib\net40\Ledger.dll</HintPath>
+    </Reference>
+    <Reference Include="Ledger.Acceptance, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Ledger.Acceptance.1.0.0\lib\net40\Ledger.Acceptance.dll</HintPath>
+    </Reference>
     <Reference Include="NSubstitute, Version=1.8.2.0, Culture=neutral, PublicKeyToken=92dd2e9066daa5ca, processorArchitecture=MSIL">
       <HintPath>..\packages\NSubstitute.1.8.2.0\lib\net45\NSubstitute.dll</HintPath>
       <Private>True</Private>
@@ -76,17 +84,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Ledger.Acceptance\Ledger.Acceptance.csproj">
-      <Project>{d783268b-95c1-419e-bc33-ee81a8740ba4}</Project>
-      <Name>Ledger.Acceptance</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Ledger.Stores.Memory\Ledger.Stores.Memory.csproj">
       <Project>{08f3b991-276e-4196-ba29-ee0c537fd7cb}</Project>
       <Name>Ledger.Stores.Memory</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Ledger\Ledger.csproj">
-      <Project>{4ed2a64f-414e-47ab-870a-4e34aa25ffbd}</Project>
-      <Name>Ledger</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
