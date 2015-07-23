@@ -36,6 +36,14 @@
       <HintPath>..\packages\Dapper.1.42\lib\net45\Dapper.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Ledger, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Ledger.1.0.0\lib\net40\Ledger.dll</HintPath>
+    </Reference>
+    <Reference Include="Ledger.Acceptance, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Ledger.Acceptance.1.0.0\lib\net40\Ledger.Acceptance.dll</HintPath>
+    </Reference>
     <Reference Include="Mono.Security, Version=4.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
       <HintPath>..\packages\Npgsql.2.2.5\lib\net45\Mono.Security.dll</HintPath>
       <Private>True</Private>
@@ -43,6 +51,9 @@
     <Reference Include="Npgsql, Version=2.2.5.0, Culture=neutral, PublicKeyToken=5d8b90d52f46fda7, processorArchitecture=MSIL">
       <HintPath>..\packages\Npgsql.2.2.5\lib\net45\Npgsql.dll</HintPath>
       <Private>True</Private>
+    </Reference>
+    <Reference Include="NSubstitute">
+      <HintPath>..\packages\NSubstitute.1.8.2.0\lib\net45\NSubstitute.dll</HintPath>
     </Reference>
     <Reference Include="Shouldly, Version=2.5.0.0, Culture=neutral, PublicKeyToken=6042cbcb05cbc941, processorArchitecture=MSIL">
       <HintPath>..\packages\Shouldly.2.5.0\lib\net40\Shouldly.dll</HintPath>
@@ -92,14 +103,6 @@
     <ProjectReference Include="..\Ledger.Stores.Postgres\Ledger.Stores.Postgres.csproj">
       <Project>{fd8bd913-a719-4879-a596-ee6ede930e5f}</Project>
       <Name>Ledger.Stores.Postgres</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Ledger.Acceptance\Ledger.Acceptance.csproj">
-      <Project>{d783268b-95c1-419e-bc33-ee81a8740ba4}</Project>
-      <Name>Ledger.Acceptance</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Ledger\Ledger.csproj">
-      <Project>{4ED2A64F-414E-47AB-870A-4E34AA25FFBD}</Project>
-      <Name>Ledger</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
