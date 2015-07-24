@@ -70,7 +70,7 @@ nugets_pack :pack do |n|
     m.project_url = "https://github.com/pondidum/#{project_name}"
     m.license_url = "https://github.com/Pondidum/#{project_name}/blob/master/LICENSE.txt"
     m.version = project_version
-    m.tags = 'eventsourcing es'
+    m.tags = 'eventsourcing es ledger'
   end
 
 end
