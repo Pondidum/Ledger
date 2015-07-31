@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="AggregateRoot.cs" />
     <Compile Include="AggregateStore.cs" />
+    <Compile Include="ConsistencyException.cs" />
     <Compile Include="DomainEvent.cs" />
     <Compile Include="IEventStore.cs" />
     <Compile Include="Infrastructure\Extensions.cs" />

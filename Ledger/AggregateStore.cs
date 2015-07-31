@@ -25,7 +25,7 @@ namespace Ledger
 
 				if (lastStoredSequence.HasValue && lastStoredSequence != aggregate.SequenceID)
 				{
-					throw new Exception();
+					throw new ConsistencyException(aggregate.GetType(), aggregate.ID.ToString(), aggregate.SequenceID, lastStoredSequence);
 				}
 
 				var changes = aggregate
