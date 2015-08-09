@@ -1,0 +1,9 @@
+version: '{build}'
+build_script:
+- gem install bundler
+- bundle install
+- bundle exec rake default pack mode="Release"
+test: off
+artifacts:
+- path: build\deploy\*.nupkg
+  name: NugetPackages
