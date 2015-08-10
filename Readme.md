@@ -2,6 +2,27 @@
 
 Ledger is a lightweight eventsourcing library for .net.
 
+## Configuration
+
+First you need to configure your AggregateStore with a backing event store.  In this example we are using the filesystem store (provided by [Ledger.Stores.Fs][nuget-ledger-store-fs]).  There are also packages available for [InMemory][nuget-ledger-store-mem] and [Postgres][nuget-ledger-store-postgres] based event stores.
+
+```c#
+var eventStore = new FileEventStore<Guid>("..\\appdata\\eventstore");
+var aggregateStore = new AggregateStore<Guid>(eventStore);
+```
+
+To load an entity from the aggregateStore, you need to provide it with an `id`, and a lambda which creates a blank entity for the aggregateStore to populate:
+
+```c#
+var person = aggregateStore.Load(id, () => new Person());
+```
+
+You can save any changes to the entity later by calling the `Save` method on the aggregateStore:
+
+```c#
+aggregateStore.Save(person);
+```
+
 ## Usage
 
 A basic event sourced entity needs to inherit from `AggregateRoot`, and specify the type of key to use.  Currently only `int` and `Guid` are supported.
@@ -53,3 +74,10 @@ private void Handle(RemoveEmailAddress e)
 	_emails.Remove(e.Email);
 }
 ```
+
+
+
+
+[nuget-ledger-store-fs]: https://www.nuget.org/packages/Ledger.Stores.Fs/
+[nuget-ledger-store-mem]: https://www.nuget.org/packages/Ledger.Stores.Memory/
+[nuget-ledger-store-postgres]: https://www.nuget.org/packages/Ledger.Stores.Postgres/
