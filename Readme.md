@@ -23,7 +23,51 @@ You can save any changes to the entity later by calling the `Save` method on the
 aggregateStore.Save(person);
 ```
 
-## Usage
+## Usage: AggregateStore
+
+Under Webapi, you can use a DI Container to provide the aggregateStore to your controllers.  For example (using structuremap):
+
+```c#
+public class WebApiConfig
+{
+	public void Configure(HttpConfiguration http)
+	{
+		var container = new Container(config =>
+		{
+			config.Scan(asm => {
+				asm.TheCallingAssembly();
+				asm.WithDefaultConventions();
+			});
+
+			config
+				.For<NpgsqlConnection>()
+				.Use(() => new NpgsqlConnection(ConfigurationManager.ConnectionString["Postgres"]));
+
+			config
+				.For<IEventStore<Guid>>()
+				.Use<PostgresEventStore<Guid>>();
+		});
+
+		http.DependencyResolver = new StructureMapDependencyResolver(container);
+	}
+}
+
+
+public class AccountController : ApiController
+{
+	private readonly IEventStore<Guid> _eventStore;
+
+	public AccountController(IEventStore<Guid> eventStore)
+	{
+		_eventStore = eventstore;
+	}
+}
+```
+
+
+
+
+## Usage: Aggregates
 
 A basic event sourced entity needs to inherit from `AggregateRoot`, and specify the type of key to use.  Currently only `int` and `Guid` are supported.
 
