@@ -58,7 +58,7 @@ namespace Ledger
 			}
 		}
 
-		private bool NeedsSnapshot<TAggregate>(IEventStore<TKey> store, TAggregate aggregate, IReadOnlyCollection<DomainEvent> changes)
+		private bool NeedsSnapshot<TAggregate>(IEventStore<TKey> store, TAggregate aggregate, IReadOnlyCollection<IDomainEvent> changes)
 			where TAggregate : AggregateRoot<TKey>
 		{
 			var control = aggregate as ISnapshotControl;
