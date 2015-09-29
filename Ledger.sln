@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ledger", "Ledger\Ledger.csproj", "{4ED2A64F-414E-47AB-870A-4E34AA25FFBD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ledger.Acceptance", "Ledger.Acceptance\Ledger.Acceptance.csproj", "{D783268B-95C1-419E-BC33-EE81A8740BA4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ledger.Tests", "Ledger.Tests\Ledger.Tests.csproj", "{69B9BC32-D2AC-41D2-982D-9025C9664A46}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{D783268B-95C1-419E-BC33-EE81A8740BA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D783268B-95C1-419E-BC33-EE81A8740BA4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D783268B-95C1-419E-BC33-EE81A8740BA4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{69B9BC32-D2AC-41D2-982D-9025C9664A46}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{69B9BC32-D2AC-41D2-982D-9025C9664A46}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{69B9BC32-D2AC-41D2-982D-9025C9664A46}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{69B9BC32-D2AC-41D2-982D-9025C9664A46}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
