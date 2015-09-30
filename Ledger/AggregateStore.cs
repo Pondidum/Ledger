@@ -21,12 +21,7 @@ namespace Ledger
 		{
 			using (var store = _eventStore.BeginTransaction())
 			{
-				var lastStoredSequence = store.GetLatestSequenceFor(aggregate.ID);
-
-				if (lastStoredSequence.HasValue && lastStoredSequence != aggregate.SequenceID)
-				{
-					throw new ConsistencyException(aggregate.GetType(), aggregate.ID.ToString(), aggregate.SequenceID, lastStoredSequence);
-				}
+				ThrowIfVersionsInconsistent(store, aggregate);
 
 				var changes = aggregate
 					.GetUncommittedEvents()
@@ -55,6 +50,17 @@ namespace Ledger
 				store.SaveEvents(aggregate.ID, changes);
 
 				aggregate.MarkEventsCommitted();
+			}
+		}
+
+		private static void ThrowIfVersionsInconsistent<TAggregate>(IEventStore<TKey> store, TAggregate aggregate)
+			where TAggregate : AggregateRoot<TKey>
+		{
+			var lastStoredSequence = store.GetLatestSequenceFor(aggregate.ID);
+
+			if (lastStoredSequence.HasValue && lastStoredSequence != aggregate.SequenceID)
+			{
+				throw new ConsistencyException(aggregate.GetType(), aggregate.ID.ToString(), aggregate.SequenceID, lastStoredSequence);
 			}
 		}
 

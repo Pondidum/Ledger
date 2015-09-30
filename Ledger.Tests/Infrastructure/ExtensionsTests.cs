@@ -3,11 +3,10 @@ using Ledger.Infrastructure;
 using Shouldly;
 using Xunit;
 
-namespace Ledger.Tests
+namespace Ledger.Tests.Infrastructure
 {
-	public class AggregateStoreTests
+	public class ExtensionsTests
 	{
-
 		[Fact]
 		public void When_the_type_implements_isnapshottable()
 		{
@@ -39,13 +38,12 @@ namespace Ledger.Tests
 
 		private class Without : AggregateRoot<Guid>
 		{
-			
+
 		}
 
-	}
-
-	internal class Snap : ISequenced
-	{
-		public int Sequence { get; set; }
+		internal class Snap : ISequenced
+		{
+			public int Sequence { get; set; }
+		}
 	}
 }
