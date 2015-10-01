@@ -35,13 +35,7 @@ namespace Ledger
 
 				if (typeof(TAggregate).ImplementsSnapshottable() && NeedsSnapshot(store, aggregate, changes))
 				{
-					var methodName = TypeInfo.GetMethodName<ISnapshotable<ISequenced>>(x => x.CreateSnapshot());
-
-					var createSnapshot = aggregate
-						.GetType()
-						.GetMethod(methodName);
-
-					var snapshot = (ISequenced)createSnapshot.Invoke(aggregate, new object[] { });
+					var snapshot = GetSnapshot(aggregate);
 					snapshot.Sequence = changes.Last().Sequence;
 
 					store.SaveSnapshot(aggregate.ID, snapshot);
@@ -51,6 +45,20 @@ namespace Ledger
 
 				aggregate.MarkEventsCommitted();
 			}
+		}
+
+		private static ISequenced GetSnapshot<TAggregate>(TAggregate aggregate) where TAggregate : AggregateRoot<TKey>
+		{
+			//you could replace this method with `return (ISequenced)(aggregate as dynamic).CreateSnapshot();`
+			//but you loose the compiler checking the `CreateSnapshot` is the right method name etc.
+
+			var methodName = TypeInfo.GetMethodName<ISnapshotable<ISequenced>>(x => x.CreateSnapshot());
+
+			var createSnapshot = aggregate
+				.GetType()
+				.GetMethod(methodName);
+
+			return (ISequenced) createSnapshot.Invoke(aggregate, new object[] {});
 		}
 
 		private static void ThrowIfVersionsInconsistent<TAggregate>(IEventStore<TKey> store, TAggregate aggregate)
