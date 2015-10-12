@@ -19,19 +19,19 @@ namespace Ledger
 		public void Save<TAggregate>(TAggregate aggregate)
 			where TAggregate : AggregateRoot<TKey>
 		{
+			var changes = aggregate
+				.GetUncommittedEvents()
+				.Apply((e, i) => e.Sequence = aggregate.SequenceID + i)
+				.ToList();
+
+			if (changes.None())
+			{
+				return;
+			}
+
 			using (var store = _eventStore.BeginTransaction())
 			{
 				ThrowIfVersionsInconsistent(store, aggregate);
-
-				var changes = aggregate
-					.GetUncommittedEvents()
-					.Apply((e, i) => e.Sequence = aggregate.SequenceID + i)
-					.ToList();
-
-				if (changes.None())
-				{
-					return;
-				}
 
 				if (typeof(TAggregate).ImplementsSnapshottable() && NeedsSnapshot(store, aggregate, changes))
 				{
