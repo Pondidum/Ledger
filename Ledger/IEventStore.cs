@@ -5,6 +5,8 @@ namespace Ledger
 {
 	public interface IEventStore<TKey> : IDisposable
 	{
+		void Configure(IStoreNamingConvention namingConvention);
+
 		int? GetLatestSequenceFor(TKey aggregateID);
 		int? GetLatestSnapshotSequenceFor(TKey aggregateID);
 		

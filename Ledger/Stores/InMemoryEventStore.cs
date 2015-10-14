@@ -14,6 +14,11 @@ namespace Ledger.Stores
 			_snapshots = new Dictionary<object, List<ISequenced>>();
 		}
 
+		public void Configure(IStoreNamingConvention namingConvention)
+		{
+			//memory doesnt do anything with this
+		}
+
 		public int? GetLatestSequenceFor(TKey aggregateID)
 		{
 			var last = LoadEvents(aggregateID).LastOrDefault();
