@@ -52,6 +52,7 @@
     <Compile Include="ISequenced.cs" />
     <Compile Include="ISnapshotable.cs" />
     <Compile Include="ISnapshotControl.cs" />
+    <Compile Include="IStoreNamingConvention.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\AssemblyVersion.cs" />
     <Compile Include="Stores\InMemoryEventStore.cs" />

@@ -11,6 +11,11 @@ namespace Ledger
 		public int DefaultSnapshotInterval { get; set; }
 
 		public AggregateStore(IEventStore<TKey> eventStore)
+			: this(eventStore, null)
+		{
+		}
+
+		public AggregateStore(IEventStore<TKey> eventStore, IStoreNamingConvention namingConvention)
 		{
 			_eventStore = eventStore;
 			DefaultSnapshotInterval = 10;
