@@ -43,6 +43,7 @@
     <Compile Include="AggregateRoot.cs" />
     <Compile Include="AggregateStore.cs" />
     <Compile Include="ConsistencyException.cs" />
+    <Compile Include="Conventions\AggregateTypeNamingConvention.cs" />
     <Compile Include="Conventions\KeyTypeNamingConvention.cs" />
     <Compile Include="DomainEvent.cs" />
     <Compile Include="IDomainEvent.cs" />
