@@ -5,24 +5,25 @@ namespace Ledger
 	public class StoreConventions : IStoreConventions
 	{
 		private readonly IStoreNamingConvention _namingConvention;
-		private readonly Type _key;
-		private readonly Type _aggregate;
 
 		public StoreConventions(IStoreNamingConvention namingConvention, Type key, Type aggregate)
 		{
 			_namingConvention = namingConvention;
-			_key = key;
-			_aggregate = aggregate;
+			KeyType = key;
+			AggregateType = aggregate;
 		}
+
+		public Type KeyType { get; }
+		public Type AggregateType { get; }
 
 		public string EventStoreName()
 		{
-			return _namingConvention.ForEvents(_key, _aggregate);
+			return _namingConvention.ForEvents(KeyType, AggregateType);
 		}
 
 		public string SnapshotStoreName()
 		{
-			return _namingConvention.ForSnapshots(_key, _aggregate);
+			return _namingConvention.ForSnapshots(KeyType, AggregateType);
 		}
 	}
 }
