@@ -2,13 +2,13 @@ using System;
 
 namespace Ledger
 {
-	public class StoreStoreConventions : IStoreConventions
+	public class StoreConventions : IStoreConventions
 	{
 		private readonly IStoreNamingConvention _namingConvention;
 		private readonly Type _key;
 		private readonly Type _aggregate;
 
-		public StoreStoreConventions(IStoreNamingConvention namingConvention, Type key, Type aggregate)
+		public StoreConventions(IStoreNamingConvention namingConvention, Type key, Type aggregate)
 		{
 			_namingConvention = namingConvention;
 			_key = key;

@@ -27,7 +27,7 @@ namespace Ledger
 
 		public IStoreConventions Conventions<TAggregate>()
 		{
-			return new StoreStoreConventions(_namingConvention, typeof (TKey), typeof (TAggregate));
+			return new StoreConventions(_namingConvention, typeof (TKey), typeof (TAggregate));
 		}
 
 		public void Save<TAggregate>(TAggregate aggregate)
