@@ -9,6 +9,7 @@ namespace Ledger
 	public class AggregateStore<TKey>
 	{
 		private readonly IEventStore<TKey> _eventStore;
+		private readonly IStoreNamingConvention _namingConvention;
 		public int DefaultSnapshotInterval { get; set; }
 
 		public AggregateStore(IEventStore<TKey> eventStore)
@@ -19,9 +20,14 @@ namespace Ledger
 		public AggregateStore(IEventStore<TKey> eventStore, IStoreNamingConvention namingConvention)
 		{
 			_eventStore = eventStore;
-			DefaultSnapshotInterval = 10;
+			_namingConvention = namingConvention;
 
-			_eventStore.Configure(namingConvention);
+			DefaultSnapshotInterval = 10;
+		}
+
+		public IStoreConventions Conventions<TAggregate>()
+		{
+			return new StoreStoreConventions(_namingConvention, typeof (TKey), typeof (TAggregate));
 		}
 
 		public void Save<TAggregate>(TAggregate aggregate)
@@ -39,17 +45,19 @@ namespace Ledger
 
 			using (var store = _eventStore.BeginTransaction())
 			{
-				ThrowIfVersionsInconsistent(store, aggregate);
+				var conventions = Conventions<TAggregate>();
+
+				ThrowIfVersionsInconsistent(store, conventions, aggregate);
 
 				if (typeof(TAggregate).ImplementsSnapshottable() && NeedsSnapshot(store, aggregate, changes))
 				{
 					var snapshot = GetSnapshot(aggregate);
 					snapshot.Sequence = changes.Last().Sequence;
 
-					store.SaveSnapshot(aggregate.ID, snapshot);
+					store.SaveSnapshot(conventions, aggregate.ID, snapshot);
 				}
 
-				store.SaveEvents(aggregate.ID, changes);
+				store.SaveEvents(conventions, aggregate.ID, changes);
 
 				aggregate.MarkEventsCommitted();
 			}
@@ -69,10 +77,10 @@ namespace Ledger
 			return (ISequenced) createSnapshot.Invoke(aggregate, new object[] {});
 		}
 
-		private static void ThrowIfVersionsInconsistent<TAggregate>(IEventStore<TKey> store, TAggregate aggregate)
+		private static void ThrowIfVersionsInconsistent<TAggregate>(IEventStore<TKey> store, IStoreConventions storeConventions, TAggregate aggregate)
 			where TAggregate : AggregateRoot<TKey>
 		{
-			var lastStoredSequence = store.GetLatestSequenceFor(aggregate.ID);
+			var lastStoredSequence = store.GetLatestSequenceFor(storeConventions, aggregate.ID);
 
 			if (lastStoredSequence.HasValue && lastStoredSequence != aggregate.SequenceID)
 			{
@@ -94,7 +102,8 @@ namespace Ledger
 				return true;
 			}
 
-			var snapshotID = store.GetLatestSnapshotSequenceFor(aggregate.ID);
+			var conventions = Conventions<TAggregate>();
+			var snapshotID = store.GetLatestSnapshotSequenceFor(conventions, aggregate.ID);
 
 			return snapshotID.HasValue && changes.Last().Sequence >= snapshotID.Value + interval;
 		}
@@ -104,22 +113,23 @@ namespace Ledger
 		{
 			using (var store = _eventStore.BeginTransaction())
 			{
+				var conventions = Conventions<TAggregate>();
 				var aggregate = createNew();
 
 				if (typeof(TAggregate).ImplementsSnapshottable())
 				{
-					var snapshot = store.LoadLatestSnapshotFor(aggregateID);
+					var snapshot = store.LoadLatestSnapshotFor(conventions, aggregateID);
 					var since = snapshot != null
 						? snapshot.Sequence
 						: -1;
 
-					var events = store.LoadEventsSince(aggregateID, since);
+					var events = store.LoadEventsSince(conventions, aggregateID, since);
 
 					aggregate.LoadFromSnapshot(snapshot, events);
 				}
 				else
 				{
-					var events = store.LoadEvents(aggregateID);
+					var events = store.LoadEvents(conventions, aggregateID);
 					aggregate.LoadFromEvents(events);
 				}
 

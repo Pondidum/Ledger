@@ -8,10 +8,12 @@ namespace Ledger.Acceptance.AcceptanceTests
 	public class AggregateStoreTests : AcceptanceBase<SnapshotAggregate>
 	{
 		private readonly AggregateStore<Guid> _aggregateStore;
+		private readonly IStoreConventions _storeConventions;
 
 		public AggregateStoreTests()
 		{
 			_aggregateStore = new AggregateStore<Guid>(EventStore);
+			_storeConventions = _aggregateStore.Conventions<SnapshotAggregate>();
 		}
 
 		[Fact]
@@ -22,7 +24,7 @@ namespace Ledger.Acceptance.AcceptanceTests
 
 			_aggregateStore.Save(Aggregate);
 
-			EventStore.LoadEvents(Aggregate.ID).ShouldBeEmpty();
+			EventStore.LoadEvents(_storeConventions, Aggregate.ID).ShouldBeEmpty();
 		}
 
 		[Fact]
@@ -31,7 +33,7 @@ namespace Ledger.Acceptance.AcceptanceTests
 			Aggregate = new SnapshotAggregate();
 			Aggregate.GenerateID();
 
-			EventStore.SaveEvents(Aggregate.ID, new[] { new TestEvent { Sequence = 5 } });
+			EventStore.SaveEvents(_storeConventions, Aggregate.ID, new[] { new TestEvent { Sequence = 5 } });
 
 			Should.Throw<ConsistencyException>(() => _aggregateStore.Save(Aggregate));
 		}
@@ -42,7 +44,7 @@ namespace Ledger.Acceptance.AcceptanceTests
 			var aggregateStore = new AggregateStore<Guid>(EventStore);
 			var id = Guid.NewGuid();
 
-			EventStore.SaveEvents(id, new[]
+			EventStore.SaveEvents(_storeConventions, id, new[]
 			{
 				new TestEvent { Sequence = 5},
 				new TestEvent { Sequence = 6},

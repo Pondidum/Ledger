@@ -11,10 +11,12 @@ namespace Ledger.Acceptance.AcceptanceTests
 	public class SavingMultipleEventsWithSnapshotting : AcceptanceBase<SnapshotAggregate>
 	{
 		private readonly IEnumerable<DomainEvent> _events;
+		private readonly IStoreConventions _storeConventions;
 
 		public SavingMultipleEventsWithSnapshotting()
 		{
 			var aggregateStore = new AggregateStore<Guid>(EventStore);
+			_storeConventions = aggregateStore.Conventions<SnapshotAggregate>();
 
 			Aggregate = new SnapshotAggregate();
 			_events = Enumerable
@@ -32,7 +34,7 @@ namespace Ledger.Acceptance.AcceptanceTests
 		public void The_events_should_be_written()
 		{
 			EventStore
-				.LoadEvents(Aggregate.ID)
+				.LoadEvents(_storeConventions, Aggregate.ID)
 				.ShouldNotBeEmpty();
 		}
 
@@ -55,7 +57,7 @@ namespace Ledger.Acceptance.AcceptanceTests
 		public void The_snapshot_should_be_saved()
 		{
 			EventStore
-				.LoadLatestSnapshotFor(Aggregate.ID)
+				.LoadLatestSnapshotFor(_storeConventions, Aggregate.ID)
 				.ShouldNotBe(null);
 		}
 
@@ -63,7 +65,7 @@ namespace Ledger.Acceptance.AcceptanceTests
 		public void The_snapshot_should_have_the_latest_sequnce_id()
 		{
 			EventStore
-				.LoadLatestSnapshotFor(Aggregate.ID)
+				.LoadLatestSnapshotFor(_storeConventions, Aggregate.ID)
 				.Sequence
 				.ShouldBe(_events.Count() - 1);
 		}

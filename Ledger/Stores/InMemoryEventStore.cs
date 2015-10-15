@@ -14,30 +14,25 @@ namespace Ledger.Stores
 			_snapshots = new Dictionary<object, List<ISequenced>>();
 		}
 
-		public void Configure(IStoreNamingConvention namingConvention)
+		public int? GetLatestSequenceFor(IStoreConventions storeConventions, TKey aggregateID)
 		{
-			//memory doesnt do anything with this
-		}
-
-		public int? GetLatestSequenceFor(TKey aggregateID)
-		{
-			var last = LoadEvents(aggregateID).LastOrDefault();
+			var last = LoadEvents(storeConventions, aggregateID).LastOrDefault();
 
 			return last != null
 				? last.Sequence
 				: (int?) null;
 		}
 
-		public int? GetLatestSnapshotSequenceFor(TKey aggregateID)
+		public int? GetLatestSnapshotSequenceFor(IStoreConventions storeConventions, TKey aggregateID)
 		{
-			var last = LoadLatestSnapshotFor(aggregateID);
+			var last = LoadLatestSnapshotFor(storeConventions, aggregateID);
 
 			return last != null
 				? last.Sequence
 				: (int?) null;
 		}
 
-		public void SaveEvents(TKey aggregateID, IEnumerable<IDomainEvent> changes)
+		public void SaveEvents(IStoreConventions storeConventions, TKey aggregateID, IEnumerable<IDomainEvent> changes)
 		{
 			if (_events.ContainsKey(aggregateID) == false)
 			{
@@ -47,7 +42,7 @@ namespace Ledger.Stores
 			_events[aggregateID].AddRange(changes);
 		}
 
-		public IEnumerable<IDomainEvent> LoadEvents(TKey aggregateID)
+		public IEnumerable<IDomainEvent> LoadEvents(IStoreConventions storeConventions, TKey aggregateID)
 		{
 			List<IDomainEvent> events;
 
@@ -56,13 +51,13 @@ namespace Ledger.Stores
 				: Enumerable.Empty<IDomainEvent>();
 		}
 
-		public IEnumerable<IDomainEvent> LoadEventsSince(TKey aggregateID, int sequenceID)
+		public IEnumerable<IDomainEvent> LoadEventsSince(IStoreConventions storeConventions, TKey aggregateID, int sequenceID)
 		{
-			return LoadEvents(aggregateID)
+			return LoadEvents(storeConventions, aggregateID)
 				.Where(e => e.Sequence > sequenceID);
 		}
 
-		public ISequenced LoadLatestSnapshotFor(TKey aggregateID)
+		public ISequenced LoadLatestSnapshotFor(IStoreConventions storeConventions, TKey aggregateID)
 		{
 			List<ISequenced> snapshots;
 
@@ -71,7 +66,7 @@ namespace Ledger.Stores
 				: null;
 		}
 
-		public void SaveSnapshot(TKey aggregateID, ISequenced snapshot)
+		public void SaveSnapshot(IStoreConventions storeConventions, TKey aggregateID, ISequenced snapshot)
 		{
 			if (_snapshots.ContainsKey(aggregateID) == false)
 			{

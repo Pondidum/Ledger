@@ -5,17 +5,15 @@ namespace Ledger
 {
 	public interface IEventStore<TKey> : IDisposable
 	{
-		void Configure(IStoreNamingConvention namingConvention);
-
-		int? GetLatestSequenceFor(TKey aggregateID);
-		int? GetLatestSnapshotSequenceFor(TKey aggregateID);
+		int? GetLatestSequenceFor(IStoreConventions storeConventions, TKey aggregateID);
+		int? GetLatestSnapshotSequenceFor(IStoreConventions storeConventions, TKey aggregateID);
 		
-		void SaveEvents(TKey aggregateID, IEnumerable<IDomainEvent> changes);
-		IEnumerable<IDomainEvent> LoadEvents(TKey aggregateID);
-		IEnumerable<IDomainEvent> LoadEventsSince(TKey aggregateID, int sequenceID);
+		void SaveEvents(IStoreConventions storeConventions, TKey aggregateID, IEnumerable<IDomainEvent> changes);
+		IEnumerable<IDomainEvent> LoadEvents(IStoreConventions storeConventions, TKey aggregateID);
+		IEnumerable<IDomainEvent> LoadEventsSince(IStoreConventions storeConventions, TKey aggregateID, int sequenceID);
 
-		ISequenced LoadLatestSnapshotFor(TKey aggregateID);
-		void SaveSnapshot(TKey aggregateID, ISequenced snapshot);
+		ISequenced LoadLatestSnapshotFor(IStoreConventions storeConventions, TKey aggregateID);
+		void SaveSnapshot(IStoreConventions storeConventions, TKey aggregateID, ISequenced snapshot);
 
 		IEventStore<TKey> BeginTransaction();
 	}

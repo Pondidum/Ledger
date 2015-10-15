@@ -10,10 +10,11 @@ namespace Ledger.Acceptance.AcceptanceTests
 		public LoadingMultipleEventsWithSnapshotting()
 		{
 			var aggregateStore = new AggregateStore<Guid>(EventStore);
-			var id = Guid.NewGuid();
+			var conventions = aggregateStore.Conventions<SnapshotAggregate>();
+            var id = Guid.NewGuid();
 
-			EventStore.SaveSnapshot(id, new TestSnapshot {Sequence = 10});
-			EventStore.SaveEvents(id, new []
+			EventStore.SaveSnapshot(conventions, id, new TestSnapshot {Sequence = 10});
+			EventStore.SaveEvents(conventions, id, new []
 			{
 				new TestEvent { Sequence = 5},
 				new TestEvent { Sequence = 6},

@@ -10,9 +10,12 @@ namespace Ledger.Acceptance.AcceptanceTests
 {
 	public class SavingMultipleEventsWithoutSnapshotting : AcceptanceBase<TestAggregate>
 	{
+		private IStoreConventions _storeConventions;
+
 		public SavingMultipleEventsWithoutSnapshotting()
 		{
 			var aggregateStore = new AggregateStore<Guid>(EventStore);
+			_storeConventions = aggregateStore.Conventions<TestAggregate>();
 
 			Aggregate = new TestAggregate();
 
@@ -25,13 +28,13 @@ namespace Ledger.Acceptance.AcceptanceTests
 		[Fact]
 		public void The_events_should_be_written()
 		{
-			EventStore.LoadEvents(Aggregate.ID).Count().ShouldBe(2);
+			EventStore.LoadEvents(_storeConventions, Aggregate.ID).Count().ShouldBe(2);
 		}
 
 		[Fact]
 		public void The_events_should_be_in_sequence()
 		{
-			var events = EventStore.LoadEvents(Aggregate.ID).ToList();
+			var events = EventStore.LoadEvents(_storeConventions, Aggregate.ID).ToList();
 
 			events.ShouldSatisfyAllConditions(
 				() => events[0].Sequence.ShouldBe(0),
