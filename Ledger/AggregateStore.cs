@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Ledger.Conventions;
 using Ledger.Infrastructure;
 
 namespace Ledger
@@ -11,7 +12,7 @@ namespace Ledger
 		public int DefaultSnapshotInterval { get; set; }
 
 		public AggregateStore(IEventStore<TKey> eventStore)
-			: this(eventStore, null)
+			: this(eventStore, new KeyTypeNamingConvention())
 		{
 		}
 
@@ -19,6 +20,8 @@ namespace Ledger
 		{
 			_eventStore = eventStore;
 			DefaultSnapshotInterval = 10;
+
+			_eventStore.Configure(namingConvention);
 		}
 
 		public void Save<TAggregate>(TAggregate aggregate)
