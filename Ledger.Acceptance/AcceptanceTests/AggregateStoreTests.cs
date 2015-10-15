@@ -35,6 +35,8 @@ namespace Ledger.Acceptance.AcceptanceTests
 
 			EventStore.SaveEvents(_storeConventions, Aggregate.ID, new[] { new TestEvent { Sequence = 5 } });
 
+			Aggregate.AddEvent(new TestEvent());
+
 			Should.Throw<ConsistencyException>(() => _aggregateStore.Save(Aggregate));
 		}
 
