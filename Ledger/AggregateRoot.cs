@@ -14,6 +14,7 @@ namespace Ledger
 		protected AggregateRoot()
 		{
 			_events = new List<IDomainEvent>();
+			SequenceID = -1;
 		}
 
 		public IEnumerable<IDomainEvent> GetUncommittedEvents()
