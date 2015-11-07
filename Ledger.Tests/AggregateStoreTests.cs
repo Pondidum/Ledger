@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Ledger.Acceptance.TestObjects;
+using Ledger.Infrastructure;
 using Ledger.Stores;
 using Shouldly;
 using Xunit;
@@ -90,6 +92,55 @@ namespace Ledger.Tests
 			aggregate
 				.SequenceID
 				.ShouldBe(4);
+
+		}
+
+		[Fact]
+		public void When_the_aggregate_implements_another_interface()
+		{
+			var aggregate = new InterfaceAggregate();
+			aggregate.GenerateID();
+
+			aggregate.AddEvent(new TestEvent());
+
+			_store.Save(aggregate);
+
+			_backing
+				.LoadEvents(_store.Conventions<InterfaceAggregate>(), aggregate.ID)
+				.Last()
+				.Sequence
+				.ShouldBe(0);
+
+			aggregate
+				.SequenceID
+				.ShouldBe(0);
+		}
+
+		public interface IKeyed
+		{
+			string Key { get; }
+		}
+
+		public class InterfaceAggregate : AggregateRoot<Guid>, IKeyed
+		{
+			public string Key { get; set; }
+
+			public void AddEvent(DomainEvent @event)
+			{
+				ApplyEvent(@event);
+			}
+
+			public void AddEvents(IEnumerable<DomainEvent> events)
+			{
+				events.ForEach(AddEvent);
+			}
+
+			private void Handle(TestEvent @event) { }
+
+			public void GenerateID()
+			{
+				ID = Guid.NewGuid();
+			}
 		}
 	}
 }
