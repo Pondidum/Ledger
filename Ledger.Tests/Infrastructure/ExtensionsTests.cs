@@ -23,7 +23,27 @@ namespace Ledger.Tests.Infrastructure
 				.ShouldBe(false);
 		}
 
-		private class With : AggregateRoot<Guid>, ISnapshotable<Snap>
+		[Fact]
+		public void When_a_parent_type_implements_isnapshottable()
+		{
+			typeof(SubWith)
+				.ImplementsSnapshottable()
+				.ShouldBe(true);
+		}
+
+		[Fact]
+		public void When_a_parent_type_doesnt_implement_isnapshottable()
+		{
+			typeof(SubWithout)
+				.ImplementsSnapshottable()
+				.ShouldBe(false);
+		}
+
+		private class SubWith : With, ITest
+		{
+		}
+
+		private class With : AggregateRoot<Guid>, ISnapshotable<Snap>, ITest
 		{
 			public Snap CreateSnapshot()
 			{
@@ -36,7 +56,11 @@ namespace Ledger.Tests.Infrastructure
 			}
 		}
 
-		private class Without : AggregateRoot<Guid>
+		private class SubWithout : Without, ITest
+		{
+		}
+
+		private class Without : AggregateRoot<Guid>, ITest
 		{
 
 		}
@@ -44,6 +68,10 @@ namespace Ledger.Tests.Infrastructure
 		internal class Snap : ISequenced
 		{
 			public int Sequence { get; set; }
+		}
+
+		private interface ITest
+		{ 
 		}
 	}
 }
