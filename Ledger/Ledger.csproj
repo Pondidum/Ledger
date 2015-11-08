@@ -49,6 +49,7 @@
     <Compile Include="IDomainEvent.cs" />
     <Compile Include="IEventStore.cs" />
     <Compile Include="Infrastructure\Extensions.cs" />
+    <Compile Include="Infrastructure\LightweightCache.cs" />
     <Compile Include="Infrastructure\TypeInfo.cs" />
     <Compile Include="Infrastructure\PrivateReflectionDynamicObject.cs" />
     <Compile Include="ISequenced.cs" />
