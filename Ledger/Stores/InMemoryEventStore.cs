@@ -1,18 +1,25 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Ledger.Stores
 {
 	public class InMemoryEventStore<TKey> : IEventStore<TKey>
 	{
-		private readonly Dictionary<object, List<IDomainEvent>> _events;
+		private readonly Dictionary<object, List<StampedEvent>> _events;
 		private readonly Dictionary<object, List<ISequenced>> _snapshots;
+
+		private int _eventSequence;
 
 		public InMemoryEventStore()
 		{
-			_events = new Dictionary<object, List<IDomainEvent>>();
+			_events = new Dictionary<object, List<StampedEvent>>();
 			_snapshots = new Dictionary<object, List<ISequenced>>();
+
+			_eventSequence = 0;
 		}
+
+		public IEnumerable<IDomainEvent> AllEvents => _events.SelectMany(e => e.Value).OrderBy(e => e.GlobalSequence).Select(e => e.Event);
 
 		public int? GetLatestSequenceFor(IStoreConventions storeConventions, TKey aggregateID)
 		{
@@ -20,7 +27,7 @@ namespace Ledger.Stores
 
 			return last != null
 				? last.Sequence
-				: (int?) null;
+				: (int?)null;
 		}
 
 		public int? GetLatestSnapshotSequenceFor(IStoreConventions storeConventions, TKey aggregateID)
@@ -29,25 +36,25 @@ namespace Ledger.Stores
 
 			return last != null
 				? last.Sequence
-				: (int?) null;
+				: (int?)null;
 		}
 
 		public void SaveEvents(IStoreConventions storeConventions, TKey aggregateID, IEnumerable<IDomainEvent> changes)
 		{
 			if (_events.ContainsKey(aggregateID) == false)
 			{
-				_events[aggregateID] = new List<IDomainEvent>();
+				_events[aggregateID] = new List<StampedEvent>();
 			}
 
-			_events[aggregateID].AddRange(changes);
+			_events[aggregateID].AddRange(changes.Select(c => new StampedEvent(c, _eventSequence++)));
 		}
 
 		public IEnumerable<IDomainEvent> LoadEvents(IStoreConventions storeConventions, TKey aggregateID)
 		{
-			List<IDomainEvent> events;
+			List<StampedEvent> events;
 
 			return _events.TryGetValue(aggregateID, out events)
-				? events
+				? events.Select(s => s.Event)
 				: Enumerable.Empty<IDomainEvent>();
 		}
 
@@ -61,8 +68,8 @@ namespace Ledger.Stores
 		{
 			List<ISequenced> snapshots;
 
-			return _snapshots.TryGetValue(aggregateID, out snapshots) 
-				? snapshots.LastOrDefault() 
+			return _snapshots.TryGetValue(aggregateID, out snapshots)
+				? snapshots.LastOrDefault()
 				: null;
 		}
 
@@ -83,6 +90,19 @@ namespace Ledger.Stores
 
 		public void Dispose()
 		{
+		}
+
+
+		private struct StampedEvent
+		{
+			public int GlobalSequence { get; }
+			public IDomainEvent Event { get; }
+
+			public StampedEvent(IDomainEvent @event, int sequence)
+			{
+				GlobalSequence = sequence;
+				Event = @event;
+			}
 		}
 	}
 }
