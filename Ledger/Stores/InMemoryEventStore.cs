@@ -7,19 +7,22 @@ namespace Ledger.Stores
 	public class InMemoryEventStore<TKey> : IEventStore<TKey>
 	{
 		private readonly Dictionary<object, List<StampedEvent>> _events;
-		private readonly Dictionary<object, List<ISequenced>> _snapshots;
+		private readonly Dictionary<object, List<StampedSnapshot>> _snapshots;
 
 		private int _eventSequence;
+		private int _snapshotSequence;
 
 		public InMemoryEventStore()
 		{
 			_events = new Dictionary<object, List<StampedEvent>>();
-			_snapshots = new Dictionary<object, List<ISequenced>>();
+			_snapshots = new Dictionary<object, List<StampedSnapshot>>();
 
 			_eventSequence = 0;
+			_snapshotSequence = 0;
 		}
 
 		public IEnumerable<IDomainEvent> AllEvents => _events.SelectMany(e => e.Value).OrderBy(e => e.GlobalSequence).Select(e => e.Event);
+		public IEnumerable<object> AllSnapshots => _snapshots.SelectMany(e => e.Value).OrderBy(e => e.GlobalSequence).Select(e => e.Snapshot);
 
 		public int? GetLatestSequenceFor(IStoreConventions storeConventions, TKey aggregateID)
 		{
@@ -66,10 +69,10 @@ namespace Ledger.Stores
 
 		public ISequenced LoadLatestSnapshotFor(IStoreConventions storeConventions, TKey aggregateID)
 		{
-			List<ISequenced> snapshots;
+			List<StampedSnapshot> snapshots;
 
 			return _snapshots.TryGetValue(aggregateID, out snapshots)
-				? snapshots.LastOrDefault()
+				? snapshots.Select(s => s.Snapshot).LastOrDefault()
 				: null;
 		}
 
@@ -77,10 +80,10 @@ namespace Ledger.Stores
 		{
 			if (_snapshots.ContainsKey(aggregateID) == false)
 			{
-				_snapshots[aggregateID] = new List<ISequenced>();
+				_snapshots[aggregateID] = new List<StampedSnapshot>();
 			}
 
-			_snapshots[aggregateID].Add(snapshot);
+			_snapshots[aggregateID].Add(new StampedSnapshot(snapshot, _snapshotSequence++));
 		}
 
 		public IEventStore<TKey> BeginTransaction()
@@ -102,6 +105,18 @@ namespace Ledger.Stores
 			{
 				GlobalSequence = sequence;
 				Event = @event;
+			}
+		}
+
+		private struct StampedSnapshot
+		{
+			public int GlobalSequence { get; }
+			public ISequenced Snapshot { get; }
+
+			public StampedSnapshot(ISequenced snapshot, int sequence)
+			{
+				GlobalSequence = sequence;
+				Snapshot = snapshot;
 			}
 		}
 	}
