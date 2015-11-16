@@ -62,6 +62,8 @@
     <Compile Include="StoreConventions.cs" />
     <Compile Include="Stores\InMemoryEventStore.cs" />
     <Compile Include="Stores\InterceptingEventStore.cs" />
+    <Compile Include="Stores\InterceptingReader.cs" />
+    <Compile Include="Stores\InterceptingWriter.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
