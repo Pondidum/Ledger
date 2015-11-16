@@ -61,6 +61,7 @@
     <Compile Include="Properties\AssemblyVersion.cs" />
     <Compile Include="StoreConventions.cs" />
     <Compile Include="Stores\InMemoryEventStore.cs" />
+    <Compile Include="Stores\InterceptingEventStore.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

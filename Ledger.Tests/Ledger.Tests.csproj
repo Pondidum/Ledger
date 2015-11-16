@@ -75,6 +75,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Scratchpad.cs" />
     <Compile Include="Stores\InMemoryEventStoreTests.cs" />
+    <Compile Include="Stores\InterceptingEventStoreTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Ledger.Acceptance\Ledger.Acceptance.csproj">
