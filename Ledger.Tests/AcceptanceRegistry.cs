@@ -8,7 +8,7 @@ namespace Ledger.Tests
 	{
 		public AcceptanceRegistry()
 		{
-			For<IEventStore<Guid>>().Use<InMemoryEventStore<Guid>>();
+			For<IEventStore>().Use<InMemoryEventStore>();
 		}
 	}
 }

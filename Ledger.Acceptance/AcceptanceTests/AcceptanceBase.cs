@@ -6,9 +6,9 @@ namespace Ledger.Acceptance.AcceptanceTests
 	{
 		public TAggregate Aggregate { get; set; }
 
-		private IEventStore<Guid> _store;
+		private IEventStore _store;
 
-		protected virtual IEventStore<Guid> EventStore
+		protected virtual IEventStore EventStore
 		{
 			get
 			{

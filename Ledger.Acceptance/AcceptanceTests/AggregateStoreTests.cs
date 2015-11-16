@@ -24,7 +24,7 @@ namespace Ledger.Acceptance.AcceptanceTests
 
 			_aggregateStore.Save(Aggregate);
 
-			EventStore.LoadEvents(_storeConventions, Aggregate.ID).ShouldBeEmpty();
+			EventStore.CreateReader<Guid>().LoadEvents(_storeConventions, Aggregate.ID).ShouldBeEmpty();
 		}
 
 		[Fact]
@@ -33,7 +33,7 @@ namespace Ledger.Acceptance.AcceptanceTests
 			Aggregate = new SnapshotAggregate();
 			Aggregate.GenerateID();
 
-			EventStore.SaveEvents(_storeConventions, Aggregate.ID, new[] { new TestEvent { Sequence = 5 } });
+			EventStore.CreateWriter<Guid>().SaveEvents(_storeConventions, Aggregate.ID, new[] { new TestEvent { Sequence = 5 } });
 
 			Aggregate.AddEvent(new TestEvent());
 
@@ -46,7 +46,7 @@ namespace Ledger.Acceptance.AcceptanceTests
 			var aggregateStore = new AggregateStore<Guid>(EventStore);
 			var id = Guid.NewGuid();
 
-			EventStore.SaveEvents(_storeConventions, id, new[]
+			EventStore.CreateWriter<Guid>().SaveEvents(_storeConventions, id, new[]
 			{
 				new TestEvent { Sequence = 5},
 				new TestEvent { Sequence = 6},

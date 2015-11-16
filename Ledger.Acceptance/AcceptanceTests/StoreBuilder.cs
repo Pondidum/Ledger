@@ -20,9 +20,9 @@ namespace Ledger.Acceptance.AcceptanceTests
 			});
 		}
 
-		public static IEventStore<Guid> GetStore()
+		public static IEventStore GetStore()
 		{
-			return Container.GetInstance<IEventStore<Guid>>();
+			return Container.GetInstance<IEventStore>();
 		}
 	}
 }

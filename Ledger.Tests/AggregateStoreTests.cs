@@ -11,12 +11,12 @@ namespace Ledger.Tests
 {
 	public class AggregateStoreTests
 	{
-		private readonly InMemoryEventStore<Guid> _backing;
+		private readonly InMemoryEventStore _backing;
 		private readonly AggregateStore<Guid> _store;
 
 		public AggregateStoreTests()
 		{
-			_backing = new InMemoryEventStore<Guid>();
+			_backing = new InMemoryEventStore();
 			_store = new AggregateStore<Guid>(_backing);
 		}
 
@@ -31,6 +31,7 @@ namespace Ledger.Tests
 			_store.Save(aggregate);
 
 			_backing
+				.CreateReader<Guid>()
 				.LoadEvents(_store.Conventions<TestAggregate>(), aggregate.ID)
 				.Last()
 				.Sequence
@@ -55,6 +56,7 @@ namespace Ledger.Tests
 			_store.Save(aggregate);
 
 			_backing
+				.CreateReader<Guid>()
 				.LoadEvents(_store.Conventions<TestAggregate>(), aggregate.ID)
 				.Last()
 				.Sequence
@@ -84,6 +86,7 @@ namespace Ledger.Tests
 			_store.Save(aggregate);
 
 			_backing
+				.CreateReader<Guid>()
 				.LoadEvents(_store.Conventions<TestAggregate>(), aggregate.ID)
 				.Last()
 				.Sequence
@@ -106,6 +109,7 @@ namespace Ledger.Tests
 			_store.Save(aggregate);
 
 			_backing
+				.CreateReader<Guid>()
 				.LoadEvents(_store.Conventions<InterfaceAggregate>(), aggregate.ID)
 				.Last()
 				.Sequence

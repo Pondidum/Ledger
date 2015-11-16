@@ -8,16 +8,16 @@ namespace Ledger
 {
 	public class AggregateStore<TKey>
 	{
-		private readonly IEventStore<TKey> _eventStore;
+		private readonly IEventStore _eventStore;
 		private readonly IStoreNamingConvention _namingConvention;
 		public int DefaultSnapshotInterval { get; set; }
 
-		public AggregateStore(IEventStore<TKey> eventStore)
+		public AggregateStore(IEventStore eventStore)
 			: this(eventStore, new KeyTypeNamingConvention())
 		{
 		}
 
-		public AggregateStore(IEventStore<TKey> eventStore, IStoreNamingConvention namingConvention)
+		public AggregateStore(IEventStore eventStore, IStoreNamingConvention namingConvention)
 		{
 			_eventStore = eventStore;
 			_namingConvention = namingConvention;
@@ -43,7 +43,7 @@ namespace Ledger
 				return;
 			}
 
-			using (var store = _eventStore.BeginTransaction())
+			using (var store = _eventStore.CreateWriter<TKey>())
 			{
 				var conventions = Conventions<TAggregate>();
 
@@ -77,7 +77,7 @@ namespace Ledger
 			return (ISequenced) createSnapshot.Invoke(aggregate, new object[] {});
 		}
 
-		private static void ThrowIfVersionsInconsistent<TAggregate>(IEventStore<TKey> store, IStoreConventions storeConventions, TAggregate aggregate)
+		private static void ThrowIfVersionsInconsistent<TAggregate>(IStoreWriter<TKey> store, IStoreConventions storeConventions, TAggregate aggregate)
 			where TAggregate : AggregateRoot<TKey>
 		{
 			var lastStoredSequence = store.GetLatestSequenceFor(storeConventions, aggregate.ID);
@@ -88,7 +88,7 @@ namespace Ledger
 			}
 		}
 
-		private bool NeedsSnapshot<TAggregate>(IEventStore<TKey> store, TAggregate aggregate, IReadOnlyCollection<IDomainEvent> changes)
+		private bool NeedsSnapshot<TAggregate>(IStoreWriter<TKey> store, TAggregate aggregate, IReadOnlyCollection<IDomainEvent> changes)
 			where TAggregate : AggregateRoot<TKey>
 		{
 			var control = aggregate as ISnapshotControl;
@@ -111,7 +111,7 @@ namespace Ledger
 		public TAggregate Load<TAggregate>(TKey aggregateID, Func<TAggregate> createNew)
 			where TAggregate : AggregateRoot<TKey>
 		{
-			using (var store = _eventStore.BeginTransaction())
+			using (var store = _eventStore.CreateReader<TKey>())
 			{
 				var conventions = Conventions<TAggregate>();
 				var aggregate = createNew();

@@ -13,8 +13,8 @@ namespace Ledger.Acceptance.AcceptanceTests
 			var conventions = aggregateStore.Conventions<SnapshotAggregate>();
             var id = Guid.NewGuid();
 
-			EventStore.SaveSnapshot(conventions, id, new TestSnapshot {Sequence = 10});
-			EventStore.SaveEvents(conventions, id, new []
+			EventStore.CreateWriter<Guid>().SaveSnapshot(conventions, id, new TestSnapshot {Sequence = 10});
+			EventStore.CreateWriter<Guid>().SaveEvents(conventions, id, new []
 			{
 				new TestEvent { Sequence = 5},
 				new TestEvent { Sequence = 6},
