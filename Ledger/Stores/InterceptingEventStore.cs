@@ -1,6 +1,6 @@
 ﻿namespace Ledger.Stores
 {
-	public class InterceptingEventStore: IEventStore
+	public class InterceptingEventStore : IEventStore
 	{
 		private readonly IEventStore _other;
 
@@ -9,14 +9,14 @@
 			_other = other;
 		}
 
-		public virtual IStoreReader<TKey> CreateReader<TKey>()
+		public virtual IStoreReader<TKey> CreateReader<TKey>(IStoreConventions storeConventions)
 		{
-			return new InterceptingReader<TKey>(_other.CreateReader<TKey>());
+			return new InterceptingReader<TKey>(_other.CreateReader<TKey>(storeConventions));
 		}
 
-		public virtual IStoreWriter<TKey> CreateWriter<TKey>()
+		public virtual IStoreWriter<TKey> CreateWriter<TKey>(IStoreConventions storeConventions)
 		{
-			return new InterceptingWriter<TKey>(_other.CreateWriter<TKey>());
+			return new InterceptingWriter<TKey>(_other.CreateWriter<TKey>(storeConventions));
 		}
 	}
 }

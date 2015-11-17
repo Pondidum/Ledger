@@ -31,8 +31,8 @@ namespace Ledger.Tests
 			_store.Save(aggregate);
 
 			_backing
-				.CreateReader<Guid>()
-				.LoadEvents(_store.Conventions<TestAggregate>(), aggregate.ID)
+				.CreateReader<Guid>(_store.Conventions<TestAggregate>())
+				.LoadEvents(aggregate.ID)
 				.Last()
 				.Sequence
 				.ShouldBe(0);
@@ -56,8 +56,8 @@ namespace Ledger.Tests
 			_store.Save(aggregate);
 
 			_backing
-				.CreateReader<Guid>()
-				.LoadEvents(_store.Conventions<TestAggregate>(), aggregate.ID)
+				.CreateReader<Guid>(_store.Conventions<TestAggregate>())
+				.LoadEvents(aggregate.ID)
 				.Last()
 				.Sequence
 				.ShouldBe(3);
@@ -86,8 +86,8 @@ namespace Ledger.Tests
 			_store.Save(aggregate);
 
 			_backing
-				.CreateReader<Guid>()
-				.LoadEvents(_store.Conventions<TestAggregate>(), aggregate.ID)
+				.CreateReader<Guid>(_store.Conventions<TestAggregate>())
+				.LoadEvents(aggregate.ID)
 				.Last()
 				.Sequence
 				.ShouldBe(4);
@@ -109,8 +109,8 @@ namespace Ledger.Tests
 			_store.Save(aggregate);
 
 			_backing
-				.CreateReader<Guid>()
-				.LoadEvents(_store.Conventions<InterfaceAggregate>(), aggregate.ID)
+				.CreateReader<Guid>(_store.Conventions<TestAggregate>())
+				.LoadEvents(aggregate.ID)
 				.Last()
 				.Sequence
 				.ShouldBe(0);

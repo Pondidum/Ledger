@@ -24,18 +24,18 @@ namespace Ledger.Stores
 		public IEnumerable<IDomainEvent> AllEvents => _events.SelectMany(e => e.Value).OrderBy(e => e.GlobalSequence).Select(e => e.Event);
 		public IEnumerable<object> AllSnapshots => _snapshots.SelectMany(e => e.Value).OrderBy(e => e.GlobalSequence).Select(e => e.Snapshot);
 
-		public IStoreReader<TKey> CreateReader<TKey>()
+		public IStoreReader<TKey> CreateReader<TKey>(IStoreConventions storeConventions)
 		{
 			return new ReaderWriter<TKey>(_events, _snapshots, ref _eventSequence, ref _snapshotSequence);
 		}
 
-		public IStoreWriter<TKey> CreateWriter<TKey>()
+		public IStoreWriter<TKey> CreateWriter<TKey>(IStoreConventions storeConventions)
 		{
 			return new ReaderWriter<TKey>(_events, _snapshots, ref _eventSequence, ref _snapshotSequence);
 		}
 
 
-		private class ReaderWriter<TKey> : IStoreReader<TKey>, IStoreWriter<TKey>, IDisposable
+		private class ReaderWriter<TKey> : IStoreReader<TKey>, IStoreWriter<TKey>
 		{
 			private readonly Dictionary<object, List<StampedEvent>> _events;
 			private readonly Dictionary<object, List<StampedSnapshot>> _snapshots;
@@ -50,7 +50,7 @@ namespace Ledger.Stores
 				_snapshotSequence = snapshotSequence;
 			}
 
-			public IEnumerable<IDomainEvent> LoadEvents(IStoreConventions storeConventions, TKey aggregateID)
+			public IEnumerable<IDomainEvent> LoadEvents(TKey aggregateID)
 			{
 				List<StampedEvent> events;
 
@@ -59,13 +59,13 @@ namespace Ledger.Stores
 					: Enumerable.Empty<IDomainEvent>();
 			}
 
-			public IEnumerable<IDomainEvent> LoadEventsSince(IStoreConventions storeConventions, TKey aggregateID, int sequenceID)
+			public IEnumerable<IDomainEvent> LoadEventsSince(TKey aggregateID, int sequenceID)
 			{
-				return LoadEvents(storeConventions, aggregateID)
+				return LoadEvents(aggregateID)
 					.Where(e => e.Sequence > sequenceID);
 			}
 
-			public ISequenced LoadLatestSnapshotFor(IStoreConventions storeConventions, TKey aggregateID)
+			public ISequenced LoadLatestSnapshotFor(TKey aggregateID)
 			{
 				List<StampedSnapshot> snapshots;
 
@@ -74,25 +74,25 @@ namespace Ledger.Stores
 					: null;
 			}
 
-			public int? GetLatestSequenceFor(IStoreConventions storeConventions, TKey aggregateID)
+			public int? GetLatestSequenceFor(TKey aggregateID)
 			{
-				var last = LoadEvents(storeConventions, aggregateID).LastOrDefault();
+				var last = LoadEvents(aggregateID).LastOrDefault();
 
 				return last != null
 					? last.Sequence
 					: (int?)null;
 			}
 
-			public int? GetLatestSnapshotSequenceFor(IStoreConventions storeConventions, TKey aggregateID)
+			public int? GetLatestSnapshotSequenceFor(TKey aggregateID)
 			{
-				var last = LoadLatestSnapshotFor(storeConventions, aggregateID);
+				var last = LoadLatestSnapshotFor(aggregateID);
 
 				return last != null
 					? last.Sequence
 					: (int?)null;
 			}
 
-			public void SaveEvents(IStoreConventions storeConventions, TKey aggregateID, IEnumerable<IDomainEvent> changes)
+			public void SaveEvents(TKey aggregateID, IEnumerable<IDomainEvent> changes)
 			{
 				if (_events.ContainsKey(aggregateID) == false)
 				{
@@ -102,7 +102,7 @@ namespace Ledger.Stores
 				_events[aggregateID].AddRange(changes.Select(c => new StampedEvent(c, _eventSequence++)));
 			}
 
-			public void SaveSnapshot(IStoreConventions storeConventions, TKey aggregateID, ISequenced snapshot)
+			public void SaveSnapshot(TKey aggregateID, ISequenced snapshot)
 			{
 				if (_snapshots.ContainsKey(aggregateID) == false)
 				{

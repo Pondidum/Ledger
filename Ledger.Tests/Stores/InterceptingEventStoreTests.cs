@@ -45,9 +45,9 @@ namespace Ledger.Tests.Stores
 				_onEvent = onEvent;
 			}
 
-			public override IStoreWriter<TKey> CreateWriter<TKey>()
+			public override IStoreWriter<TKey> CreateWriter<TKey>(IStoreConventions storeConventions)
 			{
-				return new EventLoggingStoreWriter<TKey>(_other.CreateWriter<TKey>(), _onEvent);
+				return new EventLoggingStoreWriter<TKey>(_other.CreateWriter<TKey>(storeConventions), _onEvent);
 			}
 		}
 
@@ -61,12 +61,12 @@ namespace Ledger.Tests.Stores
 				_onEvent = onEvent;
 			}
 
-			public override void SaveEvents(IStoreConventions storeConventions, TKey aggregateID, IEnumerable<IDomainEvent> changes)
+			public override void SaveEvents(TKey aggregateID, IEnumerable<IDomainEvent> changes)
 			{
 				//this is a pretty bad impl, as you can block event saving, but its easy to test!
 				//also using the .Apply() method avoids iterating the changes collection more than once.
 
-				base.SaveEvents(storeConventions, aggregateID, changes.Apply(change => _onEvent(change)));
+				base.SaveEvents(aggregateID, changes.Apply(change => _onEvent(change)));
 			}
 		}
 	}

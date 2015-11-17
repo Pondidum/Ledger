@@ -43,21 +43,21 @@ namespace Ledger
 				return;
 			}
 
-			using (var store = _eventStore.CreateWriter<TKey>())
-			{
-				var conventions = Conventions<TAggregate>();
+			var conventions = Conventions<TAggregate>();
 
-				ThrowIfVersionsInconsistent(store, conventions, aggregate);
+			using (var store = _eventStore.CreateWriter<TKey>(conventions))
+			{
+				ThrowIfVersionsInconsistent(store, aggregate);
 
 				if (typeof(TAggregate).ImplementsSnapshottable() && NeedsSnapshot(store, aggregate, changes))
 				{
 					var snapshot = GetSnapshot(aggregate);
 					snapshot.Sequence = changes.Last().Sequence;
 
-					store.SaveSnapshot(conventions, aggregate.ID, snapshot);
+					store.SaveSnapshot(aggregate.ID, snapshot);
 				}
 
-				store.SaveEvents(conventions, aggregate.ID, changes);
+				store.SaveEvents(aggregate.ID, changes);
 
 				aggregate.MarkEventsCommitted();
 			}
@@ -77,10 +77,10 @@ namespace Ledger
 			return (ISequenced) createSnapshot.Invoke(aggregate, new object[] {});
 		}
 
-		private static void ThrowIfVersionsInconsistent<TAggregate>(IStoreWriter<TKey> store, IStoreConventions storeConventions, TAggregate aggregate)
+		private static void ThrowIfVersionsInconsistent<TAggregate>(IStoreWriter<TKey> store, TAggregate aggregate)
 			where TAggregate : AggregateRoot<TKey>
 		{
-			var lastStoredSequence = store.GetLatestSequenceFor(storeConventions, aggregate.ID);
+			var lastStoredSequence = store.GetLatestSequenceFor(aggregate.ID);
 
 			if (lastStoredSequence.HasValue && lastStoredSequence != aggregate.SequenceID)
 			{
@@ -102,8 +102,7 @@ namespace Ledger
 				return true;
 			}
 
-			var conventions = Conventions<TAggregate>();
-			var snapshotID = store.GetLatestSnapshotSequenceFor(conventions, aggregate.ID);
+			var snapshotID = store.GetLatestSnapshotSequenceFor(aggregate.ID);
 
 			return snapshotID.HasValue && changes.Last().Sequence >= snapshotID.Value + interval;
 		}
@@ -111,25 +110,26 @@ namespace Ledger
 		public TAggregate Load<TAggregate>(TKey aggregateID, Func<TAggregate> createNew)
 			where TAggregate : AggregateRoot<TKey>
 		{
-			using (var store = _eventStore.CreateReader<TKey>())
+			var conventions = Conventions<TAggregate>();
+
+			using (var store = _eventStore.CreateReader<TKey>(conventions))
 			{
-				var conventions = Conventions<TAggregate>();
 				var aggregate = createNew();
 
 				if (typeof(TAggregate).ImplementsSnapshottable())
 				{
-					var snapshot = store.LoadLatestSnapshotFor(conventions, aggregateID);
+					var snapshot = store.LoadLatestSnapshotFor(aggregateID);
 					var since = snapshot != null
 						? snapshot.Sequence
 						: -1;
 
-					var events = store.LoadEventsSince(conventions, aggregateID, since);
+					var events = store.LoadEventsSince(aggregateID, since);
 
 					aggregate.LoadFromSnapshot(snapshot, events);
 				}
 				else
 				{
-					var events = store.LoadEvents(conventions, aggregateID);
+					var events = store.LoadEvents(aggregateID);
 					aggregate.LoadFromEvents(events);
 				}
 

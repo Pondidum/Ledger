@@ -12,7 +12,7 @@ namespace Ledger.Acceptance.AcceptanceTests
 			var aggregateStore = new AggregateStore<Guid>(EventStore);
 			var id = Guid.NewGuid();
 
-			EventStore.CreateWriter<Guid>().SaveEvents(aggregateStore.Conventions<TestAggregate>(), id, new[]
+			EventStore.CreateWriter<Guid>(aggregateStore.Conventions<TestAggregate>()).SaveEvents(id, new[]
 			{
 				new TestEvent { Sequence = 5},
 				new TestEvent { Sequence = 6},

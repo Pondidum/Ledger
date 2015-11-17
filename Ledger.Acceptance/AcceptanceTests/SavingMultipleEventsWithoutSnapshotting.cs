@@ -28,13 +28,13 @@ namespace Ledger.Acceptance.AcceptanceTests
 		[Fact]
 		public void The_events_should_be_written()
 		{
-			EventStore.CreateReader<Guid>().LoadEvents(_storeConventions, Aggregate.ID).Count().ShouldBe(2);
+			EventStore.CreateReader<Guid>(_storeConventions).LoadEvents(Aggregate.ID).Count().ShouldBe(2);
 		}
 
 		[Fact]
 		public void The_events_should_be_in_sequence()
 		{
-			var events = EventStore.CreateReader<Guid>().LoadEvents(_storeConventions, Aggregate.ID).ToList();
+			var events = EventStore.CreateReader<Guid>(_storeConventions).LoadEvents(Aggregate.ID).ToList();
 
 			events.ShouldSatisfyAllConditions(
 				() => events[0].Sequence.ShouldBe(0),

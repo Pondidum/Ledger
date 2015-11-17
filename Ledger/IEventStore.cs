@@ -5,23 +5,23 @@ namespace Ledger
 {
 	public interface IEventStore
 	{
-		IStoreReader<TKey> CreateReader<TKey>();
-		IStoreWriter<TKey> CreateWriter<TKey>();
+		IStoreReader<TKey> CreateReader<TKey>(IStoreConventions storeConventions);
+		IStoreWriter<TKey> CreateWriter<TKey>(IStoreConventions storeConventions);
 	}
 
 	public interface IStoreReader<TKey> : IDisposable
 	{
-		IEnumerable<IDomainEvent> LoadEvents(IStoreConventions storeConventions, TKey aggregateID);
-		IEnumerable<IDomainEvent> LoadEventsSince(IStoreConventions storeConventions, TKey aggregateID, int sequenceID);
-		ISequenced LoadLatestSnapshotFor(IStoreConventions storeConventions, TKey aggregateID);
+		IEnumerable<IDomainEvent> LoadEvents(TKey aggregateID);
+		IEnumerable<IDomainEvent> LoadEventsSince(TKey aggregateID, int sequenceID);
+		ISequenced LoadLatestSnapshotFor(TKey aggregateID);
 	}
 
 	public interface IStoreWriter<TKey> : IDisposable
 	{
-		int? GetLatestSequenceFor(IStoreConventions storeConventions, TKey aggregateID);
-		int? GetLatestSnapshotSequenceFor(IStoreConventions storeConventions, TKey aggregateID);
+		int? GetLatestSequenceFor(TKey aggregateID);
+		int? GetLatestSnapshotSequenceFor(TKey aggregateID);
 
-		void SaveEvents(IStoreConventions storeConventions, TKey aggregateID, IEnumerable<IDomainEvent> changes);
-		void SaveSnapshot(IStoreConventions storeConventions, TKey aggregateID, ISequenced snapshot);
+		void SaveEvents(TKey aggregateID, IEnumerable<IDomainEvent> changes);
+		void SaveSnapshot(TKey aggregateID, ISequenced snapshot);
 	}
 }

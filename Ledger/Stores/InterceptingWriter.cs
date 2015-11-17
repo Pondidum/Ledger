@@ -11,24 +11,24 @@ namespace Ledger.Stores
 			_other = other;
 		}
 
-		public virtual int? GetLatestSequenceFor(IStoreConventions storeConventions, TKey aggregateID)
+		public virtual int? GetLatestSequenceFor(TKey aggregateID)
 		{
-			return _other.GetLatestSequenceFor(storeConventions, aggregateID);
+			return _other.GetLatestSequenceFor(aggregateID);
 		}
 
-		public virtual int? GetLatestSnapshotSequenceFor(IStoreConventions storeConventions, TKey aggregateID)
+		public virtual int? GetLatestSnapshotSequenceFor(TKey aggregateID)
 		{
-			return _other.GetLatestSnapshotSequenceFor(storeConventions, aggregateID);
+			return _other.GetLatestSnapshotSequenceFor(aggregateID);
 		}
 
-		public virtual void SaveEvents(IStoreConventions storeConventions, TKey aggregateID, IEnumerable<IDomainEvent> changes)
+		public virtual void SaveEvents(TKey aggregateID, IEnumerable<IDomainEvent> changes)
 		{
-			_other.SaveEvents(storeConventions, aggregateID, changes);
+			_other.SaveEvents(aggregateID, changes);
 		}
 
-		public virtual void SaveSnapshot(IStoreConventions storeConventions, TKey aggregateID, ISequenced snapshot)
+		public virtual void SaveSnapshot(TKey aggregateID, ISequenced snapshot)
 		{
-			_other.SaveSnapshot(storeConventions, aggregateID, snapshot);
+			_other.SaveSnapshot(aggregateID, snapshot);
 		}
 
 		public virtual void Dispose()

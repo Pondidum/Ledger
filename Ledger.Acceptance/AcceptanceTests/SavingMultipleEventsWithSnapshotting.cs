@@ -34,8 +34,8 @@ namespace Ledger.Acceptance.AcceptanceTests
 		public void The_events_should_be_written()
 		{
 			EventStore
-				.CreateReader<Guid>()
-				.LoadEvents(_storeConventions, Aggregate.ID)
+				.CreateReader<Guid>(_storeConventions)
+				.LoadEvents(Aggregate.ID)
 				.ShouldNotBeEmpty();
 		}
 
@@ -58,8 +58,8 @@ namespace Ledger.Acceptance.AcceptanceTests
 		public void The_snapshot_should_be_saved()
 		{
 			EventStore
-				.CreateReader<Guid>()
-				.LoadLatestSnapshotFor(_storeConventions, Aggregate.ID)
+				.CreateReader<Guid>(_storeConventions)
+				.LoadLatestSnapshotFor(Aggregate.ID)
 				.ShouldNotBe(null);
 		}
 
@@ -67,8 +67,8 @@ namespace Ledger.Acceptance.AcceptanceTests
 		public void The_snapshot_should_have_the_latest_sequnce_id()
 		{
 			EventStore
-				.CreateReader<Guid>()
-				.LoadLatestSnapshotFor(_storeConventions, Aggregate.ID)
+				.CreateReader<Guid>(_storeConventions)
+				.LoadLatestSnapshotFor(Aggregate.ID)
 				.Sequence
 				.ShouldBe(_events.Count() - 1);
 		}
