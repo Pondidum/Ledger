@@ -1,4 +1,4 @@
-﻿using Ledger.Acceptance.AcceptanceTests;
+﻿using Ledger.Acceptance;
 using Ledger.Stores;
 using Xunit;
 

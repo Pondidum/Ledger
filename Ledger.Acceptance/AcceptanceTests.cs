@@ -5,7 +5,7 @@ using Ledger.Infrastructure;
 using Shouldly;
 using Xunit;
 
-namespace Ledger.Acceptance.AcceptanceTests
+namespace Ledger.Acceptance
 {
 	public abstract class AcceptanceTests
 	{
