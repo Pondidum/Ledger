@@ -73,11 +73,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AcceptanceTests\AcceptanceBase.cs" />
-    <Compile Include="AcceptanceTests\AggregateStoreTests.cs" />
-    <Compile Include="AcceptanceTests\LoadingMultipleEventsWithSnapshotting.cs" />
-    <Compile Include="AcceptanceTests\SavingMultipleEventsWithSnapshotting.cs" />
-    <Compile Include="AcceptanceTests\StoreBuilder.cs" />
+    <Compile Include="AcceptanceTests\AcceptanceTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Scratchpad.cs" />
     <Compile Include="TestDomain\Candidate.cs" />
@@ -90,8 +86,6 @@
     <Compile Include="TestObjects\SnapshotAggregate.cs" />
     <Compile Include="TestObjects\TestAggregate.cs" />
     <Compile Include="TestObjects\TestEvent.cs" />
-    <Compile Include="AcceptanceTests\SavingMultipleEventsWithoutSnapshotting.cs" />
-    <Compile Include="AcceptanceTests\LoadingMultipleEventsWithoutSnapshotting.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
