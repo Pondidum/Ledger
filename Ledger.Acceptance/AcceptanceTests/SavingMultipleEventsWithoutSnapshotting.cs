@@ -1,7 +1,5 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using Ledger.Infrastructure;
 using Ledger.Acceptance.TestObjects;
 using Shouldly;
 using Xunit;
@@ -10,12 +8,11 @@ namespace Ledger.Acceptance.AcceptanceTests
 {
 	public class SavingMultipleEventsWithoutSnapshotting : AcceptanceBase<TestAggregate>
 	{
-		private IStoreConventions _storeConventions;
-
-		public SavingMultipleEventsWithoutSnapshotting()
+		[Fact]
+		public void When_saving_multiple_events_without_snapshotting()
 		{
 			var aggregateStore = new AggregateStore<Guid>(EventStore);
-			_storeConventions = aggregateStore.Conventions<TestAggregate>();
+			var conventions = aggregateStore.Conventions<TestAggregate>();
 
 			Aggregate = new TestAggregate();
 
@@ -23,29 +20,18 @@ namespace Ledger.Acceptance.AcceptanceTests
 			Aggregate.AddEvents(new[] { new TestEvent(), new TestEvent() });
 
 			aggregateStore.Save(Aggregate);
-		}
 
-		[Fact]
-		public void The_events_should_be_written()
-		{
-			EventStore.CreateReader<Guid>(_storeConventions).LoadEvents(Aggregate.ID).Count().ShouldBe(2);
-		}
+			using (var reader = EventStore.CreateReader<Guid>(conventions))
+			{
+				var events = reader.LoadEvents(Aggregate.ID).ToList();
 
-		[Fact]
-		public void The_events_should_be_in_sequence()
-		{
-			var events = EventStore.CreateReader<Guid>(_storeConventions).LoadEvents(Aggregate.ID).ToList();
-
-			events.ShouldSatisfyAllConditions(
-				() => events[0].Sequence.ShouldBe(0),
-				() => events[1].Sequence.ShouldBe(1)
-			);
-		}
-
-		[Fact]
-		public void The_uncommitted_changes_should_be_cleared()
-		{
-			Aggregate.GetUncommittedEvents().ShouldBeEmpty();
+				reader.ShouldSatisfyAllConditions(
+					() => events.Count().ShouldBe(2),
+					() => events[0].Sequence.ShouldBe(0),
+					() => events[1].Sequence.ShouldBe(1),
+					() => Aggregate.GetUncommittedEvents().ShouldBeEmpty()
+				);
+			}
 		}
 	}
 }

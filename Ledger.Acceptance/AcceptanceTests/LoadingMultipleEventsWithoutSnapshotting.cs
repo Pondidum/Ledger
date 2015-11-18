@@ -7,7 +7,8 @@ namespace Ledger.Acceptance.AcceptanceTests
 {
 	public class LoadingMultipleEventsWithoutSnapshotting : AcceptanceBase<TestAggregate>
 	{
-		public LoadingMultipleEventsWithoutSnapshotting()
+		[Fact]
+		public void When_loading_multiple_events_without_snapshotting()
 		{
 			var aggregateStore = new AggregateStore<Guid>(EventStore);
 			var id = Guid.NewGuid();
@@ -19,18 +20,11 @@ namespace Ledger.Acceptance.AcceptanceTests
 			});
 
 			Aggregate = aggregateStore.Load(id, () => new TestAggregate());
-		}
 
-		[Fact]
-		public void The_uncommitted_changes_should_be_empty()
-		{
-			Aggregate.GetUncommittedEvents().ShouldBeEmpty();
-		}
-
-		[Fact]
-		public void The_sequence_id_should_be_the_last_events()
-		{
-			Aggregate.SequenceID.ShouldBe(6);
+			Aggregate.ShouldSatisfyAllConditions(
+				() => Aggregate.GetUncommittedEvents().ShouldBeEmpty(),
+				() => Aggregate.SequenceID.ShouldBe(6)
+			);
 		}
 	}
 }

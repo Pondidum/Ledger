@@ -7,33 +7,26 @@ namespace Ledger.Acceptance.AcceptanceTests
 {
 	public class LoadingMultipleEventsWithSnapshotting : AcceptanceBase<SnapshotAggregate>
 	{
-		public LoadingMultipleEventsWithSnapshotting()
+		[Fact]
+		public void When_loading_multiple_events_with_snapshotting()
 		{
 			var aggregateStore = new AggregateStore<Guid>(EventStore);
 			var conventions = aggregateStore.Conventions<SnapshotAggregate>();
-            var id = Guid.NewGuid();
+			var id = Guid.NewGuid();
 
-			EventStore.CreateWriter<Guid>(conventions).SaveSnapshot(id, new TestSnapshot {Sequence = 10});
-			EventStore.CreateWriter<Guid>(conventions).SaveEvents(id, new []
+			EventStore.CreateWriter<Guid>(conventions).SaveSnapshot(id, new TestSnapshot { Sequence = 10 });
+			EventStore.CreateWriter<Guid>(conventions).SaveEvents(id, new[]
 			{
 				new TestEvent { Sequence = 5},
 				new TestEvent { Sequence = 6},
 			});
 
 			Aggregate = aggregateStore.Load(id, () => new SnapshotAggregate());
-		}
 
-		[Fact]
-		public void The_uncommitted_changes_should_be_empty()
-		{
-			Aggregate.GetUncommittedEvents().ShouldBeEmpty();
+			Aggregate.ShouldSatisfyAllConditions(
+				() => Aggregate.GetUncommittedEvents().ShouldBeEmpty(),
+				() => Aggregate.SequenceID.ShouldBe(10)
+			);
 		}
-
-		[Fact]
-		public void The_sequence_id_should_be_the_last_events()
-		{
-			Aggregate.SequenceID.ShouldBe(10);
-		}
-
 	}
 }
