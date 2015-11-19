@@ -12,6 +12,7 @@ namespace Ledger.Acceptance
 		private readonly IEventStore _eventStore;
 		private readonly AggregateStore<Guid> _aggregateStore;
 		private readonly IStoreConventions _snapshotConventions;
+		private readonly IStoreConventions _defaultConventions;
 
 		protected AcceptanceTests(IEventStore eventStore)
 		{
@@ -19,9 +20,8 @@ namespace Ledger.Acceptance
 			_aggregateStore = new AggregateStore<Guid>(_eventStore);
 
 			_snapshotConventions = _aggregateStore.Conventions<SnapshotAggregate>();
+			_defaultConventions = _aggregateStore.Conventions<TestAggregate>();
 		}
-
-		public IEventStore EventStore => _eventStore;
 
 		[Fact]
 		public void When_there_are_no_events()
@@ -31,7 +31,11 @@ namespace Ledger.Acceptance
 
 			_aggregateStore.Save(aggregate);
 
-			EventStore.CreateReader<Guid>(_snapshotConventions).LoadEvents(aggregate.ID).ShouldBeEmpty();
+			using (var reader = _eventStore.CreateReader<Guid>(_snapshotConventions))
+			{
+				reader.LoadEvents(aggregate.ID).ShouldBeEmpty();
+			}
+
 		}
 
 		[Fact]
@@ -40,7 +44,10 @@ namespace Ledger.Acceptance
 			var aggregate = new SnapshotAggregate();
 			aggregate.GenerateID();
 
-			EventStore.CreateWriter<Guid>(_snapshotConventions).SaveEvents(aggregate.ID, new[] { new TestEvent { Sequence = 5 } });
+			using (var writer = _eventStore.CreateWriter<Guid>(_snapshotConventions))
+			{
+				writer.SaveEvents(aggregate.ID, new[] { new TestEvent { Sequence = 5 } });
+			}
 
 			aggregate.AddEvent(new TestEvent());
 
@@ -50,16 +57,18 @@ namespace Ledger.Acceptance
 		[Fact]
 		public void When_loading_with_snapshotting_and_there_is_no_snapshot()
 		{
-			var aggregateStore = new AggregateStore<Guid>(EventStore);
 			var id = Guid.NewGuid();
 
-			EventStore.CreateWriter<Guid>(_snapshotConventions).SaveEvents(id, new[]
+			using (var writer = _eventStore.CreateWriter<Guid>(_snapshotConventions))
 			{
-				new TestEvent { Sequence = 5},
-				new TestEvent { Sequence = 6},
-			});
+				writer.SaveEvents(id, new[]
+				{
+					new TestEvent {Sequence = 5},
+					new TestEvent {Sequence = 6},
+				});
+			}
 
-			var aggregate = aggregateStore.Load(id, () => new SnapshotAggregate());
+			var aggregate = _aggregateStore.Load(id, () => new SnapshotAggregate());
 
 			aggregate.SequenceID.ShouldBe(6);
 		}
@@ -67,16 +76,18 @@ namespace Ledger.Acceptance
 		[Fact]
 		public void When_loading_multiple_events_without_snapshotting()
 		{
-			var aggregateStore = new AggregateStore<Guid>(EventStore);
 			var id = Guid.NewGuid();
 
-			EventStore.CreateWriter<Guid>(aggregateStore.Conventions<TestAggregate>()).SaveEvents(id, new[]
+			using (var writer = _eventStore.CreateWriter<Guid>(_defaultConventions))
 			{
-				new TestEvent { Sequence = 5},
-				new TestEvent { Sequence = 6},
-			});
+				writer.SaveEvents(id, new[]
+				{
+					new TestEvent {Sequence = 5},
+					new TestEvent {Sequence = 6},
+				});
+			}
 
-			var aggregate = aggregateStore.Load(id, () => new TestAggregate());
+			var aggregate = _aggregateStore.Load(id, () => new TestAggregate());
 
 			aggregate.ShouldSatisfyAllConditions(
 				() => aggregate.GetUncommittedEvents().ShouldBeEmpty(),
@@ -87,18 +98,19 @@ namespace Ledger.Acceptance
 		[Fact]
 		public void When_loading_multiple_events_with_snapshotting()
 		{
-			var aggregateStore = new AggregateStore<Guid>(EventStore);
-			var conventions = aggregateStore.Conventions<SnapshotAggregate>();
 			var id = Guid.NewGuid();
 
-			EventStore.CreateWriter<Guid>(conventions).SaveSnapshot(id, new TestSnapshot { Sequence = 10 });
-			EventStore.CreateWriter<Guid>(conventions).SaveEvents(id, new[]
+			using (var writer = _eventStore.CreateWriter<Guid>(_snapshotConventions))
 			{
-				new TestEvent { Sequence = 5},
-				new TestEvent { Sequence = 6},
-			});
+				writer.SaveSnapshot(id, new TestSnapshot {Sequence = 10});
+				writer.SaveEvents(id, new[]
+				{
+					new TestEvent {Sequence = 5},
+					new TestEvent {Sequence = 6},
+				});
+			}
 
-			var aggregate = aggregateStore.Load(id, () => new SnapshotAggregate());
+			var aggregate = _aggregateStore.Load(id, () => new SnapshotAggregate());
 
 			aggregate.ShouldSatisfyAllConditions(
 				() => aggregate.GetUncommittedEvents().ShouldBeEmpty(),
@@ -109,17 +121,14 @@ namespace Ledger.Acceptance
 		[Fact]
 		public void When_saving_multiple_events_without_snapshotting()
 		{
-			var aggregateStore = new AggregateStore<Guid>(EventStore);
-			var conventions = aggregateStore.Conventions<TestAggregate>();
-
 			var aggregate = new TestAggregate();
 
 			aggregate.GenerateID();
 			aggregate.AddEvents(new[] { new TestEvent(), new TestEvent() });
 
-			aggregateStore.Save(aggregate);
+			_aggregateStore.Save(aggregate);
 
-			using (var reader = EventStore.CreateReader<Guid>(conventions))
+			using (var reader = _eventStore.CreateReader<Guid>(_defaultConventions))
 			{
 				var events = reader.LoadEvents(aggregate.ID).ToList();
 
@@ -135,22 +144,18 @@ namespace Ledger.Acceptance
 		[Fact]
 		public void When_saving_multiple_events_with_snapshotting()
 		{
-			var aggregateStore = new AggregateStore<Guid>(EventStore);
-			var conventions = aggregateStore.Conventions<SnapshotAggregate>();
-
 			var aggregate = new SnapshotAggregate();
 			var events = Enumerable
-				.Range(0, aggregateStore.DefaultSnapshotInterval)
+				.Range(0, _aggregateStore.DefaultSnapshotInterval)
 				.Select(i => new TestEvent { Sequence = i })
 				.ToArray();
 
 			aggregate.GenerateID();
 			aggregate.AddEvents(events);
 
-			aggregateStore.Save(aggregate);
+			_aggregateStore.Save(aggregate);
 
-
-			using (var reader = EventStore.CreateReader<Guid>(conventions))
+			using (var reader = _eventStore.CreateReader<Guid>(_snapshotConventions))
 			{
 				var storeEvents = reader.LoadEvents(aggregate.ID);
 				var storeSnapshot = reader.LoadLatestSnapshotFor(aggregate.ID);
