@@ -2,7 +2,7 @@
 
 namespace Ledger.Acceptance.TestDomain
 {
-	public class CandidateMemento : ISequenced
+	public class CandidateMemento : ISnapshot
 	{
 		public int Sequence { get; set; }
 

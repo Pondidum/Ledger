@@ -65,7 +65,7 @@ namespace Ledger.Tests.Infrastructure
 
 		}
 
-		internal class Snap : ISequenced
+		internal class Snap : ISnapshot
 		{
 			public int Sequence { get; set; }
 		}

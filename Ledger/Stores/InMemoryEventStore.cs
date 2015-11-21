@@ -65,7 +65,7 @@ namespace Ledger.Stores
 					.Where(e => e.Sequence > sequenceID);
 			}
 
-			public ISequenced LoadLatestSnapshotFor(TKey aggregateID)
+			public ISnapshot LoadLatestSnapshotFor(TKey aggregateID)
 			{
 				List<StampedSnapshot> snapshots;
 
@@ -102,7 +102,7 @@ namespace Ledger.Stores
 				_events[aggregateID].AddRange(changes.Select(c => new StampedEvent(c, _eventSequence++)));
 			}
 
-			public void SaveSnapshot(TKey aggregateID, ISequenced snapshot)
+			public void SaveSnapshot(TKey aggregateID, ISnapshot snapshot)
 			{
 				if (_snapshots.ContainsKey(aggregateID) == false)
 				{
@@ -132,9 +132,9 @@ namespace Ledger.Stores
 		private struct StampedSnapshot
 		{
 			public int GlobalSequence { get; }
-			public ISequenced Snapshot { get; }
+			public ISnapshot Snapshot { get; }
 
-			public StampedSnapshot(ISequenced snapshot, int sequence)
+			public StampedSnapshot(ISnapshot snapshot, int sequence)
 			{
 				GlobalSequence = sequence;
 				Snapshot = snapshot;

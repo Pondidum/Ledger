@@ -13,7 +13,7 @@ namespace Ledger
 	{
 		IEnumerable<IDomainEvent<TKey>> LoadEvents(TKey aggregateID);
 		IEnumerable<IDomainEvent<TKey>> LoadEventsSince(TKey aggregateID, int sequenceID);
-		ISequenced LoadLatestSnapshotFor(TKey aggregateID);
+		ISnapshot LoadLatestSnapshotFor(TKey aggregateID);
 	}
 
 	public interface IStoreWriter<TKey> : IDisposable
@@ -22,6 +22,6 @@ namespace Ledger
 		int? GetLatestSnapshotSequenceFor(TKey aggregateID);
 
 		void SaveEvents(TKey aggregateID, IEnumerable<IDomainEvent<TKey>> changes);
-		void SaveSnapshot(TKey aggregateID, ISequenced snapshot);
+		void SaveSnapshot(TKey aggregateID, ISnapshot snapshot);
 	}
 }

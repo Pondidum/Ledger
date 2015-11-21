@@ -21,7 +21,7 @@ namespace Ledger.Stores
 			return _other.LoadEventsSince(aggregateID, sequenceID);
 		}
 
-		public virtual ISequenced LoadLatestSnapshotFor(TKey aggregateID)
+		public virtual ISnapshot LoadLatestSnapshotFor(TKey aggregateID)
 		{
 			return _other.LoadLatestSnapshotFor(aggregateID);
 		}

@@ -64,18 +64,18 @@ namespace Ledger
 			}
 		}
 
-		private static ISequenced GetSnapshot<TAggregate>(TAggregate aggregate) where TAggregate : AggregateRoot<TKey>
+		private static ISnapshot GetSnapshot<TAggregate>(TAggregate aggregate) where TAggregate : AggregateRoot<TKey>
 		{
 			//you could replace this method with `return (ISequenced)(aggregate as dynamic).CreateSnapshot();`
 			//but you loose the compiler checking the `CreateSnapshot` is the right method name etc.
 
-			var methodName = TypeInfo.GetMethodName<ISnapshotable<ISequenced>>(x => x.CreateSnapshot());
+			var methodName = TypeInfo.GetMethodName<ISnapshotable<ISnapshot>>(x => x.CreateSnapshot());
 
 			var createSnapshot = aggregate
 				.GetType()
 				.GetMethod(methodName);
 
-			return (ISequenced) createSnapshot.Invoke(aggregate, new object[] {});
+			return (ISnapshot) createSnapshot.Invoke(aggregate, new object[] {});
 		}
 
 		private static void ThrowIfVersionsInconsistent<TAggregate>(IStoreWriter<TKey> store, TAggregate aggregate)
