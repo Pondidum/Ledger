@@ -46,7 +46,7 @@ namespace Ledger.Acceptance
 
 			using (var writer = _eventStore.CreateWriter<Guid>(_snapshotConventions))
 			{
-				writer.SaveEvents(aggregate.ID, new[] { new TestEvent { Sequence = 5 } });
+				writer.SaveEvents(new[] { new TestEvent { AggregateID = aggregate.ID, Sequence = 5 } });
 			}
 
 			aggregate.AddEvent(new TestEvent());
@@ -61,10 +61,10 @@ namespace Ledger.Acceptance
 
 			using (var writer = _eventStore.CreateWriter<Guid>(_snapshotConventions))
 			{
-				writer.SaveEvents(id, new[]
+				writer.SaveEvents(new[]
 				{
-					new TestEvent {Sequence = 5},
-					new TestEvent {Sequence = 6},
+					new TestEvent {AggregateID = id, Sequence = 5},
+					new TestEvent {AggregateID = id, Sequence = 6},
 				});
 			}
 
@@ -80,10 +80,10 @@ namespace Ledger.Acceptance
 
 			using (var writer = _eventStore.CreateWriter<Guid>(_defaultConventions))
 			{
-				writer.SaveEvents(id, new[]
+				writer.SaveEvents(new[]
 				{
-					new TestEvent {Sequence = 5},
-					new TestEvent {Sequence = 6},
+					new TestEvent {AggregateID = id, Sequence = 5},
+					new TestEvent {AggregateID = id, Sequence = 6},
 				});
 			}
 
@@ -102,11 +102,11 @@ namespace Ledger.Acceptance
 
 			using (var writer = _eventStore.CreateWriter<Guid>(_snapshotConventions))
 			{
-				writer.SaveSnapshot(id, new TestSnapshot {Sequence = 10});
-				writer.SaveEvents(id, new[]
+				writer.SaveSnapshot(new TestSnapshot { AggregateID = id, Sequence = 10 });
+				writer.SaveEvents(new[]
 				{
-					new TestEvent {Sequence = 5},
-					new TestEvent {Sequence = 6},
+					new TestEvent {AggregateID = id, Sequence = 5},
+					new TestEvent {AggregateID = id, Sequence = 6},
 				});
 			}
 

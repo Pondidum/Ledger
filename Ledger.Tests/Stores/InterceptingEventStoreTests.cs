@@ -62,12 +62,12 @@ namespace Ledger.Tests.Stores
 				_onEvent = onEvent;
 			}
 
-			public override void SaveEvents(TKey aggregateID, IEnumerable<IDomainEvent<TKey>> changes)
+			public override void SaveEvents(IEnumerable<IDomainEvent<TKey>> changes)
 			{
 				//this is a pretty bad impl, as you can block event saving, but its easy to test!
 				//also using the .Apply() method avoids iterating the changes collection more than once.
 
-				base.SaveEvents(aggregateID, changes.Apply(change => _onEvent(change)));
+				base.SaveEvents(changes.Apply(change => _onEvent(change)));
 			}
 		}
 	}

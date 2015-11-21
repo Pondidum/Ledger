@@ -56,10 +56,10 @@ namespace Ledger
 					snapshot.AggregateID = aggregate.ID;
 					snapshot.Sequence = changes.Last().Sequence;
 
-					store.SaveSnapshot(aggregate.ID, snapshot);
+					store.SaveSnapshot(snapshot);
 				}
 
-				store.SaveEvents(aggregate.ID, changes);
+				store.SaveEvents(changes);
 
 				aggregate.MarkEventsCommitted();
 			}

@@ -15,15 +15,15 @@ namespace Ledger.Tests.Stores
 		{
 			var store = new InMemoryEventStore();
 
-			var e0 = new TestEvent { Sequence = 0 };
-			var e1 = new TestEvent { Sequence = 1 };
-			var e2 = new TestEvent { Sequence = 2 };
+			var e0 = new TestEvent { AggregateID = 1, Sequence = 0 };
+			var e1 = new TestEvent { AggregateID = 2, Sequence = 1 };
+			var e2 = new TestEvent { AggregateID = 1, Sequence = 2 };
 
 			using (var writer = store.CreateWriter<int>(null))
 			{
-				writer.SaveEvents(1, new List<IDomainEvent<int>>() { e0 });
-				writer.SaveEvents(2, new List<IDomainEvent<int>>() { e1 });
-				writer.SaveEvents(1, new List<IDomainEvent<int>>() { e2 });
+				writer.SaveEvents(new List<IDomainEvent<int>>() { e0 });
+				writer.SaveEvents(new List<IDomainEvent<int>>() { e1 });
+				writer.SaveEvents(new List<IDomainEvent<int>>() { e2 });
 			}
 
 			store.AllEvents.Cast<IDomainEvent<int>>().ShouldBe(new[] { e0, e1, e2 });
@@ -34,15 +34,15 @@ namespace Ledger.Tests.Stores
 		{
 			var store = new InMemoryEventStore();
 
-			var snap0 = new TestSnapshot { Sequence = 0 };
-			var snap1 = new TestSnapshot { Sequence = 1 };
-			var snap2 = new TestSnapshot { Sequence = 2 };
+			var snap0 = new TestSnapshot { AggregateID = 1, Sequence = 0 };
+			var snap1 = new TestSnapshot { AggregateID = 2, Sequence = 1 };
+			var snap2 = new TestSnapshot { AggregateID = 1, Sequence = 2 };
 
 			using (var writer = store.CreateWriter<int>(null))
 			{
-				writer.SaveSnapshot(1, snap0);
-				writer.SaveSnapshot(2, snap1);
-				writer.SaveSnapshot(1, snap2);
+				writer.SaveSnapshot(snap0);
+				writer.SaveSnapshot(snap1);
+				writer.SaveSnapshot(snap2);
 			}
 
 			store.AllSnapshots.ShouldBe(new[] { snap0, snap1, snap2 });

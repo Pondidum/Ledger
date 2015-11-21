@@ -21,14 +21,14 @@ namespace Ledger.Stores
 			return _other.GetLatestSnapshotSequenceFor(aggregateID);
 		}
 
-		public virtual void SaveEvents(TKey aggregateID, IEnumerable<IDomainEvent<TKey>> changes)
+		public virtual void SaveEvents(IEnumerable<IDomainEvent<TKey>> changes)
 		{
-			_other.SaveEvents(aggregateID, changes);
+			_other.SaveEvents(changes);
 		}
 
-		public virtual void SaveSnapshot(TKey aggregateID, ISnapshot<TKey> snapshot)
+		public virtual void SaveSnapshot(ISnapshot<TKey> snapshot)
 		{
-			_other.SaveSnapshot(aggregateID, snapshot);
+			_other.SaveSnapshot(snapshot);
 		}
 
 		public virtual void Dispose()

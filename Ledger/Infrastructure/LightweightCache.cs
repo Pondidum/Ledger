@@ -71,5 +71,10 @@ namespace Ledger.Infrastructure
 		{
 			get { return _values; }
 		}
+
+		public bool TryGetValue(TKey key, out TValue value)
+		{
+			return _values.TryGetValue(key, out value);
+		}
 	}
 }
