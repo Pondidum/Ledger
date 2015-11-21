@@ -53,7 +53,7 @@ namespace Ledger
 		}
 
 		internal void LoadFromSnapshot<TSnapshot>(TSnapshot snapshot, IEnumerable<IDomainEvent<TKey>> events)
-			where TSnapshot : ISnapshot
+			where TSnapshot : ISnapshot<TKey>
 		{
 			if (snapshot != null)
 			{

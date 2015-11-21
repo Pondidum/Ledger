@@ -5,7 +5,7 @@ using Ledger.Acceptance.TestDomain.Events;
 
 namespace Ledger.Acceptance.TestDomain
 {
-	public class Candidate : AggregateRoot<Guid>, ISnapshotable<CandidateMemento>
+	public class Candidate : AggregateRoot<Guid>, ISnapshotable<Guid, CandidateMemento>
 	{
 		public string Name { get; private set; }
 		public IEnumerable<string> Emails { get { return _emails; } }

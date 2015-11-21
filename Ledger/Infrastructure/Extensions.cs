@@ -52,7 +52,7 @@ namespace Ledger.Infrastructure
 			return aggregate
 				.GetInterfaces()
 				.Where(i => i.IsGenericType)
-				.Any(i => i.GetGenericTypeDefinition() == typeof(ISnapshotable<>));
+				.Any(i => i.GetGenericTypeDefinition() == typeof(ISnapshotable<,>));
 		}
 	}
 }

@@ -1,6 +1,7 @@
 namespace Ledger
 {
-	public interface ISnapshot : ISequenced
+	public interface ISnapshot<TKey> : ISequenced
 	{
+		TKey AggregateID { get; set; }
 	}
 }

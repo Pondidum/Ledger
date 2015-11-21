@@ -65,12 +65,12 @@ namespace Ledger.Stores
 					.Where(e => e.Sequence > sequenceID);
 			}
 
-			public ISnapshot LoadLatestSnapshotFor(TKey aggregateID)
+			public ISnapshot<TKey> LoadLatestSnapshotFor(TKey aggregateID)
 			{
 				List<StampedSnapshot> snapshots;
 
 				return _snapshots.TryGetValue(aggregateID, out snapshots)
-					? snapshots.Select(s => s.Snapshot).LastOrDefault()
+					? snapshots.Select(s => s.Snapshot).Cast<ISnapshot<TKey>>().LastOrDefault()
 					: null;
 			}
 
@@ -102,7 +102,7 @@ namespace Ledger.Stores
 				_events[aggregateID].AddRange(changes.Select(c => new StampedEvent(c, _eventSequence++)));
 			}
 
-			public void SaveSnapshot(TKey aggregateID, ISnapshot snapshot)
+			public void SaveSnapshot(TKey aggregateID, ISnapshot<TKey> snapshot)
 			{
 				if (_snapshots.ContainsKey(aggregateID) == false)
 				{
@@ -132,9 +132,9 @@ namespace Ledger.Stores
 		private struct StampedSnapshot
 		{
 			public int GlobalSequence { get; }
-			public ISnapshot Snapshot { get; }
+			public object Snapshot { get; }
 
-			public StampedSnapshot(ISnapshot snapshot, int sequence)
+			public StampedSnapshot(object snapshot, int sequence)
 			{
 				GlobalSequence = sequence;
 				Snapshot = snapshot;

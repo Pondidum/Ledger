@@ -9,6 +9,6 @@ namespace Ledger
 		int? GetLatestSnapshotSequenceFor(TKey aggregateID);
 
 		void SaveEvents(TKey aggregateID, IEnumerable<IDomainEvent<TKey>> changes);
-		void SaveSnapshot(TKey aggregateID, ISnapshot snapshot);
+		void SaveSnapshot(TKey aggregateID, ISnapshot<TKey> snapshot);
 	}
 }

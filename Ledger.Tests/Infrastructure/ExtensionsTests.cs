@@ -43,7 +43,7 @@ namespace Ledger.Tests.Infrastructure
 		{
 		}
 
-		private class With : AggregateRoot<Guid>, ISnapshotable<Snap>, ITest
+		private class With : AggregateRoot<Guid>, ISnapshotable<Guid, Snap>, ITest
 		{
 			public Snap CreateSnapshot()
 			{
@@ -65,8 +65,9 @@ namespace Ledger.Tests.Infrastructure
 
 		}
 
-		internal class Snap : ISnapshot
+		internal class Snap : ISnapshot<Guid>
 		{
+			public Guid AggregateID { get; set; }
 			public int Sequence { get; set; }
 		}
 

@@ -51,5 +51,11 @@ namespace Ledger.Tests.Stores
 		public class TestEvent : DomainEvent<int>
 		{
 		}
+
+		public class TestSnapshot : ISnapshot<int>
+		{
+			public int AggregateID { get; set; }
+			public int Sequence { get; set; }
+		}
 	}
 }

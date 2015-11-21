@@ -26,7 +26,7 @@ namespace Ledger.Stores
 			_other.SaveEvents(aggregateID, changes);
 		}
 
-		public virtual void SaveSnapshot(TKey aggregateID, ISnapshot snapshot)
+		public virtual void SaveSnapshot(TKey aggregateID, ISnapshot<TKey> snapshot)
 		{
 			_other.SaveSnapshot(aggregateID, snapshot);
 		}
