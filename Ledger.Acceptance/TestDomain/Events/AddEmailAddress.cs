@@ -1,6 +1,8 @@
-﻿namespace Ledger.Acceptance.TestDomain.Events
+﻿using System;
+
+namespace Ledger.Acceptance.TestDomain.Events
 {
-	public class AddEmailAddress : DomainEvent
+	public class AddEmailAddress : DomainEvent<Guid>
 	{
 		public string Email { get; set; }
 	}

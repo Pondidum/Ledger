@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Ledger.Acceptance.TestObjects;
 using Ledger.Infrastructure;
 using Ledger.Stores;
@@ -14,7 +15,7 @@ namespace Ledger.Tests.Stores
 		[Fact]
 		public void When_an_event_occours()
 		{
-			var events = new List<IDomainEvent>();
+			var events = new List<IDomainEvent<Guid>>();
 			var store = new InMemoryEventStore();
 			var wrapped = new LoggingEventStore(store, e => events.Add(e));
 
@@ -28,7 +29,7 @@ namespace Ledger.Tests.Stores
 			ags.Save(aggregate);
 
 			events.ShouldBe(new[] { event1 });
-			store.AllEvents.ShouldBe(new[] { event1 });
+			store.AllEvents.Cast<IDomainEvent<Guid>>().ShouldBe(new[] { event1 });
 
 		}
 
@@ -36,9 +37,9 @@ namespace Ledger.Tests.Stores
 		private class LoggingEventStore : InterceptingEventStore
 		{
 			private readonly IEventStore _other;
-			private readonly Action<IDomainEvent> _onEvent;
+			private readonly Action<IDomainEvent<Guid>> _onEvent;
 
-			public LoggingEventStore(IEventStore other, Action<IDomainEvent> onEvent)
+			public LoggingEventStore(IEventStore other, Action<IDomainEvent<Guid>> onEvent)
 				: base(other)
 			{
 				_other = other;
@@ -47,21 +48,21 @@ namespace Ledger.Tests.Stores
 
 			public override IStoreWriter<TKey> CreateWriter<TKey>(IStoreConventions storeConventions)
 			{
-				return new EventLoggingStoreWriter<TKey>(_other.CreateWriter<TKey>(storeConventions), _onEvent);
+				return new EventLoggingStoreWriter<TKey>(_other.CreateWriter<TKey>(storeConventions), e =>  _onEvent((IDomainEvent<Guid>) e) );
 			}
 		}
 
 		private class EventLoggingStoreWriter<TKey> : InterceptingWriter<TKey>
 		{
-			private readonly Action<IDomainEvent> _onEvent;
+			private readonly Action<IDomainEvent<TKey>> _onEvent;
 
-			public EventLoggingStoreWriter(IStoreWriter<TKey> other, Action<IDomainEvent> onEvent)
+			public EventLoggingStoreWriter(IStoreWriter<TKey> other, Action<IDomainEvent<TKey>> onEvent)
 				: base(other)
 			{
 				_onEvent = onEvent;
 			}
 
-			public override void SaveEvents(TKey aggregateID, IEnumerable<IDomainEvent> changes)
+			public override void SaveEvents(TKey aggregateID, IEnumerable<IDomainEvent<TKey>> changes)
 			{
 				//this is a pretty bad impl, as you can block event saving, but its easy to test!
 				//also using the .Apply() method avoids iterating the changes collection more than once.

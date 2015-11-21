@@ -21,7 +21,7 @@ namespace Ledger.Stores
 			_snapshotSequence = 0;
 		}
 
-		public IEnumerable<IDomainEvent> AllEvents => _events.SelectMany(e => e.Value).OrderBy(e => e.GlobalSequence).Select(e => e.Event);
+		public IEnumerable<object> AllEvents => _events.SelectMany(e => e.Value).OrderBy(e => e.GlobalSequence).Select(e => e.Event);
 		public IEnumerable<object> AllSnapshots => _snapshots.SelectMany(e => e.Value).OrderBy(e => e.GlobalSequence).Select(e => e.Snapshot);
 
 		public IStoreReader<TKey> CreateReader<TKey>(IStoreConventions storeConventions)
@@ -50,16 +50,16 @@ namespace Ledger.Stores
 				_snapshotSequence = snapshotSequence;
 			}
 
-			public IEnumerable<IDomainEvent> LoadEvents(TKey aggregateID)
+			public IEnumerable<IDomainEvent<TKey>> LoadEvents(TKey aggregateID)
 			{
 				List<StampedEvent> events;
 
 				return _events.TryGetValue(aggregateID, out events)
-					? events.Select(s => s.Event)
-					: Enumerable.Empty<IDomainEvent>();
+					? events.Select(s => s.Event).Cast<IDomainEvent<TKey>>()
+					: Enumerable.Empty<IDomainEvent<TKey>>();
 			}
 
-			public IEnumerable<IDomainEvent> LoadEventsSince(TKey aggregateID, int sequenceID)
+			public IEnumerable<IDomainEvent<TKey>> LoadEventsSince(TKey aggregateID, int sequenceID)
 			{
 				return LoadEvents(aggregateID)
 					.Where(e => e.Sequence > sequenceID);
@@ -92,7 +92,7 @@ namespace Ledger.Stores
 					: (int?)null;
 			}
 
-			public void SaveEvents(TKey aggregateID, IEnumerable<IDomainEvent> changes)
+			public void SaveEvents(TKey aggregateID, IEnumerable<IDomainEvent<TKey>> changes)
 			{
 				if (_events.ContainsKey(aggregateID) == false)
 				{
@@ -120,9 +120,9 @@ namespace Ledger.Stores
 		private struct StampedEvent
 		{
 			public int GlobalSequence { get; }
-			public IDomainEvent Event { get; }
+			public object Event { get; }
 
-			public StampedEvent(IDomainEvent @event, int sequence)
+			public StampedEvent(object @event, int sequence)
 			{
 				GlobalSequence = sequence;
 				Event = @event;

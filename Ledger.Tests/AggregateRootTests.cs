@@ -57,12 +57,12 @@ namespace Ledger.Tests
 			}
 
 			public void AddPreProcessor<TEvent>(Action<TEvent> handler)
-				where TEvent : IDomainEvent
+				where TEvent : IDomainEvent<Guid>
 			{
 				BeforeApplyEvent(handler);
 			}
 
-			public void PushEvent<TEvent>(TEvent @event) where TEvent : IDomainEvent
+			public void PushEvent<TEvent>(TEvent @event) where TEvent : IDomainEvent<Guid>
 			{
 				ApplyEvent(@event);
 			}
@@ -76,7 +76,7 @@ namespace Ledger.Tests
 			}
 		}
 
-		private class BaseEvent : DomainEvent
+		private class BaseEvent : DomainEvent<Guid>
 		{
 			public string Key { get; set; }
 		}

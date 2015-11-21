@@ -129,12 +129,12 @@ namespace Ledger.Tests
 		{
 			public string Key { get; set; }
 
-			public void AddEvent(DomainEvent @event)
+			public void AddEvent(DomainEvent<Guid> @event)
 			{
 				ApplyEvent(@event);
 			}
 
-			public void AddEvents(IEnumerable<DomainEvent> events)
+			public void AddEvents(IEnumerable<DomainEvent<Guid>> events)
 			{
 				events.ForEach(AddEvent);
 			}

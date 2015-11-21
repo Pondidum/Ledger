@@ -2,7 +2,7 @@
 
 namespace Ledger.Acceptance.TestObjects
 {
-	public class TestEvent : DomainEvent
+	public class TestEvent : DomainEvent<Guid>
 	{
 	}
 }

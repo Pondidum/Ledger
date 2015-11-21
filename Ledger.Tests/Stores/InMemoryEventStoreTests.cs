@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Ledger.Acceptance.TestObjects;
 using Ledger.Stores;
 using Shouldly;
@@ -19,12 +21,12 @@ namespace Ledger.Tests.Stores
 
 			using (var writer = store.CreateWriter<int>(null))
 			{
-				writer.SaveEvents(1, new List<IDomainEvent>() {e0});
-				writer.SaveEvents(2, new List<IDomainEvent>() {e1});
-				writer.SaveEvents(1, new List<IDomainEvent>() {e2});
+				writer.SaveEvents(1, new List<IDomainEvent<int>>() { e0 });
+				writer.SaveEvents(2, new List<IDomainEvent<int>>() { e1 });
+				writer.SaveEvents(1, new List<IDomainEvent<int>>() { e2 });
 			}
 
-			store.AllEvents.ShouldBe(new[] { e0, e1, e2 });
+			store.AllEvents.Cast<IDomainEvent<int>>().ShouldBe(new[] { e0, e1, e2 });
 		}
 
 		[Fact]
@@ -44,6 +46,10 @@ namespace Ledger.Tests.Stores
 			}
 
 			store.AllSnapshots.ShouldBe(new[] { snap0, snap1, snap2 });
+		}
+
+		public class TestEvent : DomainEvent<int>
+		{
 		}
 	}
 }

@@ -11,12 +11,12 @@ namespace Ledger.Stores
 			_other = other;
 		}
 
-		public virtual IEnumerable<IDomainEvent> LoadEvents(TKey aggregateID)
+		public virtual IEnumerable<IDomainEvent<TKey>> LoadEvents(TKey aggregateID)
 		{
 			return _other.LoadEvents(aggregateID);
 		}
 
-		public virtual IEnumerable<IDomainEvent> LoadEventsSince(TKey aggregateID, int sequenceID)
+		public virtual IEnumerable<IDomainEvent<TKey>> LoadEventsSince(TKey aggregateID, int sequenceID)
 		{
 			return _other.LoadEventsSince(aggregateID, sequenceID);
 		}

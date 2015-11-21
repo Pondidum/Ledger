@@ -21,7 +21,7 @@ namespace Ledger.Stores
 			return _other.GetLatestSnapshotSequenceFor(aggregateID);
 		}
 
-		public virtual void SaveEvents(TKey aggregateID, IEnumerable<IDomainEvent> changes)
+		public virtual void SaveEvents(TKey aggregateID, IEnumerable<IDomainEvent<TKey>> changes)
 		{
 			_other.SaveEvents(aggregateID, changes);
 		}

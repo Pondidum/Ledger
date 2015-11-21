@@ -10,20 +10,20 @@ namespace Ledger
 		public TKey ID { get; protected set; }
 		public int SequenceID { get; protected set; }
 
-		private readonly LightweightCache<Type, List<Action<IDomainEvent>>> _handlers;
-		private readonly List<IDomainEvent> _events;
+		private readonly LightweightCache<Type, List<Action<IDomainEvent<TKey>>>> _handlers;
+		private readonly List<IDomainEvent<TKey>> _events;
 
 		protected AggregateRoot()
 		{
-			_handlers = new LightweightCache<Type, List<Action<IDomainEvent>>>(
-				key => new List<Action<IDomainEvent>>()
+			_handlers = new LightweightCache<Type, List<Action<IDomainEvent<TKey>>>>(
+				key => new List<Action<IDomainEvent<TKey>>>()
 			);
 
-			_events = new List<IDomainEvent>();
+			_events = new List<IDomainEvent<TKey>>();
 			SequenceID = -1;
 		}
 
-		public IEnumerable<IDomainEvent> GetUncommittedEvents()
+		public IEnumerable<IDomainEvent<TKey>> GetUncommittedEvents()
 		{
 			return _events;
 		}
@@ -37,9 +37,9 @@ namespace Ledger
 			}
 		}
 
-		internal void LoadFromEvents(IEnumerable<IDomainEvent> eventStream)
+		internal void LoadFromEvents(IEnumerable<IDomainEvent<TKey>> eventStream)
 		{
-			IDomainEvent last = null;
+			IDomainEvent<TKey> last = null;
 			var dynamic = this.AsDynamic();
 
 			eventStream
@@ -52,7 +52,7 @@ namespace Ledger
 			}
 		}
 
-		internal void LoadFromSnapshot<TSnapshot>(TSnapshot snapshot, IEnumerable<IDomainEvent> events)
+		internal void LoadFromSnapshot<TSnapshot>(TSnapshot snapshot, IEnumerable<IDomainEvent<TKey>> events)
 			where TSnapshot : ISequenced
 		{
 			if (snapshot != null)
@@ -65,12 +65,12 @@ namespace Ledger
 		}
 
 		protected void BeforeApplyEvent<TEvent>(Action<TEvent> handler)
-			where TEvent : IDomainEvent
+			where TEvent : IDomainEvent<TKey>
 		{
 			_handlers[typeof(TEvent)].Add(e => handler((TEvent)e));
 		}
 
-		protected void ApplyEvent(IDomainEvent @event)
+		protected void ApplyEvent(IDomainEvent<TKey> @event)
 		{
 			var eventType = @event.GetType();
 
