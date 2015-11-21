@@ -30,16 +30,17 @@ namespace Ledger.Tests
 
 			_store.Save(aggregate);
 
-			_backing
+			var events = _backing
 				.CreateReader<Guid>(_store.Conventions<TestAggregate>())
 				.LoadEvents(aggregate.ID)
-				.Last()
-				.Sequence
-				.ShouldBe(0);
+				.ToList();
 
-			aggregate
-				.SequenceID
-				.ShouldBe(0);
+			aggregate.ShouldSatisfyAllConditions(
+				() => events.ShouldAllBe(e => e.AggregateID == aggregate.ID),
+				() => events.ForEach((e, i) => e.Sequence.ShouldBe(i)),
+				() => aggregate.SequenceID.ShouldBe(0)
+            );
+
 		}
 
 		[Fact]
@@ -55,16 +56,16 @@ namespace Ledger.Tests
 
 			_store.Save(aggregate);
 
-			_backing
+			var events = _backing
 				.CreateReader<Guid>(_store.Conventions<TestAggregate>())
 				.LoadEvents(aggregate.ID)
-				.Last()
-				.Sequence
-				.ShouldBe(3);
+				.ToList();
 
-			aggregate
-				.SequenceID
-				.ShouldBe(3);
+			aggregate.ShouldSatisfyAllConditions(
+				() => events.ShouldAllBe(e => e.AggregateID == aggregate.ID),
+				() => events.ForEach((e, i) => e.Sequence.ShouldBe(i)),
+				() => aggregate.SequenceID.ShouldBe(3)
+			);
 		}
 
 
@@ -85,17 +86,17 @@ namespace Ledger.Tests
 
 			_store.Save(aggregate);
 
-			_backing
+			var events = _backing
 				.CreateReader<Guid>(_store.Conventions<TestAggregate>())
 				.LoadEvents(aggregate.ID)
-				.Last()
-				.Sequence
-				.ShouldBe(4);
+				.ToList();
 
-			aggregate
-				.SequenceID
-				.ShouldBe(4);
-
+			aggregate.ShouldSatisfyAllConditions(
+				() => events.ShouldAllBe(e => e.AggregateID == aggregate.ID),
+				() => events.ForEach((e, i) => e.Sequence.ShouldBe(i)),
+				() => aggregate.SequenceID.ShouldBe(4),
+				() => events.Count.ShouldBe(5)
+			);
 		}
 
 		[Fact]
@@ -108,16 +109,16 @@ namespace Ledger.Tests
 
 			_store.Save(aggregate);
 
-			_backing
+			var events = _backing
 				.CreateReader<Guid>(_store.Conventions<TestAggregate>())
 				.LoadEvents(aggregate.ID)
-				.Last()
-				.Sequence
-				.ShouldBe(0);
+				.ToList();
 
-			aggregate
-				.SequenceID
-				.ShouldBe(0);
+			aggregate.ShouldSatisfyAllConditions(
+				() => events.ShouldAllBe(e => e.AggregateID == aggregate.ID),
+				() => events.ForEach((e, i) => e.Sequence.ShouldBe(i)),
+				() => aggregate.SequenceID.ShouldBe(0)
+			);
 		}
 
 		public interface IKeyed
