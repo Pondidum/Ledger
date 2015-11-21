@@ -121,6 +121,55 @@ namespace Ledger.Tests
 			);
 		}
 
+		[Fact]
+		public void When_the_aggregate_is_snapshottable()
+		{
+			var aggregate = new SnapshotAggregate();
+			aggregate.GenerateID();
+
+			Enumerable.Range(0, 12).ForEach((e,i) => aggregate.AddEvent(new TestEvent()));
+
+			_store.Save(aggregate);
+
+			using (var reader = _backing.CreateReader<Guid>(_store.Conventions<SnapshotAggregate>()))
+			{
+				var events = reader.LoadEvents(aggregate.ID).ToList();
+				var snapshot = reader.LoadLatestSnapshotFor(aggregate.ID);
+
+				aggregate.ShouldSatisfyAllConditions(
+					() => events.Count.ShouldBe(12),
+					() => snapshot.Sequence.ShouldBe(11),
+					() => snapshot.AggregateID.ShouldBe(aggregate.ID)
+				);
+			}
+		}
+
+		[Fact]
+		public void When_the_aggregate_needs_a_new_snapshot()
+		{
+			var aggregate = new SnapshotAggregate();
+			aggregate.GenerateID();
+
+			Enumerable.Range(0, 12).ForEach((e, i) => aggregate.AddEvent(new TestEvent()));
+			_store.Save(aggregate);
+
+			Enumerable.Range(0, 12).ForEach((e, i) => aggregate.AddEvent(new TestEvent()));
+			_store.Save(aggregate);
+
+			using (var reader = _backing.CreateReader<Guid>(_store.Conventions<SnapshotAggregate>()))
+			{
+				var events = reader.LoadEvents(aggregate.ID).ToList();
+				var snapshot = reader.LoadLatestSnapshotFor(aggregate.ID);
+
+				aggregate.ShouldSatisfyAllConditions(
+					() => events.Count.ShouldBe(24),
+					() => snapshot.Sequence.ShouldBe(23),
+					() => snapshot.AggregateID.ShouldBe(aggregate.ID)
+				);
+			}
+		}
+
+
 		public interface IKeyed
 		{
 			string Key { get; }

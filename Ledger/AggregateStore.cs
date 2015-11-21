@@ -53,6 +53,7 @@ namespace Ledger
 				if (typeof(TAggregate).ImplementsSnapshottable() && NeedsSnapshot(store, aggregate, changes))
 				{
 					var snapshot = GetSnapshot(aggregate);
+					snapshot.AggregateID = aggregate.ID;
 					snapshot.Sequence = changes.Last().Sequence;
 
 					store.SaveSnapshot(aggregate.ID, snapshot);
