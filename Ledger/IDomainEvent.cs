@@ -4,8 +4,4 @@ namespace Ledger
 	{
 		TKey AggregateID { get; set; }
 	}
-
-	public interface ISnapshot : ISequenced
-	{
-	}
 }

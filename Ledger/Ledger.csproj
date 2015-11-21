@@ -53,10 +53,13 @@
     <Compile Include="Infrastructure\TypeInfo.cs" />
     <Compile Include="Infrastructure\PrivateReflectionDynamicObject.cs" />
     <Compile Include="ISequenced.cs" />
+    <Compile Include="ISnapshot.cs" />
     <Compile Include="ISnapshotable.cs" />
     <Compile Include="ISnapshotControl.cs" />
     <Compile Include="IStoreConventions.cs" />
     <Compile Include="IStoreNamingConvention.cs" />
+    <Compile Include="IStoreReader.cs" />
+    <Compile Include="IStoreWriter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\AssemblyVersion.cs" />
     <Compile Include="StoreConventions.cs" />
