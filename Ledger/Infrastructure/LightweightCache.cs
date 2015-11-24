@@ -57,6 +57,8 @@ namespace Ledger.Infrastructure
 			}
 		}
 
+		public IEnumerable<TKey> Keys => _values.Keys;
+
 		IEnumerator IEnumerable.GetEnumerator()
 		{
 			return ((IEnumerable<TValue>) this).GetEnumerator();
@@ -76,5 +78,6 @@ namespace Ledger.Infrastructure
 		{
 			return _values.TryGetValue(key, out value);
 		}
+
 	}
 }

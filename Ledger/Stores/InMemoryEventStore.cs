@@ -78,6 +78,11 @@ namespace Ledger.Stores
 					: null;
 			}
 
+			public IEnumerable<TKey> LoadAllKeys()
+			{
+				return _events.Keys.Cast<TKey>();
+			}
+
 			public int? GetLatestSequenceFor(TKey aggregateID)
 			{
 				var last = LoadEvents(aggregateID).LastOrDefault();

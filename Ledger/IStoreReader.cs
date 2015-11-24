@@ -8,5 +8,7 @@ namespace Ledger
 		IEnumerable<IDomainEvent<TKey>> LoadEvents(TKey aggregateID);
 		IEnumerable<IDomainEvent<TKey>> LoadEventsSince(TKey aggregateID, int sequenceID);
 		ISnapshot<TKey> LoadLatestSnapshotFor(TKey aggregateID);
+
+		IEnumerable<TKey> LoadAllKeys();
 	}
 }

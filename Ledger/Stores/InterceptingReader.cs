@@ -26,6 +26,11 @@ namespace Ledger.Stores
 			return _other.LoadLatestSnapshotFor(aggregateID);
 		}
 
+		public IEnumerable<TKey> LoadAllKeys()
+		{
+			return _other.LoadAllKeys();
+		}
+
 		public virtual void Dispose()
 		{
 			_other.Dispose();
