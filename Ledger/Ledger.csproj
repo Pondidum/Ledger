@@ -43,8 +43,6 @@
     <Compile Include="AggregateRoot.cs" />
     <Compile Include="AggregateStore.cs" />
     <Compile Include="ConsistencyException.cs" />
-    <Compile Include="Conventions\AggregateTypeNamingConvention.cs" />
-    <Compile Include="Conventions\KeyTypeNamingConvention.cs" />
     <Compile Include="DomainEvent.cs" />
     <Compile Include="IDomainEvent.cs" />
     <Compile Include="IEventStore.cs" />
@@ -56,13 +54,10 @@
     <Compile Include="ISnapshot.cs" />
     <Compile Include="ISnapshotable.cs" />
     <Compile Include="ISnapshotControl.cs" />
-    <Compile Include="IStoreConventions.cs" />
-    <Compile Include="IStoreNamingConvention.cs" />
     <Compile Include="IStoreReader.cs" />
     <Compile Include="IStoreWriter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\AssemblyVersion.cs" />
-    <Compile Include="StoreConventions.cs" />
     <Compile Include="Stores\InMemoryEventStore.cs" />
     <Compile Include="Stores\InterceptingEventStore.cs" />
     <Compile Include="Stores\InterceptingReader.cs" />

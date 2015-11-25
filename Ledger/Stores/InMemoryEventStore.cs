@@ -28,12 +28,12 @@ namespace Ledger.Stores
 		public IEnumerable<object> AllEvents => _events.SelectMany(events => events).OrderBy(e => e.GlobalSequence).Select(e => e.Event);
 		public IEnumerable<object> AllSnapshots => _snapshots.SelectMany(events => events).OrderBy(e => e.GlobalSequence).Select(e => e.Snapshot);
 
-		public IStoreReader<TKey> CreateReader<TKey>(IStoreConventions storeConventions)
+		public IStoreReader<TKey> CreateReader<TKey>(string stream)
 		{
 			return new ReaderWriter<TKey>(_events, _snapshots, ref _eventSequence, ref _snapshotSequence);
 		}
 
-		public IStoreWriter<TKey> CreateWriter<TKey>(IStoreConventions storeConventions)
+		public IStoreWriter<TKey> CreateWriter<TKey>(string stream)
 		{
 			return new ReaderWriter<TKey>(_events, _snapshots, ref _eventSequence, ref _snapshotSequence);
 		}

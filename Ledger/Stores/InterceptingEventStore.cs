@@ -9,14 +9,14 @@
 			_other = other;
 		}
 
-		public virtual IStoreReader<TKey> CreateReader<TKey>(IStoreConventions storeConventions)
+		public virtual IStoreReader<TKey> CreateReader<TKey>(string stream)
 		{
-			return new InterceptingReader<TKey>(_other.CreateReader<TKey>(storeConventions));
+			return new InterceptingReader<TKey>(_other.CreateReader<TKey>(stream));
 		}
 
-		public virtual IStoreWriter<TKey> CreateWriter<TKey>(IStoreConventions storeConventions)
+		public virtual IStoreWriter<TKey> CreateWriter<TKey>(string stream)
 		{
-			return new InterceptingWriter<TKey>(_other.CreateWriter<TKey>(storeConventions));
+			return new InterceptingWriter<TKey>(_other.CreateWriter<TKey>(stream));
 		}
 	}
 }

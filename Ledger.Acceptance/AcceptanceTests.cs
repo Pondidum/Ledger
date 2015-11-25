@@ -9,18 +9,16 @@ namespace Ledger.Acceptance
 {
 	public abstract class AcceptanceTests
 	{
+		private const string SnapshotStream = "SnapshotStream";
+		private const string DefaultStream = "DefaultStream";
+
 		private readonly IEventStore _eventStore;
 		private readonly AggregateStore<Guid> _aggregateStore;
-		private readonly IStoreConventions _snapshotConventions;
-		private readonly IStoreConventions _defaultConventions;
-
+		
 		protected AcceptanceTests(IEventStore eventStore)
 		{
 			_eventStore = eventStore;
 			_aggregateStore = new AggregateStore<Guid>(_eventStore);
-
-			_snapshotConventions = _aggregateStore.Conventions<SnapshotAggregate>();
-			_defaultConventions = _aggregateStore.Conventions<TestAggregate>();
 		}
 
 		[Fact]
@@ -29,9 +27,9 @@ namespace Ledger.Acceptance
 			var aggregate = new SnapshotAggregate();
 			aggregate.GenerateID();
 
-			_aggregateStore.Save(aggregate);
+			_aggregateStore.Save(SnapshotStream, aggregate);
 
-			using (var reader = _eventStore.CreateReader<Guid>(_snapshotConventions))
+			using (var reader = _eventStore.CreateReader<Guid>(SnapshotStream))
 			{
 				reader.LoadEvents(aggregate.ID).ShouldBeEmpty();
 			}
@@ -44,14 +42,14 @@ namespace Ledger.Acceptance
 			var aggregate = new SnapshotAggregate();
 			aggregate.GenerateID();
 
-			using (var writer = _eventStore.CreateWriter<Guid>(_snapshotConventions))
+			using (var writer = _eventStore.CreateWriter<Guid>(SnapshotStream))
 			{
 				writer.SaveEvents(new[] { new TestEvent { AggregateID = aggregate.ID, Sequence = 5 } });
 			}
 
 			aggregate.AddEvent(new TestEvent());
 
-			Should.Throw<ConsistencyException>(() => _aggregateStore.Save(aggregate));
+			Should.Throw<ConsistencyException>(() => _aggregateStore.Save(SnapshotStream, aggregate));
 		}
 
 		[Fact]
@@ -59,7 +57,7 @@ namespace Ledger.Acceptance
 		{
 			var id = Guid.NewGuid();
 
-			using (var writer = _eventStore.CreateWriter<Guid>(_snapshotConventions))
+			using (var writer = _eventStore.CreateWriter<Guid>(SnapshotStream))
 			{
 				writer.SaveEvents(new[]
 				{
@@ -68,7 +66,7 @@ namespace Ledger.Acceptance
 				});
 			}
 
-			var aggregate = _aggregateStore.Load(id, () => new SnapshotAggregate());
+			var aggregate = _aggregateStore.Load(SnapshotStream, id, () => new SnapshotAggregate());
 
 			aggregate.SequenceID.ShouldBe(6);
 		}
@@ -78,7 +76,7 @@ namespace Ledger.Acceptance
 		{
 			var id = Guid.NewGuid();
 
-			using (var writer = _eventStore.CreateWriter<Guid>(_defaultConventions))
+			using (var writer = _eventStore.CreateWriter<Guid>(DefaultStream))
 			{
 				writer.SaveEvents(new[]
 				{
@@ -87,7 +85,7 @@ namespace Ledger.Acceptance
 				});
 			}
 
-			var aggregate = _aggregateStore.Load(id, () => new TestAggregate());
+			var aggregate = _aggregateStore.Load(DefaultStream, id, () => new TestAggregate());
 
 			aggregate.ShouldSatisfyAllConditions(
 				() => aggregate.GetUncommittedEvents().ShouldBeEmpty(),
@@ -100,7 +98,7 @@ namespace Ledger.Acceptance
 		{
 			var id = Guid.NewGuid();
 
-			using (var writer = _eventStore.CreateWriter<Guid>(_snapshotConventions))
+			using (var writer = _eventStore.CreateWriter<Guid>(SnapshotStream))
 			{
 				writer.SaveSnapshot(new TestSnapshot { AggregateID = id, Sequence = 10 });
 				writer.SaveEvents(new[]
@@ -110,7 +108,7 @@ namespace Ledger.Acceptance
 				});
 			}
 
-			var aggregate = _aggregateStore.Load(id, () => new SnapshotAggregate());
+			var aggregate = _aggregateStore.Load(SnapshotStream, id, () => new SnapshotAggregate());
 
 			aggregate.ShouldSatisfyAllConditions(
 				() => aggregate.GetUncommittedEvents().ShouldBeEmpty(),
@@ -126,9 +124,9 @@ namespace Ledger.Acceptance
 			aggregate.GenerateID();
 			aggregate.AddEvents(new[] { new TestEvent(), new TestEvent() });
 
-			_aggregateStore.Save(aggregate);
+			_aggregateStore.Save(DefaultStream, aggregate);
 
-			using (var reader = _eventStore.CreateReader<Guid>(_defaultConventions))
+			using (var reader = _eventStore.CreateReader<Guid>(DefaultStream))
 			{
 				var events = reader.LoadEvents(aggregate.ID).ToList();
 
@@ -153,9 +151,9 @@ namespace Ledger.Acceptance
 			aggregate.GenerateID();
 			aggregate.AddEvents(events);
 
-			_aggregateStore.Save(aggregate);
+			_aggregateStore.Save(SnapshotStream, aggregate);
 
-			using (var reader = _eventStore.CreateReader<Guid>(_snapshotConventions))
+			using (var reader = _eventStore.CreateReader<Guid>(SnapshotStream))
 			{
 				var storeEvents = reader.LoadEvents(aggregate.ID);
 				var storeSnapshot = reader.LoadLatestSnapshotFor(aggregate.ID);

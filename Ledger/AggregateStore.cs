@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Ledger.Conventions;
 using Ledger.Infrastructure;
 
 namespace Ledger
@@ -9,28 +8,16 @@ namespace Ledger
 	public class AggregateStore<TKey>
 	{
 		private readonly IEventStore _eventStore;
-		private readonly IStoreNamingConvention _namingConvention;
 		public int DefaultSnapshotInterval { get; set; }
 
 		public AggregateStore(IEventStore eventStore)
-			: this(eventStore, new KeyTypeNamingConvention())
-		{
-		}
-
-		public AggregateStore(IEventStore eventStore, IStoreNamingConvention namingConvention)
 		{
 			_eventStore = eventStore;
-			_namingConvention = namingConvention;
 
 			DefaultSnapshotInterval = 10;
 		}
 
-		public IStoreConventions Conventions<TAggregate>()
-		{
-			return new StoreConventions(_namingConvention, typeof (TKey), typeof (TAggregate));
-		}
-
-		public void Save<TAggregate>(TAggregate aggregate)
+		public void Save<TAggregate>(string stream, TAggregate aggregate)
 			where TAggregate : AggregateRoot<TKey>
 		{
 			var changes = aggregate
@@ -44,9 +31,7 @@ namespace Ledger
 				return;
 			}
 
-			var conventions = Conventions<TAggregate>();
-
-			using (var store = _eventStore.CreateWriter<TKey>(conventions))
+			using (var store = _eventStore.CreateWriter<TKey>(stream))
 			{
 				ThrowIfVersionsInconsistent(store, aggregate);
 
@@ -109,12 +94,10 @@ namespace Ledger
 			return snapshotID.HasValue && changes.Last().Sequence >= snapshotID.Value + interval;
 		}
 
-		public TAggregate Load<TAggregate>(TKey aggregateID, Func<TAggregate> createNew)
+		public TAggregate Load<TAggregate>(string stream, TKey aggregateID, Func<TAggregate> createNew)
 			where TAggregate : AggregateRoot<TKey>
 		{
-			var conventions = Conventions<TAggregate>();
-
-			using (var store = _eventStore.CreateReader<TKey>(conventions))
+			using (var store = _eventStore.CreateReader<TKey>(stream))
 			{
 				var aggregate = createNew();
 

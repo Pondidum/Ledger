@@ -11,6 +11,8 @@ namespace Ledger.Tests
 {
 	public class AggregateStoreTests
 	{
+		private const string StreamName = "someStream";
+
 		private readonly InMemoryEventStore _backing;
 		private readonly AggregateStore<Guid> _store;
 
@@ -28,10 +30,10 @@ namespace Ledger.Tests
 
 			aggregate.AddEvent(new TestEvent());
 
-			_store.Save(aggregate);
+			_store.Save(StreamName, aggregate);
 
 			var events = _backing
-				.CreateReader<Guid>(_store.Conventions<TestAggregate>())
+				.CreateReader<Guid>(StreamName)
 				.LoadEvents(aggregate.ID)
 				.ToList();
 
@@ -54,10 +56,10 @@ namespace Ledger.Tests
 			aggregate.AddEvent(new TestEvent());
 			aggregate.AddEvent(new TestEvent());
 
-			_store.Save(aggregate);
+			_store.Save(StreamName, aggregate);
 
 			var events = _backing
-				.CreateReader<Guid>(_store.Conventions<TestAggregate>())
+				.CreateReader<Guid>(StreamName)
 				.LoadEvents(aggregate.ID)
 				.ToList();
 
@@ -80,14 +82,14 @@ namespace Ledger.Tests
 			aggregate.AddEvent(new TestEvent()); //2
 			aggregate.AddEvent(new TestEvent()); //3
 
-			_store.Save(aggregate);
+			_store.Save(StreamName, aggregate);
 
 			aggregate.AddEvent(new TestEvent()); //4
 
-			_store.Save(aggregate);
+			_store.Save(StreamName, aggregate);
 
 			var events = _backing
-				.CreateReader<Guid>(_store.Conventions<TestAggregate>())
+				.CreateReader<Guid>(StreamName)
 				.LoadEvents(aggregate.ID)
 				.ToList();
 
@@ -107,10 +109,10 @@ namespace Ledger.Tests
 
 			aggregate.AddEvent(new TestEvent());
 
-			_store.Save(aggregate);
+			_store.Save(StreamName, aggregate);
 
 			var events = _backing
-				.CreateReader<Guid>(_store.Conventions<TestAggregate>())
+				.CreateReader<Guid>(StreamName)
 				.LoadEvents(aggregate.ID)
 				.ToList();
 
@@ -129,9 +131,9 @@ namespace Ledger.Tests
 
 			Enumerable.Range(0, 12).ForEach((e,i) => aggregate.AddEvent(new TestEvent()));
 
-			_store.Save(aggregate);
+			_store.Save(StreamName, aggregate);
 
-			using (var reader = _backing.CreateReader<Guid>(_store.Conventions<SnapshotAggregate>()))
+			using (var reader = _backing.CreateReader<Guid>(StreamName))
 			{
 				var events = reader.LoadEvents(aggregate.ID).ToList();
 				var snapshot = reader.LoadLatestSnapshotFor(aggregate.ID);
@@ -151,12 +153,12 @@ namespace Ledger.Tests
 			aggregate.GenerateID();
 
 			Enumerable.Range(0, 12).ForEach((e, i) => aggregate.AddEvent(new TestEvent()));
-			_store.Save(aggregate);
+			_store.Save(StreamName, aggregate);
 
 			Enumerable.Range(0, 12).ForEach((e, i) => aggregate.AddEvent(new TestEvent()));
-			_store.Save(aggregate);
+			_store.Save(StreamName, aggregate);
 
-			using (var reader = _backing.CreateReader<Guid>(_store.Conventions<SnapshotAggregate>()))
+			using (var reader = _backing.CreateReader<Guid>(StreamName))
 			{
 				var events = reader.LoadEvents(aggregate.ID).ToList();
 				var snapshot = reader.LoadLatestSnapshotFor(aggregate.ID);

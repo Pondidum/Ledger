@@ -26,7 +26,7 @@ namespace Ledger.Tests.Stores
 			aggregate.AddEvent(event1);
 
 			var ags = new AggregateStore<Guid>(wrapped);
-			ags.Save(aggregate);
+			ags.Save("testStream", aggregate);
 
 			events.ShouldBe(new[] { event1 });
 			store.AllEvents.Cast<IDomainEvent<Guid>>().ShouldBe(new[] { event1 });
@@ -46,9 +46,9 @@ namespace Ledger.Tests.Stores
 				_onEvent = onEvent;
 			}
 
-			public override IStoreWriter<TKey> CreateWriter<TKey>(IStoreConventions storeConventions)
+			public override IStoreWriter<TKey> CreateWriter<TKey>(string stream)
 			{
-				return new EventLoggingStoreWriter<TKey>(_other.CreateWriter<TKey>(storeConventions), e =>  _onEvent((IDomainEvent<Guid>) e) );
+				return new EventLoggingStoreWriter<TKey>(_other.CreateWriter<TKey>(stream), e =>  _onEvent((IDomainEvent<Guid>) e) );
 			}
 		}
 
