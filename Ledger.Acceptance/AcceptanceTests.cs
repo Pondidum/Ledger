@@ -9,8 +9,8 @@ namespace Ledger.Acceptance
 {
 	public abstract class AcceptanceTests
 	{
-		private const string SnapshotStream = "SnapshotStream";
-		private const string DefaultStream = "DefaultStream";
+		public const string SnapshotStream = "SnapshotAggregateStream";
+		public const string DefaultStream = "TestAggregateStream";
 
 		private readonly IEventStore _eventStore;
 		private readonly AggregateStore<Guid> _aggregateStore;
