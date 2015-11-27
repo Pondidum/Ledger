@@ -9,14 +9,14 @@ using Xunit;
 
 namespace Ledger.Tests
 {
-	public class AggregateStoreTests
+	public class SaveAggregateTests
 	{
 		private const string StreamName = "someStream";
 
 		private readonly InMemoryEventStore _backing;
 		private readonly AggregateStore<Guid> _store;
 
-		public AggregateStoreTests()
+		public SaveAggregateTests()
 		{
 			_backing = new InMemoryEventStore();
 			_store = new AggregateStore<Guid>(_backing);
