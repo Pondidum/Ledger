@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Ledger.Infrastructure;
@@ -61,7 +62,7 @@ namespace Ledger
 				.GetType()
 				.GetMethod(methodName);
 
-			return (ISnapshot<TKey>) createSnapshot.Invoke(aggregate, new object[] {});
+			return (ISnapshot<TKey>)createSnapshot.Invoke(aggregate, new object[] { });
 		}
 
 		private static void ThrowIfVersionsInconsistent<TAggregate>(IStoreWriter<TKey> store, TAggregate aggregate)
@@ -119,6 +120,60 @@ namespace Ledger
 				}
 
 				return aggregate;
+			}
+		}
+
+		public IEnumerable<AggregateRoot<TKey>> LoadAll(string stream, Action<AggregateLoadAllConfiguration<TKey>> configureMapper)
+		{
+			var loader = new AggregateLoadAllConfiguration<TKey>();
+			configureMapper(loader);
+
+			using (var reader = _eventStore.CreateReader<TKey>(stream))
+			{
+				var ids = reader.LoadAllKeys();
+
+				foreach (var id in ids)
+				{
+					var snapshot = reader.LoadLatestSnapshotFor(id);
+					var since = snapshot != null
+						? snapshot.Sequence
+						: -1;
+
+					var events = reader.LoadEventsSince(id, since).GetEnumerator();
+					events.MoveNext();
+
+					var allEvents = new[] { events.Current }.Concat(new Iterator<IDomainEvent<TKey>>(events));
+
+					var creator = loader.For(snapshot, events.Current);
+					var instance = creator();
+
+					if (snapshot != null)
+						instance.LoadFromSnapshot(snapshot, allEvents);
+					else
+						instance.LoadFromEvents(allEvents);
+
+					yield return instance;
+				}
+			}
+		}
+
+		private class Iterator<T> : IEnumerable<T>
+		{
+			private readonly IEnumerator<T> _enumerator;
+
+			public Iterator(IEnumerator<T> enumerator)
+			{
+				_enumerator = enumerator;
+			}
+
+			public IEnumerator<T> GetEnumerator()
+			{
+				return _enumerator;
+			}
+
+			IEnumerator IEnumerable.GetEnumerator()
+			{
+				return GetEnumerator();
 			}
 		}
 	}
