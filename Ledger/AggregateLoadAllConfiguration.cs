@@ -24,7 +24,6 @@ namespace Ledger
 			where TEvent : IDomainEvent<TKey>
 		{
 			_byEvent.Add(typeof(TEvent), create);
-
 		}
 
 		public Func<AggregateRoot<TKey>> For(ISnapshot<TKey> snapshot, IDomainEvent<TKey> firstEvent)

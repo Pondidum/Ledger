@@ -62,6 +62,7 @@
   <ItemGroup>
     <Compile Include="Acceptance.cs" />
     <Compile Include="AggregateRootTests.cs" />
+    <Compile Include="AggregateStoreTests\LoadAllAggregatesTests.cs" />
     <Compile Include="AggregateStoreTests\SaveAggregateTests.cs" />
     <Compile Include="Infrastructure\ExtensionsTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
