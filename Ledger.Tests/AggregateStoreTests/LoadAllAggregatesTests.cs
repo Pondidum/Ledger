@@ -31,7 +31,7 @@ namespace Ledger.Tests
 			var loaded = _store
 				.LoadAll(StreamName, on =>
 				{
-					on.Event<CreatePermissionEvent>(() => new Permission());
+					on.Event<PermissionCreatedEvent>(() => new Permission());
 				})
 				.Cast<Permission>()
 				.Single();
@@ -42,6 +42,37 @@ namespace Ledger.Tests
 			);
 		}
 
+		[Fact]
+		public void When_loading_an_aggregate_with_a_snaphot()
+		{
+			var input = User.Create();
+			_store.Save(StreamName, input);
+
+			var loaded = _store
+				.LoadAll(StreamName, on =>
+				{
+					on.Snapshot<UserSnapshot>(() => new User());
+				})
+				.Cast<User>()
+				.Single();
+
+			loaded.ShouldSatisfyAllConditions(
+				() => loaded.ID.ShouldBe(input.ID),
+				() => loaded.Name.ShouldBe("Dave")
+			);
+		}
+
+		[Fact]
+		public void When_loading_and_an_aggregate_has_not_had_creation_defined()
+		{
+			var input = Permission.Create();
+			input.ChangeName("Some Permission");
+			_store.Save(StreamName, input);
+
+			Should.Throw<AggregateConstructionException>(
+				() => _store.LoadAll(StreamName, on => { }).ToList());
+		}
+
 
 		private class Permission : AggregateRoot<Guid>
 		{
@@ -50,7 +81,7 @@ namespace Ledger.Tests
 			public static Permission Create()
 			{
 				var perm = new Permission();
-				perm.ApplyEvent(new CreatePermissionEvent { AggregateID = Guid.NewGuid() });
+				perm.ApplyEvent(new PermissionCreatedEvent { AggregateID = Guid.NewGuid() });
 				return perm;
 			}
 
@@ -59,7 +90,7 @@ namespace Ledger.Tests
 				ApplyEvent(new ChangePermissionNameEvent { NewName = newName });
 			}
 
-			private void Handle(CreatePermissionEvent e)
+			private void Handle(PermissionCreatedEvent e)
 			{
 				ID = e.AggregateID;
 				Name = "New";
@@ -77,27 +108,63 @@ namespace Ledger.Tests
 			public static Role Create()
 			{
 				var role = new Role();
-				role.ApplyEvent(new CreateRoleEvent { AggregateID = Guid.NewGuid() });
+				role.ApplyEvent(new RoleCreatedEvent { AggregateID = Guid.NewGuid() });
 				return role;
 			}
 
-			private void Handle(CreateRoleEvent e)
+			private void Handle(RoleCreatedEvent e)
 			{
 				ID = e.AggregateID;
 			}
 		}
 
-		private class CreatePermissionEvent : DomainEvent<Guid>
+		private class User : AggregateRoot<Guid>, ISnapshotable<Guid, UserSnapshot>, ISnapshotControl
 		{
+			public string Name { get; private set; }
+
+			public static User Create()
+			{
+				var user = new User();
+				user.ApplyEvent(new UserCreatedEvent { AggregateID = Guid.NewGuid() });
+				return user;
+			}
+
+			private void Handle(UserCreatedEvent e)
+			{
+				ID = e.AggregateID;
+			}
+
+			public UserSnapshot CreateSnapshot()
+			{
+				return new UserSnapshot { Name = "Dave" };
+			}
+
+			public void ApplySnapshot(UserSnapshot snapshot)
+			{
+				Name = snapshot.Name;
+			}
+
+			public int SnapshotInterval
+			{
+				get { return 1; }
+			}
 		}
 
-		private class CreateRoleEvent : DomainEvent<Guid>
-		{
-		}
+		private class PermissionCreatedEvent : DomainEvent<Guid> { }
+		private class RoleCreatedEvent : DomainEvent<Guid> { }
+		private class UserCreatedEvent : DomainEvent<Guid> { }
 
 		private class ChangePermissionNameEvent : DomainEvent<Guid>
 		{
 			public string NewName { get; set; }
 		}
-	}
+
+		private class UserSnapshot : ISnapshot<Guid>
+		{
+			public int Sequence { get; set; }
+			public Guid AggregateID { get; set; }
+
+			public string Name { get; set; }
+		}
+    }
 }

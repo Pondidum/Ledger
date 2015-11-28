@@ -140,9 +140,12 @@ namespace Ledger
 						: -1;
 
 					var events = reader.LoadEventsSince(id, since).GetEnumerator();
-					events.MoveNext();
+					var allEvents = Enumerable.Empty<IDomainEvent<TKey>>();
 
-					var allEvents = new[] { events.Current }.Concat(new Iterator<IDomainEvent<TKey>>(events));
+					if (events.MoveNext())
+						allEvents = allEvents.Concat(new[] {events.Current});
+
+					allEvents = allEvents.Concat(new Iterator<IDomainEvent<TKey>>(events));
 
 					var creator = loader.For(snapshot, events.Current);
 					var instance = creator();

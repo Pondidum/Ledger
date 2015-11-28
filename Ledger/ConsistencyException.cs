@@ -1,12 +1,28 @@
 ﻿using System;
+using System.Runtime.Serialization;
 
 namespace Ledger
 {
 	public class ConsistencyException : Exception
 	{
+		public ConsistencyException()
+		{
+		}
+
 		public ConsistencyException(Type aggregate, string id, int sequenceID, int? lastStoredSequence)
-			: base(string.Format(
-			"{0} {1} base sequence is {2}, but the store's is {3}, so it cannot be saved.", aggregate.Name, id, sequenceID, lastStoredSequence.ToString()))
+			: base($"{aggregate.Name} {id} base sequence is {sequenceID}, but the store's is {lastStoredSequence}, so it cannot be saved.")
+		{
+		}
+
+		public ConsistencyException(string message) : base(message)
+		{
+		}
+
+		public ConsistencyException(string message, Exception innerException) : base(message, innerException)
+		{
+		}
+
+		protected ConsistencyException(SerializationInfo info, StreamingContext context) : base(info, context)
 		{
 		}
 	}

@@ -28,13 +28,25 @@ namespace Ledger
 
 		public Func<AggregateRoot<TKey>> For(ISnapshot<TKey> snapshot, IDomainEvent<TKey> firstEvent)
 		{
-			if (snapshot != null)
+			if (snapshot != null && _bySnapshot.ContainsKey(snapshot.GetType()))
 				return _bySnapshot[snapshot.GetType()];
 
-			if (firstEvent != null)
+			if (firstEvent != null && _byEvent.ContainsKey(firstEvent.GetType()))
 				return _byEvent[firstEvent.GetType()];
 
-			return () => { throw new NotSupportedException(); };
+			return () =>
+			{
+				if (snapshot != null && firstEvent != null)
+					throw new AggregateConstructionException($"No Aggregate has been defined for creation by {snapshot.GetType().Name} or {firstEvent.GetType().Name}");
+
+				if (snapshot != null )
+					throw new AggregateConstructionException($"No Aggregate has been defined for creation by {snapshot.GetType().Name}");
+
+				if (firstEvent != null)
+					throw new AggregateConstructionException($"No Aggregate has been defined for creation by {firstEvent.GetType().Name}");
+
+				throw new AggregateConstructionException();
+			};
 		}
 	}
 }
