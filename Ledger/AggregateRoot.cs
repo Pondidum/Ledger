@@ -59,6 +59,7 @@ namespace Ledger
 			{
 				this.AsDynamic().ApplySnapshot(snapshot);
 				SequenceID = snapshot.Sequence;
+				ID = snapshot.AggregateID;
 			}
 
 			LoadFromEvents(events);
