@@ -150,6 +150,9 @@ namespace Ledger
 					var creator = loader.For(snapshot, events.Current);
 					var instance = creator();
 
+					if (instance == null)
+						continue;
+					
 					if (snapshot != null)
 						instance.LoadFromSnapshot(snapshot, allEvents);
 					else

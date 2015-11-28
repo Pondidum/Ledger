@@ -73,6 +73,26 @@ namespace Ledger.Tests
 				() => _store.LoadAll(StreamName, on => { }).ToList());
 		}
 
+		[Fact]
+		public void When_loading_and_an_unknown_aggregate_and_custom_action_is_defined()
+		{
+			var input = Permission.Create();
+			input.ChangeName("Some Permission");
+			_store.Save(StreamName, input);
+
+			var unknownSeen = false;
+			var onUnknown = new Func<ISnapshot<Guid>, IDomainEvent<Guid>, AggregateRoot<Guid>>((s, e) =>
+			{
+				unknownSeen = true;
+				return null;
+			});
+
+			var all = _store.LoadAll(StreamName, on => { on.UnconstructableAggregate(onUnknown); }).ToList();
+
+			all.ShouldBeEmpty();
+			unknownSeen.ShouldBe(true);
+		}
+
 
 		private class Permission : AggregateRoot<Guid>
 		{
