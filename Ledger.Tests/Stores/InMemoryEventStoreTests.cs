@@ -24,9 +24,9 @@ namespace Ledger.Tests.Stores
 		{
 			var store = new InMemoryEventStore();
 
-			var e0 = new TestEvent { AggregateID = 1, Sequence = _stamper() };
-			var e1 = new TestEvent { AggregateID = 2, Sequence = _stamper() };
-			var e2 = new TestEvent { AggregateID = 1, Sequence = _stamper() };
+			var e0 = new TestEvent { AggregateID = 1, Stamp = _stamper() };
+			var e1 = new TestEvent { AggregateID = 2, Stamp = _stamper() };
+			var e2 = new TestEvent { AggregateID = 1, Stamp = _stamper() };
 
 			using (var writer = store.CreateWriter<int>(null))
 			{
@@ -43,9 +43,9 @@ namespace Ledger.Tests.Stores
 		{
 			var store = new InMemoryEventStore();
 
-			var snap0 = new TestSnapshot { AggregateID = 1, Sequence = _stamper() };
-			var snap1 = new TestSnapshot { AggregateID = 2, Sequence = _stamper() };
-			var snap2 = new TestSnapshot { AggregateID = 1, Sequence = _stamper() };
+			var snap0 = new TestSnapshot { AggregateID = 1, Stamp = _stamper() };
+			var snap1 = new TestSnapshot { AggregateID = 2, Stamp = _stamper() };
+			var snap2 = new TestSnapshot { AggregateID = 1, Stamp = _stamper() };
 
 			using (var writer = store.CreateWriter<int>(null))
 			{
@@ -64,7 +64,7 @@ namespace Ledger.Tests.Stores
 		public class TestSnapshot : ISnapshot<int>
 		{
 			public int AggregateID { get; set; }
-			public DateTime Sequence{ get; set; }
+			public DateTime Stamp { get; set; }
 		}
 	}
 }

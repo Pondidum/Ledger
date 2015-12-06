@@ -19,8 +19,8 @@ namespace Ledger.Stores
 				key => new List<object>());
 		}
 
-		public IEnumerable<object> AllEvents => _events.SelectMany(events => events).OrderBy(e => ((IStamped)e).Sequence);
-		public IEnumerable<object> AllSnapshots => _snapshots.SelectMany(events => events).OrderBy(e => ((IStamped)e).Sequence);
+		public IEnumerable<object> AllEvents => _events.SelectMany(events => events).OrderBy(e => ((IStamped)e).Stamp);
+		public IEnumerable<object> AllSnapshots => _snapshots.SelectMany(events => events).OrderBy(e => ((IStamped)e).Stamp);
 
 		public IStoreReader<TKey> CreateReader<TKey>(string stream)
 		{
@@ -56,7 +56,7 @@ namespace Ledger.Stores
 			public IEnumerable<IDomainEvent<TKey>> LoadEventsSince(TKey aggregateID, DateTime sequenceID)
 			{
 				return LoadEvents(aggregateID)
-					.Where(e => e.Sequence > sequenceID);
+					.Where(e => e.Stamp > sequenceID);
 			}
 
 			public ISnapshot<TKey> LoadLatestSnapshotFor(TKey aggregateID)
@@ -78,17 +78,17 @@ namespace Ledger.Stores
 				var last = LoadEvents(aggregateID).LastOrDefault();
 
 				return last != null
-					? last.Sequence
+					? last.Stamp
 					: (DateTime?)null;
 			}
 
 			public int GetNumberOfEventsSinceSnapshotFor(TKey aggregateID)
 			{
 				var last = LoadLatestSnapshotFor(aggregateID);
-				var stamp = last?.Sequence ?? DateTime.MinValue;
+				var stamp = last?.Stamp ?? DateTime.MinValue;
 
 				return LoadEvents(aggregateID)
-					.Count(e => e.Sequence >= stamp);
+					.Count(e => e.Stamp >= stamp);
 			}
 
 			public void SaveEvents(IEnumerable<IDomainEvent<TKey>> changes)

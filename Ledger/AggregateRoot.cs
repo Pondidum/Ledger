@@ -29,7 +29,7 @@ namespace Ledger
 			_events = new List<IDomainEvent<TKey>>();
 			SequenceID = DateTime.MinValue;
 
-			BeforeApplyEvent<IDomainEvent<TKey>>(e => e.Sequence = _getTimestamp());
+			BeforeApplyEvent<IDomainEvent<TKey>>(e => e.Stamp = _getTimestamp());
 		}
 
 		public IEnumerable<IDomainEvent<TKey>> GetUncommittedEvents()
@@ -41,7 +41,7 @@ namespace Ledger
 		{
 			if (_events.Any())
 			{
-				SequenceID = _events.Last().Sequence;
+				SequenceID = _events.Last().Stamp;
 				_events.Clear();
 			}
 		}
@@ -57,7 +57,7 @@ namespace Ledger
 
 			if (last != null)
 			{
-				SequenceID = last.Sequence;
+				SequenceID = last.Stamp;
 			}
 		}
 
@@ -67,7 +67,7 @@ namespace Ledger
 			if (snapshot != null)
 			{
 				this.AsDynamic().ApplySnapshot(snapshot);
-				SequenceID = snapshot.Sequence;
+				SequenceID = snapshot.Stamp;
 				ID = snapshot.AggregateID;
 			}
 

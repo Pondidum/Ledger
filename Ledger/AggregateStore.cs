@@ -39,7 +39,7 @@ namespace Ledger
 				{
 					var snapshot = GetSnapshot(aggregate);
 					snapshot.AggregateID = aggregate.ID;
-					snapshot.Sequence = changes.Last().Sequence;
+					snapshot.Stamp = changes.Last().Stamp;
 
 					store.SaveSnapshot(snapshot);
 				}
@@ -67,11 +67,11 @@ namespace Ledger
 		private static void ThrowIfVersionsInconsistent<TAggregate>(IStoreWriter<TKey> store, TAggregate aggregate)
 			where TAggregate : AggregateRoot<TKey>
 		{
-			var lastStoredSequence = store.GetLatestSequenceFor(aggregate.ID);
+			var lastStoredStamp = store.GetLatestSequenceFor(aggregate.ID);
 
-			if (lastStoredSequence.HasValue && lastStoredSequence != aggregate.SequenceID)
+			if (lastStoredStamp.HasValue && lastStoredStamp != aggregate.SequenceID)
 			{
-				throw new ConsistencyException(aggregate.GetType(), aggregate.ID.ToString(), aggregate.SequenceID, lastStoredSequence);
+				throw new ConsistencyException(aggregate.GetType(), aggregate.ID.ToString(), aggregate.SequenceID, lastStoredStamp);
 			}
 		}
 
@@ -105,7 +105,7 @@ namespace Ledger
 				{
 					var snapshot = store.LoadLatestSnapshotFor(aggregateID);
 					var since = snapshot != null
-						? snapshot.Sequence
+						? snapshot.Stamp
 						: DateTime.MinValue;
 
 					var events = store.LoadEventsSince(aggregateID, since);
@@ -135,7 +135,7 @@ namespace Ledger
 				{
 					var snapshot = reader.LoadLatestSnapshotFor(id);
 					var since = snapshot != null
-						? snapshot.Sequence
+						? snapshot.Stamp
 						: DateTime.MinValue;
 
 					var events = reader.LoadEventsSince(id, since).GetEnumerator();

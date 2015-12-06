@@ -44,7 +44,7 @@ namespace Ledger.Acceptance
 
 			using (var writer = _eventStore.CreateWriter<Guid>(SnapshotStream))
 			{
-				writer.SaveEvents(new[] { new TestEvent { AggregateID = aggregate.ID, Sequence = DateTime.UtcNow } });
+				writer.SaveEvents(new[] { new TestEvent { AggregateID = aggregate.ID, Stamp = DateTime.UtcNow } });
 			}
 
 			aggregate.AddEvent(new TestEvent());
@@ -63,8 +63,8 @@ namespace Ledger.Acceptance
 			{
 				writer.SaveEvents(new[]
 				{
-					new TestEvent {AggregateID = id, Sequence = t1},
-					new TestEvent {AggregateID = id, Sequence = t2},
+					new TestEvent {AggregateID = id, Stamp = t1},
+					new TestEvent {AggregateID = id, Stamp = t2},
 				});
 			}
 
@@ -84,8 +84,8 @@ namespace Ledger.Acceptance
 			{
 				writer.SaveEvents(new[]
 				{
-					new TestEvent {AggregateID = id, Sequence = t1},
-					new TestEvent {AggregateID = id, Sequence = t2},
+					new TestEvent {AggregateID = id, Stamp = t1},
+					new TestEvent {AggregateID = id, Stamp = t2},
 				});
 			}
 
@@ -108,11 +108,11 @@ namespace Ledger.Acceptance
 
 			using (var writer = _eventStore.CreateWriter<Guid>(SnapshotStream))
 			{
-				writer.SaveSnapshot(new TestSnapshot { AggregateID = id, Sequence = t10 });
+				writer.SaveSnapshot(new TestSnapshot { AggregateID = id, Stamp = t10 });
 				writer.SaveEvents(new[]
 				{
-					new TestEvent {AggregateID = id, Sequence = t5},
-					new TestEvent {AggregateID = id, Sequence = t6},
+					new TestEvent {AggregateID = id, Stamp = t5},
+					new TestEvent {AggregateID = id, Stamp = t6},
 				});
 			}
 
@@ -144,8 +144,8 @@ namespace Ledger.Acceptance
 
 				reader.ShouldSatisfyAllConditions(
 					() => events.Count().ShouldBe(2),
-					() => events[0].Sequence.ShouldBe(start),
-					() => events[1].Sequence.ShouldBe(start.AddSeconds(1)),
+					() => events[0].Stamp.ShouldBe(start),
+					() => events[1].Stamp.ShouldBe(start.AddSeconds(1)),
 					() => aggregate.GetUncommittedEvents().ShouldBeEmpty()
 				);
 			}
@@ -177,10 +177,10 @@ namespace Ledger.Acceptance
 
 				reader.ShouldSatisfyAllConditions(
 					() => storeEvents.ShouldNotBeEmpty(),
-					() => events.ForEach((e, i) => e.Sequence.ShouldBe(start.AddSeconds(i))),
+					() => events.ForEach((e, i) => e.Stamp.ShouldBe(start.AddSeconds(i))),
 					() => aggregate.GetUncommittedEvents().ShouldBeEmpty(),
 					() => storeSnapshot.ShouldNotBe(null),
-					() => storeSnapshot.Sequence.ShouldBe(events.Last().Sequence)
+					() => storeSnapshot.Stamp.ShouldBe(events.Last().Stamp)
 				);
 			}
 

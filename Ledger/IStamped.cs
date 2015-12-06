@@ -4,6 +4,6 @@ namespace Ledger
 {
 	public interface IStamped
 	{
-		DateTime Sequence { get; set; }
+		DateTime Stamp { get; set; }
 	}
 }

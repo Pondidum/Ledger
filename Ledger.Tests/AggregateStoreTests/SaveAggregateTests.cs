@@ -49,7 +49,7 @@ namespace Ledger.Tests
 
 			aggregate.ShouldSatisfyAllConditions(
 				() => events.ShouldAllBe(e => e.AggregateID == aggregate.ID),
-				() => events.ForEach((e, i) => e.Sequence.ShouldBe(_start.AddSeconds(i))),
+				() => events.ForEach((e, i) => e.Stamp.ShouldBe(_start.AddSeconds(i))),
 				() => aggregate.GetSequenceID().ShouldBe(_start)
             );
 
@@ -75,7 +75,7 @@ namespace Ledger.Tests
 
 			aggregate.ShouldSatisfyAllConditions(
 				() => events.ShouldAllBe(e => e.AggregateID == aggregate.ID),
-				() => events.ForEach((e, i) => e.Sequence.ShouldBe(_start.AddSeconds(i))),
+				() => events.ForEach((e, i) => e.Stamp.ShouldBe(_start.AddSeconds(i))),
 				() => aggregate.GetSequenceID().ShouldBe(_start.AddSeconds(3))
 			);
 		}
@@ -105,7 +105,7 @@ namespace Ledger.Tests
 
 			aggregate.ShouldSatisfyAllConditions(
 				() => events.ShouldAllBe(e => e.AggregateID == aggregate.ID),
-				() => events.ForEach((e, i) => e.Sequence.ShouldBe(_start.AddSeconds(i))),
+				() => events.ForEach((e, i) => e.Stamp.ShouldBe(_start.AddSeconds(i))),
 				() => aggregate.GetSequenceID().ShouldBe(_start.AddSeconds(4)),
 				() => events.Count.ShouldBe(5)
 			);
@@ -128,7 +128,7 @@ namespace Ledger.Tests
 
 			aggregate.ShouldSatisfyAllConditions(
 				() => events.ShouldAllBe(e => e.AggregateID == aggregate.ID),
-				() => events.ForEach((e, i) => e.Sequence.ShouldBe(_start.AddSeconds(i))),
+				() => events.ForEach((e, i) => e.Stamp.ShouldBe(_start.AddSeconds(i))),
 				() => aggregate.GetSequenceID().ShouldBe(_start.AddSeconds(0))
 			);
 		}
@@ -150,7 +150,7 @@ namespace Ledger.Tests
 
 				aggregate.ShouldSatisfyAllConditions(
 					() => events.Count.ShouldBe(12),
-					() => snapshot.Sequence.ShouldBe(_start.AddSeconds(11)),
+					() => snapshot.Stamp.ShouldBe(_start.AddSeconds(11)),
 					() => snapshot.AggregateID.ShouldBe(aggregate.ID)
 				);
 			}
@@ -175,7 +175,7 @@ namespace Ledger.Tests
 
 				aggregate.ShouldSatisfyAllConditions(
 					() => events.Count.ShouldBe(24),
-					() => snapshot.Sequence.ShouldBe(_start.AddSeconds(23)),
+					() => snapshot.Stamp.ShouldBe(_start.AddSeconds(23)),
 					() => snapshot.AggregateID.ShouldBe(aggregate.ID)
 				);
 			}
@@ -200,7 +200,7 @@ namespace Ledger.Tests
 
 				aggregate.ShouldSatisfyAllConditions(
 					() => events.Count.ShouldBe(11),
-					() => snapshot.Sequence.ShouldBe(_start.AddSeconds(10))
+					() => snapshot.Stamp.ShouldBe(_start.AddSeconds(10))
 				);
 			}
 		}
