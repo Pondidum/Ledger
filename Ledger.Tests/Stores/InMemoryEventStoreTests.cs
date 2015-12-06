@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Ledger.Acceptance.TestObjects;
 using Ledger.Stores;
 using Shouldly;
 using Xunit;
@@ -10,14 +9,24 @@ namespace Ledger.Tests.Stores
 {
 	public class InMemoryEventStoreTests
 	{
+		private readonly DateTime _start;
+		private readonly Func<DateTime> _stamper;
+
+		public InMemoryEventStoreTests()
+		{
+			var offset = 0;
+			_start = DateTime.UtcNow;
+			_stamper = new Func<DateTime>(() => _start.AddSeconds(offset++));
+		}
+
 		[Fact]
 		public void When_getting_events_they_are_ordered()
 		{
 			var store = new InMemoryEventStore();
 
-			var e0 = new TestEvent { AggregateID = 1, Sequence = 0 };
-			var e1 = new TestEvent { AggregateID = 2, Sequence = 1 };
-			var e2 = new TestEvent { AggregateID = 1, Sequence = 2 };
+			var e0 = new TestEvent { AggregateID = 1, Sequence = _stamper() };
+			var e1 = new TestEvent { AggregateID = 2, Sequence = _stamper() };
+			var e2 = new TestEvent { AggregateID = 1, Sequence = _stamper() };
 
 			using (var writer = store.CreateWriter<int>(null))
 			{
@@ -34,9 +43,9 @@ namespace Ledger.Tests.Stores
 		{
 			var store = new InMemoryEventStore();
 
-			var snap0 = new TestSnapshot { AggregateID = 1, Sequence = 0 };
-			var snap1 = new TestSnapshot { AggregateID = 2, Sequence = 1 };
-			var snap2 = new TestSnapshot { AggregateID = 1, Sequence = 2 };
+			var snap0 = new TestSnapshot { AggregateID = 1, Sequence = _stamper() };
+			var snap1 = new TestSnapshot { AggregateID = 2, Sequence = _stamper() };
+			var snap2 = new TestSnapshot { AggregateID = 1, Sequence = _stamper() };
 
 			using (var writer = store.CreateWriter<int>(null))
 			{
@@ -55,7 +64,7 @@ namespace Ledger.Tests.Stores
 		public class TestSnapshot : ISnapshot<int>
 		{
 			public int AggregateID { get; set; }
-			public int Sequence { get; set; }
+			public DateTime Sequence{ get; set; }
 		}
 	}
 }

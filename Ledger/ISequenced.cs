@@ -1,7 +1,9 @@
-﻿namespace Ledger
+﻿using System;
+
+namespace Ledger
 {
 	public interface ISequenced
 	{
-		int Sequence { get; set; }
+		DateTime Sequence { get; set; }
 	}
 }

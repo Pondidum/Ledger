@@ -6,6 +6,10 @@ namespace Ledger.Acceptance.TestObjects
 {
 	public class TestAggregate : AggregateRoot<Guid>
 	{
+		public TestAggregate(Func<DateTime> getTimestamp)
+			: base(getTimestamp)
+		{
+		}
 		public void AddEvent(DomainEvent<Guid> @event)
 		{
 			ApplyEvent(@event);
@@ -23,7 +27,7 @@ namespace Ledger.Acceptance.TestObjects
 			ID = Guid.NewGuid();
 		}
 
-		public int GetSequenceID()
+		public DateTime GetSequenceID()
 		{
 			return SequenceID;
 		}

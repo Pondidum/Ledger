@@ -6,6 +6,11 @@ namespace Ledger.Acceptance.TestObjects
 {
 	public class SnapshotAggregate : AggregateRoot<Guid>, ISnapshotable<Guid, TestSnapshot>
 	{
+		public SnapshotAggregate(Func<DateTime>  getTimestamp)
+			:base(getTimestamp)
+		{
+		}
+
 		public void AddEvent(IDomainEvent<Guid> @event)
 		{
 			ApplyEvent(@event);
@@ -32,7 +37,7 @@ namespace Ledger.Acceptance.TestObjects
 		{
 		}
 
-		public int GetSequenceID()
+		public DateTime GetSequenceID()
 		{
 			return SequenceID;
 		}
@@ -41,7 +46,7 @@ namespace Ledger.Acceptance.TestObjects
 	public class TestSnapshot : ISnapshot<Guid>
 	{
 		public Guid AggregateID { get; set; }
-		public int Sequence { get; set; }
+		public DateTime Sequence{ get; set; }
 
 	}
 }

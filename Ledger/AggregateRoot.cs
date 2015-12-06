@@ -8,19 +8,28 @@ namespace Ledger
 	public class AggregateRoot<TKey>
 	{
 		public TKey ID { get; protected set; }
-		protected internal int SequenceID { get; set; }
+		protected internal DateTime SequenceID { get; set; }
 
+		private readonly Func<DateTime> _getTimestamp;
 		private readonly LightweightCache<Type, List<Action<IDomainEvent<TKey>>>> _handlers;
 		private readonly List<IDomainEvent<TKey>> _events;
 
 		protected AggregateRoot()
+			: this(() => DateTime.UtcNow)
 		{
+		}
+
+		protected AggregateRoot(Func<DateTime> getTimestamp)
+		{
+			_getTimestamp = getTimestamp;
 			_handlers = new LightweightCache<Type, List<Action<IDomainEvent<TKey>>>>(
 				key => new List<Action<IDomainEvent<TKey>>>()
 			);
 
 			_events = new List<IDomainEvent<TKey>>();
-			SequenceID = -1;
+			SequenceID = DateTime.MinValue;
+
+			BeforeApplyEvent<IDomainEvent<TKey>>(e => e.Sequence = _getTimestamp());
 		}
 
 		public IEnumerable<IDomainEvent<TKey>> GetUncommittedEvents()

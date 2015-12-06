@@ -18,16 +18,24 @@ namespace Ledger.Tests
 		private readonly InMemoryEventStore _backing;
 		private readonly AggregateStore<Guid> _store;
 
+		private DateTime _start;
+		private Func<DateTime> _stamper;
+
 		public SaveAggregateTests()
 		{
 			_backing = new InMemoryEventStore();
 			_store = new AggregateStore<Guid>(_backing);
+
+
+			_start = DateTime.UtcNow;
+			var offset = 0;
+			_stamper = new Func<DateTime>(() => _start.AddSeconds(offset++));
 		}
 
 		[Fact]
 		public void When_a_single_event_is_saved()
 		{
-			var aggregate = new TestAggregate();
+			var aggregate = new TestAggregate(_stamper);
 			aggregate.GenerateID();
 
 			aggregate.AddEvent(new TestEvent());
@@ -41,8 +49,8 @@ namespace Ledger.Tests
 
 			aggregate.ShouldSatisfyAllConditions(
 				() => events.ShouldAllBe(e => e.AggregateID == aggregate.ID),
-				() => events.ForEach((e, i) => e.Sequence.ShouldBe(i)),
-				() => aggregate.GetSequenceID().ShouldBe(0)
+				() => events.ForEach((e, i) => e.Sequence.ShouldBe(_start.AddSeconds(i))),
+				() => aggregate.GetSequenceID().ShouldBe(_start)
             );
 
 		}
@@ -50,7 +58,7 @@ namespace Ledger.Tests
 		[Fact]
 		public void When_multiple_events_are_saved()
 		{
-			var aggregate = new TestAggregate();
+			var aggregate = new TestAggregate(_stamper);
 			aggregate.GenerateID();
 
 			aggregate.AddEvent(new TestEvent());
@@ -67,8 +75,8 @@ namespace Ledger.Tests
 
 			aggregate.ShouldSatisfyAllConditions(
 				() => events.ShouldAllBe(e => e.AggregateID == aggregate.ID),
-				() => events.ForEach((e, i) => e.Sequence.ShouldBe(i)),
-				() => aggregate.GetSequenceID().ShouldBe(3)
+				() => events.ForEach((e, i) => e.Sequence.ShouldBe(_start.AddSeconds(i))),
+				() => aggregate.GetSequenceID().ShouldBe(_start.AddSeconds(3))
 			);
 		}
 
@@ -76,7 +84,7 @@ namespace Ledger.Tests
 		[Fact]
 		public void When_an_event_is_saved_onto_a_saved_aggregate()
 		{
-			var aggregate = new TestAggregate();
+			var aggregate = new TestAggregate(_stamper);
 			aggregate.GenerateID();
 
 			aggregate.AddEvent(new TestEvent()); //0
@@ -97,8 +105,8 @@ namespace Ledger.Tests
 
 			aggregate.ShouldSatisfyAllConditions(
 				() => events.ShouldAllBe(e => e.AggregateID == aggregate.ID),
-				() => events.ForEach((e, i) => e.Sequence.ShouldBe(i)),
-				() => aggregate.GetSequenceID().ShouldBe(4),
+				() => events.ForEach((e, i) => e.Sequence.ShouldBe(_start.AddSeconds(i))),
+				() => aggregate.GetSequenceID().ShouldBe(_start.AddSeconds(4)),
 				() => events.Count.ShouldBe(5)
 			);
 		}
@@ -106,7 +114,7 @@ namespace Ledger.Tests
 		[Fact]
 		public void When_the_aggregate_implements_another_interface()
 		{
-			var aggregate = new InterfaceAggregate();
+			var aggregate = new InterfaceAggregate(_stamper);
 			aggregate.GenerateID();
 
 			aggregate.AddEvent(new TestEvent());
@@ -120,15 +128,15 @@ namespace Ledger.Tests
 
 			aggregate.ShouldSatisfyAllConditions(
 				() => events.ShouldAllBe(e => e.AggregateID == aggregate.ID),
-				() => events.ForEach((e, i) => e.Sequence.ShouldBe(i)),
-				() => aggregate.GetSequenceID().ShouldBe(0)
+				() => events.ForEach((e, i) => e.Sequence.ShouldBe(_start.AddSeconds(i))),
+				() => aggregate.GetSequenceID().ShouldBe(_start.AddSeconds(0))
 			);
 		}
 
 		[Fact]
 		public void When_the_aggregate_is_snapshottable()
 		{
-			var aggregate = new SnapshotAggregate();
+			var aggregate = new SnapshotAggregate(_stamper);
 			aggregate.GenerateID();
 
 			Enumerable.Range(0, 12).ForEach((e,i) => aggregate.AddEvent(new TestEvent()));
@@ -142,7 +150,7 @@ namespace Ledger.Tests
 
 				aggregate.ShouldSatisfyAllConditions(
 					() => events.Count.ShouldBe(12),
-					() => snapshot.Sequence.ShouldBe(11),
+					() => snapshot.Sequence.ShouldBe(_start.AddSeconds(11)),
 					() => snapshot.AggregateID.ShouldBe(aggregate.ID)
 				);
 			}
@@ -151,7 +159,7 @@ namespace Ledger.Tests
 		[Fact]
 		public void When_the_aggregate_needs_a_new_snapshot()
 		{
-			var aggregate = new SnapshotAggregate();
+			var aggregate = new SnapshotAggregate(_stamper);
 			aggregate.GenerateID();
 
 			Enumerable.Range(0, 12).ForEach((e, i) => aggregate.AddEvent(new TestEvent()));
@@ -167,7 +175,7 @@ namespace Ledger.Tests
 
 				aggregate.ShouldSatisfyAllConditions(
 					() => events.Count.ShouldBe(24),
-					() => snapshot.Sequence.ShouldBe(23),
+					() => snapshot.Sequence.ShouldBe(_start.AddSeconds(23)),
 					() => snapshot.AggregateID.ShouldBe(aggregate.ID)
 				);
 			}
@@ -204,6 +212,11 @@ namespace Ledger.Tests
 		{
 			public string Key { get; set; }
 
+			public InterfaceAggregate(Func<DateTime> getTimestamp)
+				: base(getTimestamp)
+			{
+				
+			}
 			public void AddEvent(DomainEvent<Guid> @event)
 			{
 				ApplyEvent(@event);
@@ -221,7 +234,7 @@ namespace Ledger.Tests
 				ID = Guid.NewGuid();
 			}
 
-			public int GetSequenceID()
+			public DateTime GetSequenceID()
 			{
 				return SequenceID;
 			}

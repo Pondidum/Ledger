@@ -12,9 +12,11 @@ namespace Ledger.Acceptance
 		public const string SnapshotStream = "SnapshotAggregateStream";
 		public const string DefaultStream = "TestAggregateStream";
 
+		public readonly Func<DateTime> DefaultStamper = () => DateTime.UtcNow;
+
 		private readonly IEventStore _eventStore;
 		private readonly AggregateStore<Guid> _aggregateStore;
-		
+
 		protected AcceptanceTests(IEventStore eventStore)
 		{
 			_eventStore = eventStore;
@@ -24,7 +26,7 @@ namespace Ledger.Acceptance
 		[Fact]
 		public void When_there_are_no_events()
 		{
-			var aggregate = new SnapshotAggregate();
+			var aggregate = new SnapshotAggregate(DefaultStamper);
 			aggregate.GenerateID();
 
 			_aggregateStore.Save(SnapshotStream, aggregate);
@@ -39,12 +41,12 @@ namespace Ledger.Acceptance
 		[Fact]
 		public void When_the_event_store_has_newer_events()
 		{
-			var aggregate = new SnapshotAggregate();
+			var aggregate = new SnapshotAggregate(DefaultStamper);
 			aggregate.GenerateID();
 
 			using (var writer = _eventStore.CreateWriter<Guid>(SnapshotStream))
 			{
-				writer.SaveEvents(new[] { new TestEvent { AggregateID = aggregate.ID, Sequence = 5 } });
+				writer.SaveEvents(new[] { new TestEvent { AggregateID = aggregate.ID, Sequence = DateTime.UtcNow } });
 			}
 
 			aggregate.AddEvent(new TestEvent());
@@ -56,40 +58,44 @@ namespace Ledger.Acceptance
 		public void When_loading_with_snapshotting_and_there_is_no_snapshot()
 		{
 			var id = Guid.NewGuid();
+			var t1 = DateTime.UtcNow;
+			var t2 = t1.AddSeconds(5);
 
 			using (var writer = _eventStore.CreateWriter<Guid>(SnapshotStream))
 			{
 				writer.SaveEvents(new[]
 				{
-					new TestEvent {AggregateID = id, Sequence = 5},
-					new TestEvent {AggregateID = id, Sequence = 6},
+					new TestEvent {AggregateID = id, Sequence = t1},
+					new TestEvent {AggregateID = id, Sequence = t2},
 				});
 			}
 
-			var aggregate = _aggregateStore.Load(SnapshotStream, id, () => new SnapshotAggregate());
+			var aggregate = _aggregateStore.Load(SnapshotStream, id, () => new SnapshotAggregate(DefaultStamper));
 
-			aggregate.GetSequenceID().ShouldBe(6);
+			aggregate.GetSequenceID().ShouldBe(t2);
 		}
 
 		[Fact]
 		public void When_loading_multiple_events_without_snapshotting()
 		{
 			var id = Guid.NewGuid();
+			var t1 = DateTime.UtcNow;
+			var t2 = t1.AddSeconds(5);
 
 			using (var writer = _eventStore.CreateWriter<Guid>(DefaultStream))
 			{
 				writer.SaveEvents(new[]
 				{
-					new TestEvent {AggregateID = id, Sequence = 5},
-					new TestEvent {AggregateID = id, Sequence = 6},
+					new TestEvent {AggregateID = id, Sequence = t1},
+					new TestEvent {AggregateID = id, Sequence = t2},
 				});
 			}
 
-			var aggregate = _aggregateStore.Load(DefaultStream, id, () => new TestAggregate());
+			var aggregate = _aggregateStore.Load(DefaultStream, id, () => new TestAggregate(DefaultStamper));
 
 			aggregate.ShouldSatisfyAllConditions(
 				() => aggregate.GetUncommittedEvents().ShouldBeEmpty(),
-				() => aggregate.GetSequenceID().ShouldBe(6)
+				() => aggregate.GetSequenceID().ShouldBe(t2)
 			);
 		}
 
@@ -98,28 +104,36 @@ namespace Ledger.Acceptance
 		{
 			var id = Guid.NewGuid();
 
+			var t5 = DateTime.UtcNow;
+			var t6 = t5.AddSeconds(1);
+			var t10 = t5.AddSeconds(5);
+
 			using (var writer = _eventStore.CreateWriter<Guid>(SnapshotStream))
 			{
-				writer.SaveSnapshot(new TestSnapshot { AggregateID = id, Sequence = 10 });
+				writer.SaveSnapshot(new TestSnapshot { AggregateID = id, Sequence = t10 });
 				writer.SaveEvents(new[]
 				{
-					new TestEvent {AggregateID = id, Sequence = 5},
-					new TestEvent {AggregateID = id, Sequence = 6},
+					new TestEvent {AggregateID = id, Sequence = t5},
+					new TestEvent {AggregateID = id, Sequence = t6},
 				});
 			}
 
-			var aggregate = _aggregateStore.Load(SnapshotStream, id, () => new SnapshotAggregate());
+			var aggregate = _aggregateStore.Load(SnapshotStream, id, () => new SnapshotAggregate(DefaultStamper));
 
 			aggregate.ShouldSatisfyAllConditions(
 				() => aggregate.GetUncommittedEvents().ShouldBeEmpty(),
-				() => aggregate.GetSequenceID().ShouldBe(10)
+				() => aggregate.GetSequenceID().ShouldBe(t10)
 			);
 		}
 
 		[Fact]
 		public void When_saving_multiple_events_without_snapshotting()
 		{
-			var aggregate = new TestAggregate();
+			var start = DefaultStamper();
+			var offset = 0;
+			var stamper = new Func<DateTime>(() => start.AddSeconds(offset++));
+
+			var aggregate = new TestAggregate(stamper);
 
 			aggregate.GenerateID();
 			aggregate.AddEvents(new[] { new TestEvent(), new TestEvent() });
@@ -132,8 +146,8 @@ namespace Ledger.Acceptance
 
 				reader.ShouldSatisfyAllConditions(
 					() => events.Count().ShouldBe(2),
-					() => events[0].Sequence.ShouldBe(0),
-					() => events[1].Sequence.ShouldBe(1),
+					() => events[0].Sequence.ShouldBe(start),
+					() => events[1].Sequence.ShouldBe(start.AddSeconds(1)),
 					() => aggregate.GetUncommittedEvents().ShouldBeEmpty()
 				);
 			}
@@ -142,10 +156,15 @@ namespace Ledger.Acceptance
 		[Fact]
 		public void When_saving_multiple_events_with_snapshotting()
 		{
-			var aggregate = new SnapshotAggregate();
+
+			var start = DefaultStamper();
+			var offset = 0;
+			var stamper = new Func<DateTime>(() => start.AddSeconds(offset++));
+
+			var aggregate = new SnapshotAggregate(stamper);
 			var events = Enumerable
 				.Range(0, _aggregateStore.DefaultSnapshotInterval)
-				.Select(i => new TestEvent { Sequence = i })
+				.Select(i => new TestEvent())
 				.ToArray();
 
 			aggregate.GenerateID();
@@ -160,10 +179,10 @@ namespace Ledger.Acceptance
 
 				reader.ShouldSatisfyAllConditions(
 					() => storeEvents.ShouldNotBeEmpty(),
-					() => events.ForEach((e, i) => e.Sequence.ShouldBe(i)),
+					() => events.ForEach((e, i) => e.Sequence.ShouldBe(start.AddSeconds(i))),
 					() => aggregate.GetUncommittedEvents().ShouldBeEmpty(),
 					() => storeSnapshot.ShouldNotBe(null),
-					() => storeSnapshot.Sequence.ShouldBe(events.Length - 1)
+					() => storeSnapshot.Sequence.ShouldBe(events.Last().Sequence)
 				);
 			}
 

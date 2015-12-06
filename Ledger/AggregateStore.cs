@@ -24,7 +24,6 @@ namespace Ledger
 			var changes = aggregate
 				.GetUncommittedEvents()
 				.Apply((e, i) => e.AggregateID = aggregate.ID)
-				.Apply((e, i) => e.Sequence = aggregate.SequenceID + i + 1)
 				.ToList();
 
 			if (changes.None())
@@ -92,7 +91,9 @@ namespace Ledger
 
 			var snapshotID = store.GetLatestSnapshotSequenceFor(aggregate.ID);
 
-			return snapshotID.HasValue && changes.Last().Sequence >= snapshotID.Value + interval;
+			//TODO: get count of events in store since date.
+			return true;
+			//return snapshotID.HasValue && changes.Last().Sequence >= snapshotID.Value + interval;
 		}
 
 		public TAggregate Load<TAggregate>(string stream, TKey aggregateID, Func<TAggregate> createNew)
@@ -107,7 +108,7 @@ namespace Ledger
 					var snapshot = store.LoadLatestSnapshotFor(aggregateID);
 					var since = snapshot != null
 						? snapshot.Sequence
-						: -1;
+						: DateTime.MinValue;
 
 					var events = store.LoadEventsSince(aggregateID, since);
 
@@ -137,7 +138,7 @@ namespace Ledger
 					var snapshot = reader.LoadLatestSnapshotFor(id);
 					var since = snapshot != null
 						? snapshot.Sequence
-						: -1;
+						: DateTime.MinValue;
 
 					var events = reader.LoadEventsSince(id, since).GetEnumerator();
 					var allEvents = Enumerable.Empty<IDomainEvent<TKey>>();

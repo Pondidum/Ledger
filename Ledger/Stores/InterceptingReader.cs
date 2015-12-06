@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Ledger.Stores
 {
@@ -16,7 +17,7 @@ namespace Ledger.Stores
 			return _other.LoadEvents(aggregateID);
 		}
 
-		public virtual IEnumerable<IDomainEvent<TKey>> LoadEventsSince(TKey aggregateID, int sequenceID)
+		public virtual IEnumerable<IDomainEvent<TKey>> LoadEventsSince(TKey aggregateID, DateTime sequenceID)
 		{
 			return _other.LoadEventsSince(aggregateID, sequenceID);
 		}

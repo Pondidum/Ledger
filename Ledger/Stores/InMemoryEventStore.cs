@@ -53,7 +53,7 @@ namespace Ledger.Stores
 					: Enumerable.Empty<IDomainEvent<TKey>>();
 			}
 
-			public IEnumerable<IDomainEvent<TKey>> LoadEventsSince(TKey aggregateID, int sequenceID)
+			public IEnumerable<IDomainEvent<TKey>> LoadEventsSince(TKey aggregateID, DateTime sequenceID)
 			{
 				return LoadEvents(aggregateID)
 					.Where(e => e.Sequence > sequenceID);
@@ -73,22 +73,22 @@ namespace Ledger.Stores
 				return _events.Keys.Cast<TKey>();
 			}
 
-			public int? GetLatestSequenceFor(TKey aggregateID)
+			public DateTime? GetLatestSequenceFor(TKey aggregateID)
 			{
 				var last = LoadEvents(aggregateID).LastOrDefault();
 
 				return last != null
 					? last.Sequence
-					: (int?)null;
+					: (DateTime?)null;
 			}
 
-			public int? GetLatestSnapshotSequenceFor(TKey aggregateID)
+			public DateTime? GetLatestSnapshotSequenceFor(TKey aggregateID)
 			{
 				var last = LoadLatestSnapshotFor(aggregateID);
 
 				return last != null
 					? last.Sequence
-					: (int?)null;
+					: (DateTime?)null;
 			}
 
 			public void SaveEvents(IEnumerable<IDomainEvent<TKey>> changes)
