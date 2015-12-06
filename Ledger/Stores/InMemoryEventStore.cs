@@ -19,8 +19,8 @@ namespace Ledger.Stores
 				key => new List<object>());
 		}
 
-		public IEnumerable<object> AllEvents => _events.SelectMany(events => events).OrderBy(e => ((ISequenced)e).Sequence);
-		public IEnumerable<object> AllSnapshots => _snapshots.SelectMany(events => events).OrderBy(e => ((ISequenced)e).Sequence);
+		public IEnumerable<object> AllEvents => _events.SelectMany(events => events).OrderBy(e => ((IStamped)e).Sequence);
+		public IEnumerable<object> AllSnapshots => _snapshots.SelectMany(events => events).OrderBy(e => ((IStamped)e).Sequence);
 
 		public IStoreReader<TKey> CreateReader<TKey>(string stream)
 		{

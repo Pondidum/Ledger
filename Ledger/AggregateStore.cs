@@ -52,7 +52,7 @@ namespace Ledger
 
 		private static ISnapshot<TKey> GetSnapshot<TAggregate>(TAggregate aggregate) where TAggregate : AggregateRoot<TKey>
 		{
-			//you could replace this method with `return (ISequenced)(aggregate as dynamic).CreateSnapshot();`
+			//you could replace this method with `return (IStamped)(aggregate as dynamic).CreateSnapshot();`
 			//but you loose the compiler checking the `CreateSnapshot` is the right method name etc.
 
 			var methodName = TypeInfo.GetMethodName<ISnapshotable<TKey, ISnapshot<TKey>>>(x => x.CreateSnapshot());

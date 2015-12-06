@@ -2,7 +2,7 @@
 
 namespace Ledger
 {
-	public interface ISequenced
+	public interface IStamped
 	{
 		DateTime Sequence { get; set; }
 	}

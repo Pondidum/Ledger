@@ -1,6 +1,6 @@
 namespace Ledger
 {
-	public interface IDomainEvent<TKey> : ISequenced
+	public interface IDomainEvent<TKey> : IStamped
 	{
 		TKey AggregateID { get; set; }
 	}
