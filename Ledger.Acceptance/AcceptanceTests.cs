@@ -68,7 +68,7 @@ namespace Ledger.Acceptance
 
 			var aggregate = _aggregateStore.Load(SnapshotStream, id, () => new SnapshotAggregate());
 
-			aggregate.SequenceID.ShouldBe(6);
+			aggregate.GetSequenceID().ShouldBe(6);
 		}
 
 		[Fact]
@@ -89,7 +89,7 @@ namespace Ledger.Acceptance
 
 			aggregate.ShouldSatisfyAllConditions(
 				() => aggregate.GetUncommittedEvents().ShouldBeEmpty(),
-				() => aggregate.SequenceID.ShouldBe(6)
+				() => aggregate.GetSequenceID().ShouldBe(6)
 			);
 		}
 
@@ -112,7 +112,7 @@ namespace Ledger.Acceptance
 
 			aggregate.ShouldSatisfyAllConditions(
 				() => aggregate.GetUncommittedEvents().ShouldBeEmpty(),
-				() => aggregate.SequenceID.ShouldBe(10)
+				() => aggregate.GetSequenceID().ShouldBe(10)
 			);
 		}
 

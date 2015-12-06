@@ -8,7 +8,7 @@ namespace Ledger
 	public class AggregateRoot<TKey>
 	{
 		public TKey ID { get; protected set; }
-		public int SequenceID { get; protected set; }
+		protected internal int SequenceID { get; set; }
 
 		private readonly LightweightCache<Type, List<Action<IDomainEvent<TKey>>>> _handlers;
 		private readonly List<IDomainEvent<TKey>> _events;

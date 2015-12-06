@@ -31,6 +31,11 @@ namespace Ledger.Acceptance.TestObjects
 		public void ApplySnapshot(TestSnapshot snapshot)
 		{
 		}
+
+		public int GetSequenceID()
+		{
+			return SequenceID;
+		}
 	}
 
 	public class TestSnapshot : ISnapshot<Guid>

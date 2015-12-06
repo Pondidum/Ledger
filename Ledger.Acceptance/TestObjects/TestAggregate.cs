@@ -22,5 +22,10 @@ namespace Ledger.Acceptance.TestObjects
 		{
 			ID = Guid.NewGuid();
 		}
+
+		public int GetSequenceID()
+		{
+			return SequenceID;
+		}
 	}
 }

@@ -4,6 +4,8 @@ using System.Linq;
 using Ledger.Acceptance.TestObjects;
 using Ledger.Infrastructure;
 using Ledger.Stores;
+using Ledger.Tests.AggregateStoreTests.MiniDomain;
+using Ledger.Tests.AggregateStoreTests.MiniDomain.Events;
 using Shouldly;
 using Xunit;
 
@@ -40,7 +42,7 @@ namespace Ledger.Tests
 			aggregate.ShouldSatisfyAllConditions(
 				() => events.ShouldAllBe(e => e.AggregateID == aggregate.ID),
 				() => events.ForEach((e, i) => e.Sequence.ShouldBe(i)),
-				() => aggregate.SequenceID.ShouldBe(0)
+				() => aggregate.GetSequenceID().ShouldBe(0)
             );
 
 		}
@@ -66,7 +68,7 @@ namespace Ledger.Tests
 			aggregate.ShouldSatisfyAllConditions(
 				() => events.ShouldAllBe(e => e.AggregateID == aggregate.ID),
 				() => events.ForEach((e, i) => e.Sequence.ShouldBe(i)),
-				() => aggregate.SequenceID.ShouldBe(3)
+				() => aggregate.GetSequenceID().ShouldBe(3)
 			);
 		}
 
@@ -96,7 +98,7 @@ namespace Ledger.Tests
 			aggregate.ShouldSatisfyAllConditions(
 				() => events.ShouldAllBe(e => e.AggregateID == aggregate.ID),
 				() => events.ForEach((e, i) => e.Sequence.ShouldBe(i)),
-				() => aggregate.SequenceID.ShouldBe(4),
+				() => aggregate.GetSequenceID().ShouldBe(4),
 				() => events.Count.ShouldBe(5)
 			);
 		}
@@ -119,7 +121,7 @@ namespace Ledger.Tests
 			aggregate.ShouldSatisfyAllConditions(
 				() => events.ShouldAllBe(e => e.AggregateID == aggregate.ID),
 				() => events.ForEach((e, i) => e.Sequence.ShouldBe(i)),
-				() => aggregate.SequenceID.ShouldBe(0)
+				() => aggregate.GetSequenceID().ShouldBe(0)
 			);
 		}
 
@@ -171,6 +173,27 @@ namespace Ledger.Tests
 			}
 		}
 
+		[Fact]
+		public void When_saving_multiple_aggregates_events_stay_in_actioned_order()
+		{
+			var perm = Permission.Create();
+			var role = Role.Create();
+			perm.ChangeName("Test");
+			role.ChangeName("Testing");
+
+			_store.Save(StreamName, role);
+			_store.Save(StreamName, perm);
+
+			_backing.AllEvents.Select(e => e.GetType()).ShouldBe(new []
+			{
+				typeof(PermissionCreatedEvent),
+				typeof(RoleCreatedEvent),
+				typeof(PermissionNameChangedEvent),
+				typeof(RoleNameChangedEvent)
+			});
+
+		}
+
 
 		public interface IKeyed
 		{
@@ -196,6 +219,11 @@ namespace Ledger.Tests
 			public void GenerateID()
 			{
 				ID = Guid.NewGuid();
+			}
+
+			public int GetSequenceID()
+			{
+				return SequenceID;
 			}
 		}
 	}

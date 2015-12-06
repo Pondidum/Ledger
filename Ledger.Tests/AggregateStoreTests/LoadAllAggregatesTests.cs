@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq;
 using Ledger.Stores;
+using Ledger.Tests.AggregateStoreTests.MiniDomain;
+using Ledger.Tests.AggregateStoreTests.MiniDomain.Events;
 using Shouldly;
 using Xunit;
 
@@ -91,100 +93,6 @@ namespace Ledger.Tests
 
 			all.ShouldBeEmpty();
 			unknownSeen.ShouldBe(true);
-		}
-
-
-		private class Permission : AggregateRoot<Guid>
-		{
-			public string Name { get; private set; }
-
-			public static Permission Create()
-			{
-				var perm = new Permission();
-				perm.ApplyEvent(new PermissionCreatedEvent { AggregateID = Guid.NewGuid() });
-				return perm;
-			}
-
-			public void ChangeName(string newName)
-			{
-				ApplyEvent(new ChangePermissionNameEvent { NewName = newName });
-			}
-
-			private void Handle(PermissionCreatedEvent e)
-			{
-				ID = e.AggregateID;
-				Name = "New";
-			}
-
-			private void Handle(ChangePermissionNameEvent e)
-			{
-				Name = e.NewName;
-			}
-
-		}
-
-		private class Role : AggregateRoot<Guid>
-		{
-			public static Role Create()
-			{
-				var role = new Role();
-				role.ApplyEvent(new RoleCreatedEvent { AggregateID = Guid.NewGuid() });
-				return role;
-			}
-
-			private void Handle(RoleCreatedEvent e)
-			{
-				ID = e.AggregateID;
-			}
-		}
-
-		private class User : AggregateRoot<Guid>, ISnapshotable<Guid, UserSnapshot>, ISnapshotControl
-		{
-			public string Name { get; private set; }
-
-			public static User Create()
-			{
-				var user = new User();
-				user.ApplyEvent(new UserCreatedEvent { AggregateID = Guid.NewGuid() });
-				return user;
-			}
-
-			private void Handle(UserCreatedEvent e)
-			{
-				ID = e.AggregateID;
-			}
-
-			public UserSnapshot CreateSnapshot()
-			{
-				return new UserSnapshot { Name = "Dave" };
-			}
-
-			public void ApplySnapshot(UserSnapshot snapshot)
-			{
-				Name = snapshot.Name;
-			}
-
-			public int SnapshotInterval
-			{
-				get { return 1; }
-			}
-		}
-
-		private class PermissionCreatedEvent : DomainEvent<Guid> { }
-		private class RoleCreatedEvent : DomainEvent<Guid> { }
-		private class UserCreatedEvent : DomainEvent<Guid> { }
-
-		private class ChangePermissionNameEvent : DomainEvent<Guid>
-		{
-			public string NewName { get; set; }
-		}
-
-		private class UserSnapshot : ISnapshot<Guid>
-		{
-			public int Sequence { get; set; }
-			public Guid AggregateID { get; set; }
-
-			public string Name { get; set; }
 		}
     }
 }

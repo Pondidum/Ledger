@@ -63,6 +63,15 @@
     <Compile Include="Acceptance.cs" />
     <Compile Include="AggregateRootTests.cs" />
     <Compile Include="AggregateStoreTests\LoadAllAggregatesTests.cs" />
+    <Compile Include="AggregateStoreTests\MiniDomain\Events\RoleNameChangedEvent.cs" />
+    <Compile Include="AggregateStoreTests\MiniDomain\Permission.cs" />
+    <Compile Include="AggregateStoreTests\MiniDomain\Events\PermissionCreatedEvent.cs" />
+    <Compile Include="AggregateStoreTests\MiniDomain\Events\PermissionNameChangedEvent.cs" />
+    <Compile Include="AggregateStoreTests\MiniDomain\Role.cs" />
+    <Compile Include="AggregateStoreTests\MiniDomain\Events\RoleCreatedEvent.cs" />
+    <Compile Include="AggregateStoreTests\MiniDomain\User.cs" />
+    <Compile Include="AggregateStoreTests\MiniDomain\Events\UserCreatedEvent.cs" />
+    <Compile Include="AggregateStoreTests\MiniDomain\UserSnapshot.cs" />
     <Compile Include="AggregateStoreTests\SaveAggregateTests.cs" />
     <Compile Include="Infrastructure\ExtensionsTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
