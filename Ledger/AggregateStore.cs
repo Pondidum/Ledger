@@ -67,7 +67,7 @@ namespace Ledger
 		private static void ThrowIfVersionsInconsistent<TAggregate>(IStoreWriter<TKey> store, TAggregate aggregate)
 			where TAggregate : AggregateRoot<TKey>
 		{
-			var lastStoredStamp = store.GetLatestSequenceFor(aggregate.ID);
+			var lastStoredStamp = store.GetLatestStampFor(aggregate.ID);
 
 			if (lastStoredStamp.HasValue && lastStoredStamp != aggregate.SequenceID)
 			{

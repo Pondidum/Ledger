@@ -12,9 +12,9 @@ namespace Ledger.Stores
 			_other = other;
 		}
 
-		public virtual DateTime? GetLatestSequenceFor(TKey aggregateID)
+		public virtual DateTime? GetLatestStampFor(TKey aggregateID)
 		{
-			return _other.GetLatestSequenceFor(aggregateID);
+			return _other.GetLatestStampFor(aggregateID);
 		}
 
 		public virtual int GetNumberOfEventsSinceSnapshotFor(TKey aggregateID)
