@@ -45,6 +45,7 @@
     <Compile Include="AggregateRoot.cs" />
     <Compile Include="AggregateStore.cs" />
     <Compile Include="ConsistencyException.cs" />
+    <Compile Include="DefaultStamper.cs" />
     <Compile Include="DomainEvent.cs" />
     <Compile Include="IDomainEvent.cs" />
     <Compile Include="IEventStore.cs" />

@@ -15,7 +15,7 @@ namespace Ledger
 		private readonly List<IDomainEvent<TKey>> _events;
 
 		protected AggregateRoot()
-			: this(() => DateTime.UtcNow)
+			: this(DefaultStamper.Now)
 		{
 		}
 
