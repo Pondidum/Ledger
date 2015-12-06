@@ -12,8 +12,6 @@ namespace Ledger.Acceptance
 		public const string SnapshotStream = "SnapshotAggregateStream";
 		public const string DefaultStream = "TestAggregateStream";
 
-		public readonly Func<DateTime> DefaultStamper = () => DateTime.UtcNow;
-
 		private readonly IEventStore _eventStore;
 		private readonly AggregateStore<Guid> _aggregateStore;
 
@@ -26,7 +24,7 @@ namespace Ledger.Acceptance
 		[Fact]
 		public void When_there_are_no_events()
 		{
-			var aggregate = new SnapshotAggregate(DefaultStamper);
+			var aggregate = new SnapshotAggregate(DefaultStamper.Now);
 			aggregate.GenerateID();
 
 			_aggregateStore.Save(SnapshotStream, aggregate);
@@ -41,7 +39,7 @@ namespace Ledger.Acceptance
 		[Fact]
 		public void When_the_event_store_has_newer_events()
 		{
-			var aggregate = new SnapshotAggregate(DefaultStamper);
+			var aggregate = new SnapshotAggregate(DefaultStamper.Now);
 			aggregate.GenerateID();
 
 			using (var writer = _eventStore.CreateWriter<Guid>(SnapshotStream))
@@ -70,7 +68,7 @@ namespace Ledger.Acceptance
 				});
 			}
 
-			var aggregate = _aggregateStore.Load(SnapshotStream, id, () => new SnapshotAggregate(DefaultStamper));
+			var aggregate = _aggregateStore.Load(SnapshotStream, id, () => new SnapshotAggregate(DefaultStamper.Now));
 
 			aggregate.GetSequenceID().ShouldBe(t2);
 		}
@@ -91,7 +89,7 @@ namespace Ledger.Acceptance
 				});
 			}
 
-			var aggregate = _aggregateStore.Load(DefaultStream, id, () => new TestAggregate(DefaultStamper));
+			var aggregate = _aggregateStore.Load(DefaultStream, id, () => new TestAggregate(DefaultStamper.Now));
 
 			aggregate.ShouldSatisfyAllConditions(
 				() => aggregate.GetUncommittedEvents().ShouldBeEmpty(),
@@ -118,7 +116,7 @@ namespace Ledger.Acceptance
 				});
 			}
 
-			var aggregate = _aggregateStore.Load(SnapshotStream, id, () => new SnapshotAggregate(DefaultStamper));
+			var aggregate = _aggregateStore.Load(SnapshotStream, id, () => new SnapshotAggregate(DefaultStamper.Now));
 
 			aggregate.ShouldSatisfyAllConditions(
 				() => aggregate.GetUncommittedEvents().ShouldBeEmpty(),
@@ -129,7 +127,7 @@ namespace Ledger.Acceptance
 		[Fact]
 		public void When_saving_multiple_events_without_snapshotting()
 		{
-			var start = DefaultStamper();
+			var start = DefaultStamper.Now();
 			var offset = 0;
 			var stamper = new Func<DateTime>(() => start.AddSeconds(offset++));
 
@@ -157,7 +155,7 @@ namespace Ledger.Acceptance
 		public void When_saving_multiple_events_with_snapshotting()
 		{
 
-			var start = DefaultStamper();
+			var start = DefaultStamper.Now();
 			var offset = 0;
 			var stamper = new Func<DateTime>(() => start.AddSeconds(offset++));
 

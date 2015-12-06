@@ -19,7 +19,7 @@ namespace Ledger.Tests.Stores
 			var store = new InMemoryEventStore();
 			var wrapped = new LoggingEventStore(store, e => events.Add(e));
 
-			var aggregate = new TestAggregate(() => DateTime.UtcNow);
+			var aggregate = new TestAggregate(DefaultStamper.Now);
 			aggregate.GenerateID();
 
 			var event1 = new TestEvent();
