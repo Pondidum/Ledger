@@ -10,9 +10,6 @@ namespace Ledger.Stores
 		private readonly LightweightCache<object, List<StampedEvent>> _events;
 		private readonly LightweightCache<object, List<StampedSnapshot>> _snapshots;
 
-		private int _eventSequence;
-		private int _snapshotSequence;
-
 		public InMemoryEventStore()
 		{
 			_events = new LightweightCache<object, List<StampedEvent>>(
@@ -20,9 +17,6 @@ namespace Ledger.Stores
 
 			_snapshots = new LightweightCache<object, List<StampedSnapshot>>(
 				key => new List<StampedSnapshot>());
-
-			_eventSequence = 0;
-			_snapshotSequence = 0;
 		}
 
 		public IEnumerable<object> AllEvents => _events.SelectMany(events => events).OrderBy(e => e.GlobalSequence).Select(e => e.Event);
@@ -30,12 +24,12 @@ namespace Ledger.Stores
 
 		public IStoreReader<TKey> CreateReader<TKey>(string stream)
 		{
-			return new ReaderWriter<TKey>(_events, _snapshots, ref _eventSequence, ref _snapshotSequence);
+			return new ReaderWriter<TKey>(_events, _snapshots);
 		}
 
 		public IStoreWriter<TKey> CreateWriter<TKey>(string stream)
 		{
-			return new ReaderWriter<TKey>(_events, _snapshots, ref _eventSequence, ref _snapshotSequence);
+			return new ReaderWriter<TKey>(_events, _snapshots);
 		}
 
 
@@ -43,15 +37,11 @@ namespace Ledger.Stores
 		{
 			private readonly LightweightCache<object, List<StampedEvent>> _events;
 			private readonly LightweightCache<object, List<StampedSnapshot>> _snapshots;
-			private int _eventSequence;
-			private int _snapshotSequence;
 
-			public ReaderWriter(LightweightCache<object, List<StampedEvent>> events, LightweightCache<object, List<StampedSnapshot>> snapshots, ref int eventSequence, ref int snapshotSequence)
+			public ReaderWriter(LightweightCache<object, List<StampedEvent>> events, LightweightCache<object, List<StampedSnapshot>> snapshots)
 			{
 				_events = events;
 				_snapshots = snapshots;
-				_eventSequence = eventSequence;
-				_snapshotSequence = snapshotSequence;
 			}
 
 			public IEnumerable<IDomainEvent<TKey>> LoadEvents(TKey aggregateID)
@@ -103,12 +93,12 @@ namespace Ledger.Stores
 
 			public void SaveEvents(IEnumerable<IDomainEvent<TKey>> changes)
 			{
-				changes.ForEach(change => _events[change.AggregateID].Add(new StampedEvent(change, _eventSequence++)));
+				changes.ForEach(change => _events[change.AggregateID].Add(new StampedEvent(change)));
 			}
 
 			public void SaveSnapshot(ISnapshot<TKey> snapshot)
 			{
-				_snapshots[snapshot.AggregateID].Add(new StampedSnapshot(snapshot, _snapshotSequence++));
+				_snapshots[snapshot.AggregateID].Add(new StampedSnapshot(snapshot));
 			}
 
 			public void Dispose()
@@ -118,24 +108,28 @@ namespace Ledger.Stores
 
 		private struct StampedEvent
 		{
+			private static int _globalSequence;
+
 			public int GlobalSequence { get; }
 			public object Event { get; }
 
-			public StampedEvent(object @event, int sequence)
+			public StampedEvent(object @event)
 			{
-				GlobalSequence = sequence;
+				GlobalSequence = _globalSequence++;
 				Event = @event;
 			}
 		}
 
 		private struct StampedSnapshot
 		{
+			private static int _globalSequence;
+
 			public int GlobalSequence { get; }
 			public object Snapshot { get; }
 
-			public StampedSnapshot(object snapshot, int sequence)
+			public StampedSnapshot(object snapshot)
 			{
-				GlobalSequence = sequence;
+				GlobalSequence = _globalSequence++;
 				Snapshot = snapshot;
 			}
 		}
