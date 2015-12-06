@@ -89,11 +89,9 @@ namespace Ledger
 				return true;
 			}
 
-			var snapshotID = store.GetLatestSnapshotSequenceFor(aggregate.ID);
+			var eventCount = store.GetNumberOfEventsSinceSnapshotFor(aggregate.ID);
 
-			//TODO: get count of events in store since date.
-			return true;
-			//return snapshotID.HasValue && changes.Last().Sequence >= snapshotID.Value + interval;
+			return eventCount + changes.Count >= interval;
 		}
 
 		public TAggregate Load<TAggregate>(string stream, TKey aggregateID, Func<TAggregate> createNew)

@@ -6,7 +6,7 @@ namespace Ledger
 	public interface IStoreWriter<TKey> : IDisposable
 	{
 		DateTime? GetLatestSequenceFor(TKey aggregateID);
-		DateTime? GetLatestSnapshotSequenceFor(TKey aggregateID);
+		int GetNumberOfEventsSinceSnapshotFor(TKey aggregateID);
 
 		void SaveEvents(IEnumerable<IDomainEvent<TKey>> changes);
 		void SaveSnapshot(ISnapshot<TKey> snapshot);

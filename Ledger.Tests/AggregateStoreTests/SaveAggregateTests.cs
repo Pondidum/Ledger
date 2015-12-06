@@ -182,6 +182,30 @@ namespace Ledger.Tests
 		}
 
 		[Fact]
+		public void When_a_few_events_push_over_the_snapshot_threashold()
+		{
+			var aggregate = new SnapshotAggregate(_stamper);
+			aggregate.GenerateID();
+
+			Enumerable.Range(0, _store.DefaultSnapshotInterval - 2).ForEach(e => aggregate.AddEvent(new TestEvent()));
+			_store.Save(StreamName, aggregate);
+
+			Enumerable.Range(0, 3).ForEach(e => aggregate.AddEvent(new TestEvent()));
+			_store.Save(StreamName, aggregate);
+
+			using (var reader = _backing.CreateReader<Guid>(StreamName))
+			{
+				var events = reader.LoadEvents(aggregate.ID).ToList();
+				var snapshot = reader.LoadLatestSnapshotFor(aggregate.ID);
+
+				aggregate.ShouldSatisfyAllConditions(
+					() => events.Count.ShouldBe(11),
+					() => snapshot.Sequence.ShouldBe(_start.AddSeconds(10))
+				);
+			}
+		}
+
+		[Fact]
 		public void When_saving_multiple_aggregates_events_stay_in_actioned_order()
 		{
 			var perm = Permission.Create();

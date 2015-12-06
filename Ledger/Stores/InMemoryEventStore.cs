@@ -82,13 +82,13 @@ namespace Ledger.Stores
 					: (DateTime?)null;
 			}
 
-			public DateTime? GetLatestSnapshotSequenceFor(TKey aggregateID)
+			public int GetNumberOfEventsSinceSnapshotFor(TKey aggregateID)
 			{
 				var last = LoadLatestSnapshotFor(aggregateID);
+				var stamp = last?.Sequence ?? DateTime.MinValue;
 
-				return last != null
-					? last.Sequence
-					: (DateTime?)null;
+				return LoadEvents(aggregateID)
+					.Count(e => e.Sequence >= stamp);
 			}
 
 			public void SaveEvents(IEnumerable<IDomainEvent<TKey>> changes)
