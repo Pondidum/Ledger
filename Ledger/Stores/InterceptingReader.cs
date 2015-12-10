@@ -32,6 +32,11 @@ namespace Ledger.Stores
 			return _other.LoadAllKeys();
 		}
 
+		public IEnumerable<IDomainEvent<TKey>> LoadAllEvents()
+		{
+			return _other.LoadAllEvents();
+		}
+
 		public virtual void Dispose()
 		{
 			_other.Dispose();

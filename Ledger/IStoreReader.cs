@@ -10,5 +10,6 @@ namespace Ledger
 		ISnapshot<TKey> LoadLatestSnapshotFor(TKey aggregateID);
 
 		IEnumerable<TKey> LoadAllKeys();
+		IEnumerable<IDomainEvent<TKey>> LoadAllEvents();
 	}
 }

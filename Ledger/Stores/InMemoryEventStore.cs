@@ -73,6 +73,14 @@ namespace Ledger.Stores
 				return _events.Keys.Cast<TKey>();
 			}
 
+			public IEnumerable<IDomainEvent<TKey>> LoadAllEvents()
+			{
+				return _events
+					.SelectMany(e => e)
+					.Cast<IDomainEvent<TKey>>()
+					.OrderBy(e => e.Stamp);
+			}
+
 			public DateTime? GetLatestStampFor(TKey aggregateID)
 			{
 				var last = LoadEvents(aggregateID).LastOrDefault();
