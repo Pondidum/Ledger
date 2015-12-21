@@ -142,7 +142,7 @@ namespace Ledger
 					var allEvents = Enumerable.Empty<IDomainEvent<TKey>>();
 
 					if (events.MoveNext())
-						allEvents = allEvents.Concat(new[] {events.Current});
+						allEvents = allEvents.Concat(new[] { events.Current });
 
 					allEvents = allEvents.Concat(new Iterator<IDomainEvent<TKey>>(events));
 
@@ -151,7 +151,7 @@ namespace Ledger
 
 					if (instance == null)
 						continue;
-					
+
 					if (snapshot != null)
 						instance.LoadFromSnapshot(snapshot, allEvents);
 					else
@@ -159,6 +159,16 @@ namespace Ledger
 
 					yield return instance;
 				}
+			}
+		}
+
+		/// <summary>Yeilds all events in the store in order</summary>
+		/// <param name="stream">The stream to replay</param>
+		public IEnumerable<IDomainEvent<TKey>> ReplayAll(string stream)
+		{
+			using (var reader = _eventStore.CreateReader<TKey>(stream))
+			{
+				return reader.LoadAllEvents();
 			}
 		}
 
