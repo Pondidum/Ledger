@@ -18,6 +18,11 @@ namespace Ledger
 			DefaultSnapshotInterval = 10;
 		}
 
+		/// <summary>
+		/// Save an aggregate
+		/// </summary>
+		/// <param name="stream">The stream to write to</param>
+		/// <param name="aggregate">The aggregate to save</param>
 		public void Save<TAggregate>(string stream, TAggregate aggregate)
 			where TAggregate : AggregateRoot<TKey>
 		{
@@ -94,6 +99,12 @@ namespace Ledger
 			return eventCount + changes.Count >= interval;
 		}
 
+		/// <summary>
+		/// Load a specific aggregate
+		/// </summary>
+		/// <param name="stream">The stream to read from</param>
+		/// <param name="aggregateID">The key of the aggregate to load</param>
+		/// <param name="createNew">Invoked to create the blank aggregate instance</param>
 		public TAggregate Load<TAggregate>(string stream, TKey aggregateID, Func<TAggregate> createNew)
 			where TAggregate : AggregateRoot<TKey>
 		{
@@ -122,6 +133,11 @@ namespace Ledger
 			}
 		}
 
+		/// <summary>
+		/// Loads all aggregates in the stream, not nessacarily in event order
+		/// </summary>
+		/// <param name="stream">The stream to read from</param>
+		/// <param name="configureMapper">Configure which events and snapshots to create new aggregate instances on</param>
 		public IEnumerable<AggregateRoot<TKey>> LoadAll(string stream, Action<AggregateLoadAllConfiguration<TKey>> configureMapper)
 		{
 			var loader = new AggregateLoadAllConfiguration<TKey>();
