@@ -10,11 +10,8 @@ _ReSharper.*
 *.DotSettings
 *.DotSettings.user
 
-Gemfile.lock
-
 AssemblyVersion.cs
 
-packages
-build
-
-*.sublime-workspace
+/packages
+/build
+/node_modules
