@@ -63,10 +63,13 @@ gulp.task('test', [ "compile" ], function() {
     }));
 });
 
-gulp.task('pack', [ 'test' ], shell.task([
-  ' "tools/nuget/nuget.exe"' +
-  ' pack ' + config.name + '/' + config.name + '.csproj' +
-  ' -version ' + config.version +
-  ' -prop configuration=' + config.mode +
-  ' -o ' + config.output
-]));
+gulp.task('pack', [ 'test' ], function () {
+  return gulp
+    .src('**/*.nuspec', { read: false })
+    .pipe(rename({ extname: ".csproj" }))
+    .pipe(shell([
+      '"tools/nuget/nuget.exe" pack <%= file.path %> -version <%= version %> -prop configuration=<%= mode %> -o <%= output%>'
+    ], {
+      templateData: config
+    }));
+});
