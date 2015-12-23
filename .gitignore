@@ -13,5 +13,4 @@ _ReSharper.*
 AssemblyVersion.cs
 
 /packages
-/build
 /node_modules
