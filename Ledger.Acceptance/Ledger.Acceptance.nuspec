@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>Ledger.Acceptance</id>
+    <title>Ledger.Acceptance</title>
+    <version>$version$</version>
+    <authors>Andy Dote</authors>
+    <description>A lightweight EventSourcing library</description>
+    <projectUrl>https://github.com/pondidum/ledger</projectUrl>
+    <licenseUrl>https://github.com/Pondidum/ledger/blob/master/LICENSE.txt</licenseUrl>
+    <tags>eventsourcing es ledger</tags>
+  </metadata>
+</package>
