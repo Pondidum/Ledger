@@ -1,8 +1,8 @@
 version: '{build}'
 build_script:
-- gem install bundler
-- bundle install
-- bundle exec rake default pack mode="Release"
+- npm install -g gulp
+- npm install
+- gulp --mode Release
 test: off
 artifacts:
 - path: build\deploy\*.nupkg
