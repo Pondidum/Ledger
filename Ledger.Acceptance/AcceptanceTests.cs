@@ -21,7 +21,7 @@ namespace Ledger.Acceptance
 			_aggregateStore = new AggregateStore<Guid>(_eventStore);
 		}
 
-		[Fact]
+		[AcceptanceFact]
 		public void When_there_are_no_events()
 		{
 			var aggregate = new SnapshotAggregate(DefaultStamper.Now);
@@ -36,7 +36,7 @@ namespace Ledger.Acceptance
 
 		}
 
-		[Fact]
+		[AcceptanceFact]
 		public void When_the_event_store_has_newer_events()
 		{
 			var aggregate = new SnapshotAggregate(DefaultStamper.Now);
@@ -52,7 +52,7 @@ namespace Ledger.Acceptance
 			Should.Throw<ConsistencyException>(() => _aggregateStore.Save(SnapshotStream, aggregate));
 		}
 
-		[Fact]
+		[AcceptanceFact]
 		public void When_loading_with_snapshotting_and_there_is_no_snapshot()
 		{
 			var id = Guid.NewGuid();
@@ -73,7 +73,7 @@ namespace Ledger.Acceptance
 			aggregate.GetSequenceID().ShouldBe(t2);
 		}
 
-		[Fact]
+		[AcceptanceFact]
 		public void When_loading_multiple_events_without_snapshotting()
 		{
 			var id = Guid.NewGuid();
@@ -97,7 +97,7 @@ namespace Ledger.Acceptance
 			);
 		}
 
-		[Fact]
+		[AcceptanceFact]
 		public void When_loading_multiple_events_with_snapshotting()
 		{
 			var id = Guid.NewGuid();
@@ -124,7 +124,7 @@ namespace Ledger.Acceptance
 			);
 		}
 
-		[Fact]
+		[AcceptanceFact]
 		public void When_saving_multiple_events_without_snapshotting()
 		{
 			var start = DefaultStamper.Now();
@@ -151,7 +151,7 @@ namespace Ledger.Acceptance
 			}
 		}
 
-		[Fact]
+		[AcceptanceFact]
 		public void When_saving_multiple_events_with_snapshotting()
 		{
 
