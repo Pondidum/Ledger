@@ -44,7 +44,7 @@ namespace Ledger
 			{
 				ThrowIfVersionsInconsistent(store, aggregate);
 
-				if (SnapshotPolicy.SupportsSnapshotting<TAggregate>() && SnapshotPolicy.NeedsSnapshot(store, aggregate, changes))
+				if (SupportsSnapshotting<TAggregate>() && SnapshotPolicy.NeedsSnapshot(store, aggregate, changes))
 				{
 					var snapshot = GetSnapshot(aggregate);
 					snapshot.AggregateID = aggregate.ID;
@@ -57,20 +57,6 @@ namespace Ledger
 
 				aggregate.MarkEventsCommitted();
 			}
-		}
-
-		private static ISnapshot<TKey> GetSnapshot<TAggregate>(TAggregate aggregate) where TAggregate : AggregateRoot<TKey>
-		{
-			//you could replace this method with `return (IStamped)(aggregate as dynamic).CreateSnapshot();`
-			//but you loose the compiler checking the `CreateSnapshot` is the right method name etc.
-
-			var methodName = TypeInfo.GetMethodName<ISnapshotable<TKey, ISnapshot<TKey>>>(x => x.CreateSnapshot());
-
-			var createSnapshot = aggregate
-				.GetType()
-				.GetMethod(methodName);
-
-			return (ISnapshot<TKey>)createSnapshot.Invoke(aggregate, new object[] { });
 		}
 
 		private static void ThrowIfVersionsInconsistent<TAggregate>(IStoreWriter<TKey> store, TAggregate aggregate)
@@ -97,7 +83,7 @@ namespace Ledger
 			{
 				var aggregate = createNew();
 
-				if (SnapshotPolicy.SupportsSnapshotting<TAggregate>())
+				if (SupportsSnapshotting<TAggregate>())
 				{
 					var snapshot = store.LoadLatestSnapshotFor(aggregateID);
 					var since = snapshot != null
@@ -171,6 +157,30 @@ namespace Ledger
 			{
 				return reader.LoadAllEvents();
 			}
+		}
+
+
+		private bool SupportsSnapshotting<TAggregate>()
+		{
+			return typeof(TAggregate)
+				.GetInterfaces()
+				.Where(i => i.IsGenericType)
+				.Any(i => i.GetGenericTypeDefinition() == typeof(ISnapshotable<,>));
+		}
+
+
+		private ISnapshot<TKey> GetSnapshot<TAggregate>(TAggregate aggregate) where TAggregate : AggregateRoot<TKey>
+		{
+			//you could replace this method with `return (IStamped)(aggregate as dynamic).CreateSnapshot();`
+			//but you loose the compiler checking the `CreateSnapshot` is the right method name etc.
+
+			var methodName = TypeInfo.GetMethodName<ISnapshotable<TKey, ISnapshot<TKey>>>(x => x.CreateSnapshot());
+
+			var createSnapshot = aggregate
+				.GetType()
+				.GetMethod(methodName);
+
+			return (ISnapshot<TKey>)createSnapshot.Invoke(aggregate, new object[] { });
 		}
 
 		private class Iterator<T> : IEnumerable<T>

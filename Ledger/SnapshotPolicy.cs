@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Ledger.Infrastructure;
 
 namespace Ledger
 {
@@ -29,14 +30,6 @@ namespace Ledger
 			var eventCount = store.GetNumberOfEventsSinceSnapshotFor(aggregate.ID);
 
 			return eventCount + changes.Count >= interval;
-		}
-
-		public virtual bool SupportsSnapshotting<TAggregate>()
-		{
-			return typeof(TAggregate)
-				.GetInterfaces()
-				.Where(i => i.IsGenericType)
-				.Any(i => i.GetGenericTypeDefinition() == typeof(ISnapshotable<,>));
 		}
 	}
 }
