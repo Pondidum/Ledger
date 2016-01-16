@@ -183,7 +183,7 @@ namespace Ledger.Tests
 			var aggregate = new SnapshotAggregate(_stamper.GetNext);
 			aggregate.GenerateID();
 
-			Enumerable.Range(0, _store.DefaultSnapshotInterval - 2).ForEach(e => aggregate.AddEvent(new TestEvent()));
+			Enumerable.Range(0, _store.SnapshotPolicy.DefaultInterval - 2).ForEach(e => aggregate.AddEvent(new TestEvent()));
 			_store.Save(StreamName, aggregate);
 
 			Enumerable.Range(0, 3).ForEach(e => aggregate.AddEvent(new TestEvent()));

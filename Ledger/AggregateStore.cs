@@ -9,13 +9,17 @@ namespace Ledger
 	public class AggregateStore<TKey>
 	{
 		private readonly IEventStore _eventStore;
-		public int DefaultSnapshotInterval { get; set; }
+		public SnapshotPolicy SnapshotPolicy { get; set; }
 
 		public AggregateStore(IEventStore eventStore)
+			: this(eventStore, new SnapshotPolicy())
+		{
+		}
+
+		public AggregateStore(IEventStore eventStore, SnapshotPolicy policy)
 		{
 			_eventStore = eventStore;
-
-			DefaultSnapshotInterval = 10;
+			SnapshotPolicy = policy;
 		}
 
 		/// <summary>
@@ -40,7 +44,7 @@ namespace Ledger
 			{
 				ThrowIfVersionsInconsistent(store, aggregate);
 
-				if (typeof(TAggregate).ImplementsSnapshottable() && NeedsSnapshot(store, aggregate, changes))
+				if (SnapshotPolicy.SupportsSnapshotting<TAggregate>() && SnapshotPolicy.NeedsSnapshot(store, aggregate, changes))
 				{
 					var snapshot = GetSnapshot(aggregate);
 					snapshot.AggregateID = aggregate.ID;
@@ -80,25 +84,6 @@ namespace Ledger
 			}
 		}
 
-		private bool NeedsSnapshot<TAggregate>(IStoreWriter<TKey> store, TAggregate aggregate, IReadOnlyCollection<IDomainEvent<TKey>> changes)
-			where TAggregate : AggregateRoot<TKey>
-		{
-			var control = aggregate as ISnapshotControl;
-
-			var interval = control != null
-				? control.SnapshotInterval
-				: DefaultSnapshotInterval;
-
-			if (changes.Count >= interval)
-			{
-				return true;
-			}
-
-			var eventCount = store.GetNumberOfEventsSinceSnapshotFor(aggregate.ID);
-
-			return eventCount + changes.Count >= interval;
-		}
-
 		/// <summary>
 		/// Load a specific aggregate
 		/// </summary>
@@ -112,7 +97,7 @@ namespace Ledger
 			{
 				var aggregate = createNew();
 
-				if (typeof(TAggregate).ImplementsSnapshottable())
+				if (SnapshotPolicy.SupportsSnapshotting<TAggregate>())
 				{
 					var snapshot = store.LoadLatestSnapshotFor(aggregateID);
 					var since = snapshot != null

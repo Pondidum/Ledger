@@ -168,7 +168,7 @@ namespace Ledger.Acceptance
 
 			var aggregate = new SnapshotAggregate(stamper);
 			var events = Enumerable
-				.Range(0, _aggregateStore.DefaultSnapshotInterval)
+				.Range(0, _aggregateStore.SnapshotPolicy.DefaultInterval)
 				.Select(i => new TestEvent())
 				.ToArray();
 
