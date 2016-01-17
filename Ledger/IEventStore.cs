@@ -4,5 +4,6 @@ namespace Ledger
 	{
 		IStoreReader<TKey> CreateReader<TKey>(string streamName);
 		IStoreWriter<TKey> CreateWriter<TKey>(string streamName);
+		IStoreMaintainer<TKey> CreateMaintainer<TKey>(string streamName);
 	}
 }

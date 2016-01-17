@@ -79,6 +79,66 @@ namespace Ledger.Tests.Stores
 			store.AllSnapshots.ShouldBe(new[] { snap0, snap1, snap2 });
 		}
 
+		[Fact]
+		public void When_cleaning_all_except_most_recent_snapshot()
+		{
+			var store = new InMemoryEventStore();
+
+			var snap0 = new TestSnapshot { AggregateID = 1, Stamp = _stamper() };
+			var snap1 = new TestSnapshot { AggregateID = 1, Stamp = _stamper() };
+			var snap2 = new TestSnapshot { AggregateID = 1, Stamp = _stamper() };
+
+			using (var writer = store.CreateWriter<int>(null))
+			{
+				writer.SaveSnapshot(snap0);
+				writer.SaveSnapshot(snap1);
+				writer.SaveSnapshot(snap2);
+			}
+
+			using (var maintainer = store.CreateMaintainer<int>(null))
+			{
+				maintainer.RemoveAllOldSnapshots(1);
+			}
+
+			store.AllSnapshots.ShouldBe(new[] { snap2 });
+		}
+
+		[Fact]
+		public void When_cleaning_all_except_most_recent_snapshot_and_there_are_none()
+		{
+			var store = new InMemoryEventStore();
+			
+			using (var maintainer = store.CreateMaintainer<int>(null))
+			{
+				maintainer.RemoveAllOldSnapshots(1);
+			}
+
+			store.AllSnapshots.ShouldBeEmpty();
+		}
+
+		[Fact]
+		public void When_cleaning_all_except_most_recent_2_snapshot()
+		{
+			var store = new InMemoryEventStore();
+
+			var snap0 = new TestSnapshot { AggregateID = 1, Stamp = _stamper() };
+			var snap1 = new TestSnapshot { AggregateID = 1, Stamp = _stamper() };
+			var snap2 = new TestSnapshot { AggregateID = 1, Stamp = _stamper() };
+
+			using (var writer = store.CreateWriter<int>(null))
+			{
+				writer.SaveSnapshot(snap0);
+				writer.SaveSnapshot(snap1);
+				writer.SaveSnapshot(snap2);
+			}
+
+			using (var maintainer = store.CreateMaintainer<int>(null))
+			{
+				maintainer.KeepLastSnapshots(1, 2);
+			}
+
+			store.AllSnapshots.ShouldBe(new[] { snap1, snap2 });
+		}
 		public class TestEvent : DomainEvent<int>
 		{
 		}

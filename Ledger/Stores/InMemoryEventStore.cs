@@ -32,6 +32,43 @@ namespace Ledger.Stores
 			return new ReaderWriter<TKey>(_events, _snapshots);
 		}
 
+		public IStoreMaintainer<TKey> CreateMaintainer<TKey>(string streamName)
+		{
+			return new Maintainer<TKey>(_snapshots);
+		}
+
+
+		private class Maintainer<TKey> : IStoreMaintainer<TKey>
+		{
+			private readonly LightweightCache<object, List<object>> _snapshots;
+
+			public Maintainer(LightweightCache<object, List<object>> snapshots)
+			{
+				_snapshots = snapshots;
+			}
+
+			public void RemoveAllOldSnapshots(TKey aggregateID)
+			{
+				KeepLastSnapshots(aggregateID, 1);
+			}
+
+			public void KeepLastSnapshots(TKey aggregateID, int snapshotsToKeep)
+			{
+				List<object> snapshots;
+
+				if (_snapshots.TryGetValue(aggregateID, out snapshots) == false)
+					return;
+
+				if (snapshots.Count() <= snapshotsToKeep)
+					return;
+
+				snapshots.RemoveRange(0, snapshots.Count() - snapshotsToKeep);
+			}
+
+			public void Dispose()
+			{
+			}
+		}
 
 		private class ReaderWriter<TKey> : IStoreReader<TKey>, IStoreWriter<TKey>
 		{

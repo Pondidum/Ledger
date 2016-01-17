@@ -18,5 +18,10 @@
 		{
 			return new InterceptingWriter<TKey>(_other.CreateWriter<TKey>(stream));
 		}
+
+		public IStoreMaintainer<TKey> CreateMaintainer<TKey>(string streamName)
+		{
+			return new InterceptingMaintainer<TKey>(_other.CreateMaintainer<TKey>(streamName));
+		}
 	}
 }
