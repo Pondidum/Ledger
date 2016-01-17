@@ -44,7 +44,7 @@ namespace Ledger
 			{
 				ThrowIfVersionsInconsistent(store, aggregate);
 
-				if (SupportsSnapshotting<TAggregate>() && SnapshotPolicy.NeedsSnapshot(store, aggregate, changes))
+				if (typeof(TAggregate).ImplementsSnapshottable() && SnapshotPolicy.NeedsSnapshot(store, aggregate, changes))
 				{
 					var snapshot = GetSnapshot(aggregate);
 					snapshot.AggregateID = aggregate.ID;
@@ -83,7 +83,7 @@ namespace Ledger
 			{
 				var aggregate = createNew();
 
-				if (SupportsSnapshotting<TAggregate>())
+				if (typeof(TAggregate).ImplementsSnapshottable())
 				{
 					var snapshot = store.LoadLatestSnapshotFor(aggregateID);
 					var since = snapshot != null
@@ -158,16 +158,6 @@ namespace Ledger
 				return reader.LoadAllEvents();
 			}
 		}
-
-
-		private bool SupportsSnapshotting<TAggregate>()
-		{
-			return typeof(TAggregate)
-				.GetInterfaces()
-				.Where(i => i.IsGenericType)
-				.Any(i => i.GetGenericTypeDefinition() == typeof(ISnapshotable<,>));
-		}
-
 
 		private ISnapshot<TKey> GetSnapshot<TAggregate>(TAggregate aggregate) where TAggregate : AggregateRoot<TKey>
 		{

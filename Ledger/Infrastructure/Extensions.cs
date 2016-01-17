@@ -46,5 +46,13 @@ namespace Ledger.Infrastructure
 		{
 			return self.Any() == false;
 		}
+
+		public static bool ImplementsSnapshottable(this Type aggregate)
+		{
+			return aggregate
+				.GetInterfaces()
+				.Where(i => i.IsGenericType)
+				.Any(i => i.GetGenericTypeDefinition() == typeof(ISnapshotable<,>));
+		}
 	}
 }
