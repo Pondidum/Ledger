@@ -19,7 +19,7 @@ namespace Ledger
 		}
 
 		public AggregateStore(IEventStore eventStore, SnapshotPolicy policy)
-			: this(eventStore, policy, new JsonSerializerSettings())
+			: this(eventStore, policy, Default.SerializerSettings)
 		{
 		}
 

@@ -10,8 +10,8 @@ namespace Ledger.Acceptance
 {
 	public abstract class AcceptanceTests
 	{
-		public readonly EventStoreContext SnapshotStream = new EventStoreContext( "SnapshotAggregateStream", new JsonSerializerSettings());
-		public readonly EventStoreContext DefaultStream = new EventStoreContext("TestAggregateStream", new JsonSerializerSettings());
+		public readonly EventStoreContext SnapshotStream = new EventStoreContext( "SnapshotAggregateStream", Default.SerializerSettings);
+		public readonly EventStoreContext DefaultStream = new EventStoreContext("TestAggregateStream", Default.SerializerSettings);
 
 		private readonly IEventStore _eventStore;
 		private readonly AggregateStore<Guid> _aggregateStore;
