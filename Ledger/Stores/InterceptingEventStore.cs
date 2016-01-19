@@ -9,19 +9,19 @@
 			_other = other;
 		}
 
-		public virtual IStoreReader<TKey> CreateReader<TKey>(string stream)
+		public virtual IStoreReader<TKey> CreateReader<TKey>(EventStoreContext context)
 		{
-			return new InterceptingReader<TKey>(_other.CreateReader<TKey>(stream));
+			return new InterceptingReader<TKey>(_other.CreateReader<TKey>(context));
 		}
 
-		public virtual IStoreWriter<TKey> CreateWriter<TKey>(string stream)
+		public virtual IStoreWriter<TKey> CreateWriter<TKey>(EventStoreContext context)
 		{
-			return new InterceptingWriter<TKey>(_other.CreateWriter<TKey>(stream));
+			return new InterceptingWriter<TKey>(_other.CreateWriter<TKey>(context));
 		}
 
-		public IStoreMaintainer<TKey> CreateMaintainer<TKey>(string streamName)
+		public IStoreMaintainer<TKey> CreateMaintainer<TKey>(EventStoreContext context)
 		{
-			return new InterceptingMaintainer<TKey>(_other.CreateMaintainer<TKey>(streamName));
+			return new InterceptingMaintainer<TKey>(_other.CreateMaintainer<TKey>(context));
 		}
 	}
 }

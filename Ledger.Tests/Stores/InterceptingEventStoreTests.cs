@@ -46,9 +46,9 @@ namespace Ledger.Tests.Stores
 				_onEvent = onEvent;
 			}
 
-			public override IStoreWriter<TKey> CreateWriter<TKey>(string stream)
+			public override IStoreWriter<TKey> CreateWriter<TKey>(EventStoreContext context)
 			{
-				return new EventLoggingStoreWriter<TKey>(_other.CreateWriter<TKey>(stream), e =>  _onEvent((IDomainEvent<Guid>) e) );
+				return new EventLoggingStoreWriter<TKey>(_other.CreateWriter<TKey>(context), e =>  _onEvent((IDomainEvent<Guid>) e) );
 			}
 		}
 

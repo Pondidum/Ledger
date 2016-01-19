@@ -7,6 +7,7 @@ using Ledger.Infrastructure;
 using Ledger.Stores;
 using Ledger.Tests.AggregateStoreTests.MiniDomain;
 using Ledger.Tests.AggregateStoreTests.MiniDomain.Events;
+using Newtonsoft.Json;
 using Shouldly;
 using Xunit;
 
@@ -14,7 +15,7 @@ namespace Ledger.Tests
 {
 	public class SaveAggregateTests
 	{
-		private const string StreamName = "someStream";
+		private static readonly EventStoreContext Context = new EventStoreContext("someStream", new JsonSerializerSettings());
 
 		private readonly InMemoryEventStore _backing;
 		private readonly AggregateStore<Guid> _store;
@@ -36,10 +37,10 @@ namespace Ledger.Tests
 
 			aggregate.AddEvent(new TestEvent());
 
-			_store.Save(StreamName, aggregate);
+			_store.Save(Context.StreamName, aggregate);
 
 			var events = _backing
-				.CreateReader<Guid>(StreamName)
+				.CreateReader<Guid>(Context)
 				.LoadEvents(aggregate.ID)
 				.ToList();
 
@@ -62,10 +63,10 @@ namespace Ledger.Tests
 			aggregate.AddEvent(new TestEvent());
 			aggregate.AddEvent(new TestEvent());
 
-			_store.Save(StreamName, aggregate);
+			_store.Save(Context.StreamName, aggregate);
 
 			var events = _backing
-				.CreateReader<Guid>(StreamName)
+				.CreateReader<Guid>(Context)
 				.LoadEvents(aggregate.ID)
 				.ToList();
 
@@ -88,14 +89,14 @@ namespace Ledger.Tests
 			aggregate.AddEvent(new TestEvent()); //2
 			aggregate.AddEvent(new TestEvent()); //3
 
-			_store.Save(StreamName, aggregate);
+			_store.Save(Context.StreamName, aggregate);
 
 			aggregate.AddEvent(new TestEvent()); //4
 
-			_store.Save(StreamName, aggregate);
+			_store.Save(Context.StreamName, aggregate);
 
 			var events = _backing
-				.CreateReader<Guid>(StreamName)
+				.CreateReader<Guid>(Context)
 				.LoadEvents(aggregate.ID)
 				.ToList();
 
@@ -115,10 +116,10 @@ namespace Ledger.Tests
 
 			aggregate.AddEvent(new TestEvent());
 
-			_store.Save(StreamName, aggregate);
+			_store.Save(Context.StreamName, aggregate);
 
 			var events = _backing
-				.CreateReader<Guid>(StreamName)
+				.CreateReader<Guid>(Context)
 				.LoadEvents(aggregate.ID)
 				.ToList();
 
@@ -137,9 +138,9 @@ namespace Ledger.Tests
 
 			Enumerable.Range(0, 12).ForEach((e,i) => aggregate.AddEvent(new TestEvent()));
 
-			_store.Save(StreamName, aggregate);
+			_store.Save(Context.StreamName, aggregate);
 
-			using (var reader = _backing.CreateReader<Guid>(StreamName))
+			using (var reader = _backing.CreateReader<Guid>(Context))
 			{
 				var events = reader.LoadEvents(aggregate.ID).ToList();
 				var snapshot = reader.LoadLatestSnapshotFor(aggregate.ID);
@@ -159,12 +160,12 @@ namespace Ledger.Tests
 			aggregate.GenerateID();
 
 			Enumerable.Range(0, 12).ForEach((e, i) => aggregate.AddEvent(new TestEvent()));
-			_store.Save(StreamName, aggregate);
+			_store.Save(Context.StreamName, aggregate);
 
 			Enumerable.Range(0, 12).ForEach((e, i) => aggregate.AddEvent(new TestEvent()));
-			_store.Save(StreamName, aggregate);
+			_store.Save(Context.StreamName, aggregate);
 
-			using (var reader = _backing.CreateReader<Guid>(StreamName))
+			using (var reader = _backing.CreateReader<Guid>(Context))
 			{
 				var events = reader.LoadEvents(aggregate.ID).ToList();
 				var snapshot = reader.LoadLatestSnapshotFor(aggregate.ID);
@@ -184,12 +185,12 @@ namespace Ledger.Tests
 			aggregate.GenerateID();
 
 			Enumerable.Range(0, _store.SnapshotPolicy.DefaultInterval - 2).ForEach(e => aggregate.AddEvent(new TestEvent()));
-			_store.Save(StreamName, aggregate);
+			_store.Save(Context.StreamName, aggregate);
 
 			Enumerable.Range(0, 3).ForEach(e => aggregate.AddEvent(new TestEvent()));
-			_store.Save(StreamName, aggregate);
+			_store.Save(Context.StreamName, aggregate);
 
-			using (var reader = _backing.CreateReader<Guid>(StreamName))
+			using (var reader = _backing.CreateReader<Guid>(Context))
 			{
 				var events = reader.LoadEvents(aggregate.ID).ToList();
 				var snapshot = reader.LoadLatestSnapshotFor(aggregate.ID);
@@ -209,8 +210,8 @@ namespace Ledger.Tests
 			perm.ChangeName("Test");
 			role.ChangeName("Testing");
 
-			_store.Save(StreamName, role);
-			_store.Save(StreamName, perm);
+			_store.Save(Context.StreamName, role);
+			_store.Save(Context.StreamName, perm);
 
 			_backing.AllEvents.Select(e => e.GetType()).ShouldBe(new []
 			{

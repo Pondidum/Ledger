@@ -3,13 +3,15 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Ledger.Infrastructure;
+using Newtonsoft.Json;
 
 namespace Ledger
 {
 	public class AggregateStore<TKey>
 	{
 		private readonly IEventStore _eventStore;
-		public SnapshotPolicy SnapshotPolicy { get; set; }
+		public SnapshotPolicy SnapshotPolicy { get; }
+		public JsonSerializerSettings SerializerSettings { get; }
 
 		public AggregateStore(IEventStore eventStore)
 			: this(eventStore, new SnapshotPolicy())
@@ -17,9 +19,15 @@ namespace Ledger
 		}
 
 		public AggregateStore(IEventStore eventStore, SnapshotPolicy policy)
+			: this(eventStore, policy, new JsonSerializerSettings())
+		{
+		}
+
+		public AggregateStore(IEventStore eventStore, SnapshotPolicy policy, JsonSerializerSettings serializerSettings)
 		{
 			_eventStore = eventStore;
 			SnapshotPolicy = policy;
+			SerializerSettings = serializerSettings;
 		}
 
 		/// <summary>
@@ -40,7 +48,9 @@ namespace Ledger
 				return;
 			}
 
-			using (var store = _eventStore.CreateWriter<TKey>(stream))
+			var context = new EventStoreContext(stream, SerializerSettings);
+
+			using (var store = _eventStore.CreateWriter<TKey>(context))
 			{
 				ThrowIfVersionsInconsistent(store, aggregate);
 
@@ -58,7 +68,7 @@ namespace Ledger
 				aggregate.MarkEventsCommitted();
 			}
 
-			SnapshotPolicy.CleanSnapshots(() =>_eventStore.CreateMaintainer<TKey>(stream), aggregate);
+			SnapshotPolicy.CleanSnapshots(() =>_eventStore.CreateMaintainer<TKey>(context), aggregate);
 		}
 
 		private static void ThrowIfVersionsInconsistent<TAggregate>(IStoreWriter<TKey> store, TAggregate aggregate)
@@ -81,7 +91,9 @@ namespace Ledger
 		public TAggregate Load<TAggregate>(string stream, TKey aggregateID, Func<TAggregate> createNew)
 			where TAggregate : AggregateRoot<TKey>
 		{
-			using (var store = _eventStore.CreateReader<TKey>(stream))
+			var context = new EventStoreContext(stream, SerializerSettings);
+
+			using (var store = _eventStore.CreateReader<TKey>(context))
 			{
 				var aggregate = createNew();
 
@@ -116,7 +128,9 @@ namespace Ledger
 			var loader = new AggregateLoadAllConfiguration<TKey>();
 			configureMapper(loader);
 
-			using (var reader = _eventStore.CreateReader<TKey>(stream))
+			var context = new EventStoreContext(stream, SerializerSettings);
+
+			using (var reader = _eventStore.CreateReader<TKey>(context))
 			{
 				var ids = reader.LoadAllKeys();
 
@@ -155,7 +169,9 @@ namespace Ledger
 		/// <param name="stream">The stream to replay</param>
 		public IEnumerable<IDomainEvent<TKey>> ReplayAll(string stream)
 		{
-			using (var reader = _eventStore.CreateReader<TKey>(stream))
+			var context = new EventStoreContext(stream, SerializerSettings);
+
+			using (var reader = _eventStore.CreateReader<TKey>(context))
 			{
 				return reader.LoadAllEvents();
 			}

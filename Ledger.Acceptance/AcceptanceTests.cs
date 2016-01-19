@@ -2,6 +2,7 @@
 using System.Linq;
 using Ledger.Acceptance.TestObjects;
 using Ledger.Infrastructure;
+using Newtonsoft.Json;
 using Shouldly;
 using Xunit;
 
@@ -9,8 +10,8 @@ namespace Ledger.Acceptance
 {
 	public abstract class AcceptanceTests
 	{
-		public const string SnapshotStream = "SnapshotAggregateStream";
-		public const string DefaultStream = "TestAggregateStream";
+		public readonly EventStoreContext SnapshotStream = new EventStoreContext( "SnapshotAggregateStream", new JsonSerializerSettings());
+		public readonly EventStoreContext DefaultStream = new EventStoreContext("TestAggregateStream", new JsonSerializerSettings());
 
 		private readonly IEventStore _eventStore;
 		private readonly AggregateStore<Guid> _aggregateStore;
@@ -28,7 +29,7 @@ namespace Ledger.Acceptance
 			var aggregate = new SnapshotAggregate(DefaultStamper.Now);
 			aggregate.GenerateID();
 
-			_aggregateStore.Save(SnapshotStream, aggregate);
+			_aggregateStore.Save(SnapshotStream.StreamName, aggregate);
 
 			using (var reader = _eventStore.CreateReader<Guid>(SnapshotStream))
 			{
@@ -51,7 +52,7 @@ namespace Ledger.Acceptance
 
 			aggregate.AddEvent(new TestEvent());
 
-			Should.Throw<ConsistencyException>(() => _aggregateStore.Save(SnapshotStream, aggregate));
+			Should.Throw<ConsistencyException>(() => _aggregateStore.Save(SnapshotStream.StreamName, aggregate));
 		}
 
 		[Fact]
@@ -71,7 +72,7 @@ namespace Ledger.Acceptance
 				});
 			}
 
-			var aggregate = _aggregateStore.Load(SnapshotStream, id, () => new SnapshotAggregate(DefaultStamper.Now));
+			var aggregate = _aggregateStore.Load(SnapshotStream.StreamName, id, () => new SnapshotAggregate(DefaultStamper.Now));
 
 			aggregate.GetSequenceID().ShouldBe(t2);
 		}
@@ -93,7 +94,7 @@ namespace Ledger.Acceptance
 				});
 			}
 
-			var aggregate = _aggregateStore.Load(DefaultStream, id, () => new TestAggregate(DefaultStamper.Now));
+			var aggregate = _aggregateStore.Load(DefaultStream.StreamName, id, () => new TestAggregate(DefaultStamper.Now));
 
 			aggregate.ShouldSatisfyAllConditions(
 				() => aggregate.GetUncommittedEvents().ShouldBeEmpty(),
@@ -121,7 +122,7 @@ namespace Ledger.Acceptance
 				});
 			}
 
-			var aggregate = _aggregateStore.Load(SnapshotStream, id, () => new SnapshotAggregate(DefaultStamper.Now));
+			var aggregate = _aggregateStore.Load(SnapshotStream.StreamName, id, () => new SnapshotAggregate(DefaultStamper.Now));
 
 			aggregate.ShouldSatisfyAllConditions(
 				() => aggregate.GetUncommittedEvents().ShouldBeEmpty(),
@@ -142,7 +143,7 @@ namespace Ledger.Acceptance
 			aggregate.GenerateID();
 			aggregate.AddEvents(new[] { new TestEvent(), new TestEvent() });
 
-			_aggregateStore.Save(DefaultStream, aggregate);
+			_aggregateStore.Save(DefaultStream.StreamName, aggregate);
 
 			using (var reader = _eventStore.CreateReader<Guid>(DefaultStream))
 			{
@@ -175,7 +176,7 @@ namespace Ledger.Acceptance
 			aggregate.GenerateID();
 			aggregate.AddEvents(events);
 
-			_aggregateStore.Save(SnapshotStream, aggregate);
+			_aggregateStore.Save(SnapshotStream.StreamName, aggregate);
 
 			using (var reader = _eventStore.CreateReader<Guid>(SnapshotStream))
 			{

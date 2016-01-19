@@ -2,8 +2,8 @@ namespace Ledger
 {
 	public interface IEventStore
 	{
-		IStoreReader<TKey> CreateReader<TKey>(string streamName);
-		IStoreWriter<TKey> CreateWriter<TKey>(string streamName);
-		IStoreMaintainer<TKey> CreateMaintainer<TKey>(string streamName);
+		IStoreReader<TKey> CreateReader<TKey>(EventStoreContext context);
+		IStoreWriter<TKey> CreateWriter<TKey>(EventStoreContext context);
+		IStoreMaintainer<TKey> CreateMaintainer<TKey>(EventStoreContext context);
 	}
 }

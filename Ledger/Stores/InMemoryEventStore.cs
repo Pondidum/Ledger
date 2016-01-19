@@ -22,17 +22,17 @@ namespace Ledger.Stores
 		public IEnumerable<object> AllEvents => _events.SelectMany(events => events).OrderBy(e => ((IStamped)e).Stamp);
 		public IEnumerable<object> AllSnapshots => _snapshots.SelectMany(events => events).OrderBy(e => ((IStamped)e).Stamp);
 
-		public IStoreReader<TKey> CreateReader<TKey>(string stream)
+		public IStoreReader<TKey> CreateReader<TKey>(EventStoreContext context)
 		{
 			return new ReaderWriter<TKey>(_events, _snapshots);
 		}
 
-		public IStoreWriter<TKey> CreateWriter<TKey>(string stream)
+		public IStoreWriter<TKey> CreateWriter<TKey>(EventStoreContext context)
 		{
 			return new ReaderWriter<TKey>(_events, _snapshots);
 		}
 
-		public IStoreMaintainer<TKey> CreateMaintainer<TKey>(string streamName)
+		public IStoreMaintainer<TKey> CreateMaintainer<TKey>(EventStoreContext context)
 		{
 			return new Maintainer<TKey>(_snapshots);
 		}
