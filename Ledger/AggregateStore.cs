@@ -67,8 +67,6 @@ namespace Ledger
 
 				aggregate.MarkEventsCommitted();
 			}
-
-			SnapshotPolicy.CleanSnapshots(() =>_eventStore.CreateMaintainer<TKey>(context), aggregate);
 		}
 
 		private static void ThrowIfVersionsInconsistent<TAggregate>(IStoreWriter<TKey> store, TAggregate aggregate)

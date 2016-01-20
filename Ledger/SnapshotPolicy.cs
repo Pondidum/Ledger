@@ -32,13 +32,5 @@ namespace Ledger
 
 			return eventCount + changes.Count >= interval;
 		}
-
-		public void CleanSnapshots<TKey>(Func<IStoreMaintainer<TKey>> createMaintainer, AggregateRoot<TKey> aggregate)
-		{
-			using (var maintainer = createMaintainer())
-			{
-				maintainer.RemoveAllOldSnapshots(aggregate.ID);
-			}
-		}
 	}
 }

@@ -18,10 +18,5 @@
 		{
 			return new InterceptingWriter<TKey>(_other.CreateWriter<TKey>(context));
 		}
-
-		public IStoreMaintainer<TKey> CreateMaintainer<TKey>(EventStoreContext context)
-		{
-			return new InterceptingMaintainer<TKey>(_other.CreateMaintainer<TKey>(context));
-		}
 	}
 }

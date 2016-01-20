@@ -4,6 +4,5 @@ namespace Ledger
 	{
 		IStoreReader<TKey> CreateReader<TKey>(EventStoreContext context);
 		IStoreWriter<TKey> CreateWriter<TKey>(EventStoreContext context);
-		IStoreMaintainer<TKey> CreateMaintainer<TKey>(EventStoreContext context);
 	}
 }

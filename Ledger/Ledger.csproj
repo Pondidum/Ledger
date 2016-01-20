@@ -63,7 +63,6 @@
     <Compile Include="ISnapshot.cs" />
     <Compile Include="ISnapshotable.cs" />
     <Compile Include="ISnapshotControl.cs" />
-    <Compile Include="IStoreMaintainer.cs" />
     <Compile Include="IStoreReader.cs" />
     <Compile Include="IStoreWriter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -71,7 +70,6 @@
     <Compile Include="SnapshotPolicy.cs" />
     <Compile Include="Stores\InMemoryEventStore.cs" />
     <Compile Include="Stores\InterceptingEventStore.cs" />
-    <Compile Include="Stores\InterceptingMaintainer.cs" />
     <Compile Include="Stores\InterceptingReader.cs" />
     <Compile Include="Stores\InterceptingWriter.cs" />
   </ItemGroup>
