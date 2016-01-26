@@ -79,6 +79,26 @@ namespace Ledger.Tests.Stores
 			store.AllSnapshots.ShouldBe(new[] { snap0, snap1, snap2 });
 		}
 
+		[Fact]
+		public void When_getting_all_keys_and_there_are_only_snapshots_stored()
+		{
+			var store = new InMemoryEventStore();
+
+			var snap0 = new TestSnapshot { AggregateID = 1 };
+			var snap1 = new TestSnapshot { AggregateID = 2 };
+
+			using (var writer = store.CreateWriter<int>(null))
+			{
+				writer.SaveSnapshot(snap0);
+				writer.SaveSnapshot(snap1);
+			}
+
+			using (var reader = store.CreateReader<int>(null))
+			{
+				reader.LoadAllKeys().ShouldBe(new[] { 1, 2 }, ignoreOrder: true);
+			}
+		}
+
 		public class TestEvent : DomainEvent<int>
 		{
 		}

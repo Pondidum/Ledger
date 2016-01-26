@@ -69,7 +69,9 @@ namespace Ledger.Stores
 
 			public IEnumerable<TKey> LoadAllKeys()
 			{
-				return _events.Keys.Cast<TKey>();
+				return _events.Keys.Cast<TKey>()
+					.Concat(_snapshots.Keys.Cast<TKey>())
+					.Distinct();
 			}
 
 			public IEnumerable<IDomainEvent<TKey>> LoadAllEvents()
