@@ -5,40 +5,19 @@ namespace Ledger
 {
 	public class Migrator
 	{
-		private readonly IEventStore _source;
-		private readonly IEventStore _destination;
-		private readonly JsonSerializerSettings _settings;
+		private readonly IMigrationStrategy _strategy;
 
-		public Migrator(IEventStore source, IEventStore destination)
-			: this(source, destination, null)
+		public Migrator(IMigrationStrategy strategy)
 		{
+			_strategy = strategy;
 		}
 
-		public Migrator(IEventStore source, IEventStore destination, JsonSerializerSettings serializerSettings)
+		public void ToEmptyStream<TKey>(IEventStore source, IEventStore destination, EventStoreContext context)
 		{
-			_source = source;
-			_destination = destination;
-			_settings = serializerSettings ?? Default.SerializerSettings;
-		}
-
-		public void ToEmptyStream<TKey>(string streamName)
-		{
-			var context = new EventStoreContext(streamName, _settings);
-
-			using (var reader = _source.CreateReader<TKey>(context))
-			using (var writer = _destination.CreateWriter<TKey>(context))
+			using (var reader = source.CreateReader<TKey>(context))
+			using (var writer = destination.CreateWriter<TKey>(context))
 			{
-				var keys = reader.LoadAllKeys();
-
-				foreach (var key in keys)
-				{
-					writer.SaveEvents(reader.LoadEvents(key));
-
-					var snapshot = reader.LoadLatestSnapshotFor(key);
-
-					if (snapshot != null)
-						writer.SaveSnapshot(snapshot);
-				}
+				_strategy.Execute(reader, writer);
 			}
 		}
 	}

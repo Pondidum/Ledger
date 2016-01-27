@@ -3,6 +3,7 @@ using System.Linq;
 using Ledger.Acceptance;
 using Ledger.Acceptance.TestObjects;
 using Ledger.Infrastructure;
+using Ledger.Migrations;
 using Ledger.Stores;
 using Shouldly;
 using Xunit;
@@ -52,8 +53,8 @@ namespace Ledger.Tests
 
 			WriteEvents(source, new TestEvent(), new TestEvent(), new TestEvent());
 
-			var migrator = new Migrator(source, dest);
-			migrator.ToEmptyStream<Guid>(TestStream.StreamName);
+			var migrator = new Migrator(new BlankDestinationStrategy());
+			migrator.ToEmptyStream<Guid>(source, dest, TestStream);
 
 			dest.AllEvents.Count().ShouldBe(3);
 		}
@@ -67,8 +68,8 @@ namespace Ledger.Tests
 			WriteSnapshots(source, new TestSnapshot());
 
 
-			var migrator = new Migrator(source, dest);
-			migrator.ToEmptyStream<Guid>(TestStream.StreamName);
+			var migrator = new Migrator(new BlankDestinationStrategy());
+			migrator.ToEmptyStream<Guid>(source, dest, TestStream);
 
 			dest.AllSnapshots.Count().ShouldBe(1);
 		}
@@ -82,8 +83,8 @@ namespace Ledger.Tests
 			WriteSnapshots(source, new TestSnapshot(), new TestSnapshot(), new TestSnapshot());
 
 
-			var migrator = new Migrator(source, dest);
-			migrator.ToEmptyStream<Guid>(TestStream.StreamName);
+			var migrator = new Migrator(new BlankDestinationStrategy());
+			migrator.ToEmptyStream<Guid>(source, dest, TestStream);
 
 			dest.AllSnapshots.Count().ShouldBe(1);
 		}

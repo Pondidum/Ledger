@@ -48,6 +48,7 @@
     <Compile Include="AggregateLoadAllConfiguration.cs" />
     <Compile Include="AggregateRoot.cs" />
     <Compile Include="AggregateStore.cs" />
+    <Compile Include="Migrations\BlankDestinationStrategy.cs" />
     <Compile Include="ConsistencyException.cs" />
     <Compile Include="Default.cs" />
     <Compile Include="DefaultStamper.cs" />
@@ -55,6 +56,7 @@
     <Compile Include="EventStoreContext.cs" />
     <Compile Include="IDomainEvent.cs" />
     <Compile Include="IEventStore.cs" />
+    <Compile Include="IMigrationStrategy.cs" />
     <Compile Include="Infrastructure\Extensions.cs" />
     <Compile Include="Infrastructure\LightweightCache.cs" />
     <Compile Include="Infrastructure\TypeInfo.cs" />
@@ -77,6 +79,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
