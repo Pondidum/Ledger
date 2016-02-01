@@ -15,7 +15,7 @@ namespace Ledger.Tests.Stores
 		[Fact]
 		public void When_an_event_occours()
 		{
-			var events = new List<IDomainEvent<Guid>>();
+			var events = new List<DomainEvent<Guid>>();
 			var store = new InMemoryEventStore();
 			var wrapped = new LoggingEventStore(store, e => events.Add(e));
 
@@ -29,7 +29,7 @@ namespace Ledger.Tests.Stores
 			ags.Save("testStream", aggregate);
 
 			events.ShouldBe(new[] { event1 });
-			store.AllEvents.Cast<IDomainEvent<Guid>>().ShouldBe(new[] { event1 });
+			store.AllEvents.Cast<DomainEvent<Guid>>().ShouldBe(new[] { event1 });
 
 		}
 
@@ -37,9 +37,9 @@ namespace Ledger.Tests.Stores
 		private class LoggingEventStore : InterceptingEventStore
 		{
 			private readonly IEventStore _other;
-			private readonly Action<IDomainEvent<Guid>> _onEvent;
+			private readonly Action<DomainEvent<Guid>> _onEvent;
 
-			public LoggingEventStore(IEventStore other, Action<IDomainEvent<Guid>> onEvent)
+			public LoggingEventStore(IEventStore other, Action<DomainEvent<Guid>> onEvent)
 				: base(other)
 			{
 				_other = other;
@@ -48,21 +48,21 @@ namespace Ledger.Tests.Stores
 
 			public override IStoreWriter<TKey> CreateWriter<TKey>(EventStoreContext context)
 			{
-				return new EventLoggingStoreWriter<TKey>(_other.CreateWriter<TKey>(context), e =>  _onEvent((IDomainEvent<Guid>) e) );
+				return new EventLoggingStoreWriter<TKey>(_other.CreateWriter<TKey>(context), e => _onEvent(e as DomainEvent<Guid>));
 			}
 		}
 
 		private class EventLoggingStoreWriter<TKey> : InterceptingWriter<TKey>
 		{
-			private readonly Action<IDomainEvent<TKey>> _onEvent;
+			private readonly Action<DomainEvent<TKey>> _onEvent;
 
-			public EventLoggingStoreWriter(IStoreWriter<TKey> other, Action<IDomainEvent<TKey>> onEvent)
+			public EventLoggingStoreWriter(IStoreWriter<TKey> other, Action<DomainEvent<TKey>> onEvent)
 				: base(other)
 			{
 				_onEvent = onEvent;
 			}
 
-			public override void SaveEvents(IEnumerable<IDomainEvent<TKey>> changes)
+			public override void SaveEvents(IEnumerable<DomainEvent<TKey>> changes)
 			{
 				//this is a pretty bad impl, as you can block event saving, but its easy to test!
 				//also using the .Apply() method avoids iterating the changes collection more than once.

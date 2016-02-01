@@ -20,7 +20,7 @@ namespace Ledger.Tests
 			_stamper = new IncrementingStamper();
 		}
 
-		private void WriteEvents(InMemoryEventStore store, params IDomainEvent<Guid>[] events)
+		private void WriteEvents(InMemoryEventStore store, params DomainEvent<Guid>[] events)
 		{
 			var aggregateID = Guid.NewGuid();
 

@@ -30,12 +30,12 @@ namespace Ledger.Tests.Stores
 
 			using (var writer = store.CreateWriter<int>(null))
 			{
-				writer.SaveEvents(new List<IDomainEvent<int>>() { e0 });
-				writer.SaveEvents(new List<IDomainEvent<int>>() { e1 });
-				writer.SaveEvents(new List<IDomainEvent<int>>() { e2 });
+				writer.SaveEvents(new List<DomainEvent<int>>() { e0 });
+				writer.SaveEvents(new List<DomainEvent<int>>() { e1 });
+				writer.SaveEvents(new List<DomainEvent<int>>() { e2 });
 			}
 
-			store.AllEvents.Cast<IDomainEvent<int>>().ShouldBe(new[] { e0, e1, e2 });
+			store.AllEvents.Cast<DomainEvent<int>>().ShouldBe(new[] { e0, e1, e2 });
 		}
 
 		[Fact]
@@ -49,9 +49,9 @@ namespace Ledger.Tests.Stores
 
 			using (var writer = store.CreateWriter<int>(null))
 			{
-				writer.SaveEvents(new List<IDomainEvent<int>>() { e0 });
-				writer.SaveEvents(new List<IDomainEvent<int>>() { e1 });
-				writer.SaveEvents(new List<IDomainEvent<int>>() { e2 });
+				writer.SaveEvents(new List<DomainEvent<int>>() { e0 });
+				writer.SaveEvents(new List<DomainEvent<int>>() { e1 });
+				writer.SaveEvents(new List<DomainEvent<int>>() { e2 });
 			}
 
 			using (var reader = store.CreateReader<int>(null))

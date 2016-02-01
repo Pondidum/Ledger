@@ -11,8 +11,8 @@ namespace Ledger
 		protected internal DateTime SequenceID { get; set; }
 
 		private readonly Func<DateTime> _getTimestamp;
-		private readonly LightweightCache<Type, List<Action<IDomainEvent<TKey>>>> _handlers;
-		private readonly List<IDomainEvent<TKey>> _events;
+		private readonly LightweightCache<Type, List<Action<DomainEvent<TKey>>>> _handlers;
+		private readonly List<DomainEvent<TKey>> _events;
 
 		protected AggregateRoot()
 			: this(DefaultStamper.Now)
@@ -22,17 +22,17 @@ namespace Ledger
 		protected AggregateRoot(Func<DateTime> getTimestamp)
 		{
 			_getTimestamp = getTimestamp;
-			_handlers = new LightweightCache<Type, List<Action<IDomainEvent<TKey>>>>(
-				key => new List<Action<IDomainEvent<TKey>>>()
+			_handlers = new LightweightCache<Type, List<Action<DomainEvent<TKey>>>>(
+				key => new List<Action<DomainEvent<TKey>>>()
 			);
 
-			_events = new List<IDomainEvent<TKey>>();
+			_events = new List<DomainEvent<TKey>>();
 			SequenceID = DateTime.MinValue;
 
-			BeforeApplyEvent<IDomainEvent<TKey>>(e => e.Stamp = _getTimestamp());
+			BeforeApplyEvent<DomainEvent<TKey>>(e => e.Stamp = _getTimestamp());
 		}
 
-		public IEnumerable<IDomainEvent<TKey>> GetUncommittedEvents()
+		public IEnumerable<DomainEvent<TKey>> GetUncommittedEvents()
 		{
 			return _events;
 		}
@@ -46,9 +46,9 @@ namespace Ledger
 			}
 		}
 
-		internal void LoadFromEvents(IEnumerable<IDomainEvent<TKey>> eventStream)
+		internal void LoadFromEvents(IEnumerable<DomainEvent<TKey>> eventStream)
 		{
-			IDomainEvent<TKey> last = null;
+			DomainEvent<TKey> last = null;
 			var dynamic = this.AsDynamic();
 
 			eventStream
@@ -61,7 +61,7 @@ namespace Ledger
 			}
 		}
 
-		internal void LoadFromSnapshot<TSnapshot>(TSnapshot snapshot, IEnumerable<IDomainEvent<TKey>> events)
+		internal void LoadFromSnapshot<TSnapshot>(TSnapshot snapshot, IEnumerable<DomainEvent<TKey>> events)
 			where TSnapshot : ISnapshot<TKey>
 		{
 			if (snapshot != null)
@@ -75,12 +75,12 @@ namespace Ledger
 		}
 
 		protected void BeforeApplyEvent<TEvent>(Action<TEvent> handler)
-			where TEvent : IDomainEvent<TKey>
+			where TEvent : DomainEvent<TKey>
 		{
 			_handlers[typeof(TEvent)].Add(e => handler((TEvent)e));
 		}
 
-		protected void ApplyEvent(IDomainEvent<TKey> @event)
+		protected void ApplyEvent(DomainEvent<TKey> @event)
 		{
 			var eventType = @event.GetType();
 

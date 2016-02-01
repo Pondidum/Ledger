@@ -140,12 +140,12 @@ namespace Ledger
 						: (DateTime?)null;
 
 					var events = reader.LoadEventsSince(id, since).GetEnumerator();
-					var allEvents = Enumerable.Empty<IDomainEvent<TKey>>();
+					var allEvents = Enumerable.Empty<DomainEvent<TKey>>();
 
 					if (events.MoveNext())
 						allEvents = allEvents.Concat(new[] { events.Current });
 
-					allEvents = allEvents.Concat(new Iterator<IDomainEvent<TKey>>(events));
+					allEvents = allEvents.Concat(new Iterator<DomainEvent<TKey>>(events));
 
 					var creator = loader.For(snapshot, events.Current);
 					var instance = creator();
@@ -165,7 +165,7 @@ namespace Ledger
 
 		/// <summary>Yeilds all events in the store in order</summary>
 		/// <param name="stream">The stream to replay</param>
-		public IEnumerable<IDomainEvent<TKey>> ReplayAll(string stream)
+		public IEnumerable<DomainEvent<TKey>> ReplayAll(string stream)
 		{
 			var context = new EventStoreContext(stream, SerializerSettings);
 

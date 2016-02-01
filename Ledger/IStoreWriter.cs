@@ -8,7 +8,7 @@ namespace Ledger
 		DateTime? GetLatestStampFor(TKey aggregateID);
 		int GetNumberOfEventsSinceSnapshotFor(TKey aggregateID);
 
-		void SaveEvents(IEnumerable<IDomainEvent<TKey>> changes);
+		void SaveEvents(IEnumerable<DomainEvent<TKey>> changes);
 		void SaveSnapshot(ISnapshot<TKey> snapshot);
 	}
 }

@@ -22,7 +22,7 @@ namespace Ledger.Stores
 			return _other.GetNumberOfEventsSinceSnapshotFor(aggregateID);
 		}
 
-		public virtual void SaveEvents(IEnumerable<IDomainEvent<TKey>> changes)
+		public virtual void SaveEvents(IEnumerable<DomainEvent<TKey>> changes)
 		{
 			_other.SaveEvents(changes);
 		}

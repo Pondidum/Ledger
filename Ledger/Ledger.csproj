@@ -54,7 +54,6 @@
     <Compile Include="DefaultStamper.cs" />
     <Compile Include="DomainEvent.cs" />
     <Compile Include="EventStoreContext.cs" />
-    <Compile Include="IDomainEvent.cs" />
     <Compile Include="IEventStore.cs" />
     <Compile Include="IMigrationStrategy.cs" />
     <Compile Include="Infrastructure\Extensions.cs" />

@@ -11,12 +11,12 @@ namespace Ledger.Acceptance.TestObjects
 		{
 		}
 
-		public void AddEvent(IDomainEvent<Guid> @event)
+		public void AddEvent(DomainEvent<Guid> @event)
 		{
 			ApplyEvent(@event);
 		}
 
-		public void AddEvents(IEnumerable<IDomainEvent<Guid>> events)
+		public void AddEvents(IEnumerable<DomainEvent<Guid>> events)
 		{
 			events.ForEach(AddEvent);
 		}

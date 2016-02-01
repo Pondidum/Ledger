@@ -49,16 +49,16 @@ namespace Ledger.Stores
 				_snapshots = snapshots;
 			}
 
-			public IEnumerable<IDomainEvent<TKey>> LoadEvents(TKey aggregateID)
+			public IEnumerable<DomainEvent<TKey>> LoadEvents(TKey aggregateID)
 			{
 				List<Dto> events;
 
 				return _events.TryGetValue(aggregateID, out events)
-					? events.Select(e => e.Content).Cast<IDomainEvent<TKey>>()
-					: Enumerable.Empty<IDomainEvent<TKey>>();
+					? events.Select(e => e.Content).Cast<DomainEvent<TKey>>()
+					: Enumerable.Empty<DomainEvent<TKey>>();
 			}
 
-			public IEnumerable<IDomainEvent<TKey>> LoadEventsSince(TKey aggregateID, DateTime? stamp)
+			public IEnumerable<DomainEvent<TKey>> LoadEventsSince(TKey aggregateID, DateTime? stamp)
 			{
 				var events = LoadEvents(aggregateID);
 
@@ -83,12 +83,12 @@ namespace Ledger.Stores
 					.Distinct();
 			}
 
-			public IEnumerable<IDomainEvent<TKey>> LoadAllEvents()
+			public IEnumerable<DomainEvent<TKey>> LoadAllEvents()
 			{
 				return _events
 					.SelectMany(e => e)
 					.Select(e => e.Content)
-					.Cast<IDomainEvent<TKey>>()
+					.Cast<DomainEvent<TKey>>()
 					.OrderBy(e => e.Stamp);
 			}
 
@@ -110,7 +110,7 @@ namespace Ledger.Stores
 					.Count(e => e.Stamp >= stamp);
 			}
 
-			public void SaveEvents(IEnumerable<IDomainEvent<TKey>> changes)
+			public void SaveEvents(IEnumerable<DomainEvent<TKey>> changes)
 			{
 				changes.ForEach(change => _events[change.AggregateID].Add(new Dto { Stamp = change.Stamp, Content = change }));
 			}

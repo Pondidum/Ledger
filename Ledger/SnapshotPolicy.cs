@@ -14,7 +14,7 @@ namespace Ledger
 			DefaultInterval = 10;
 		}
 
-		public virtual bool NeedsSnapshot<TKey, TAggregate>(IStoreWriter<TKey> store, TAggregate aggregate, IReadOnlyCollection<IDomainEvent<TKey>> changes)
+		public virtual bool NeedsSnapshot<TKey, TAggregate>(IStoreWriter<TKey> store, TAggregate aggregate, IReadOnlyCollection<DomainEvent<TKey>> changes)
 			where TAggregate : AggregateRoot<TKey>
 		{
 			var control = aggregate as ISnapshotControl;
