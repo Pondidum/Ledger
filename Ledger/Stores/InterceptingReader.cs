@@ -17,7 +17,7 @@ namespace Ledger.Stores
 			return _other.LoadEvents(aggregateID);
 		}
 
-		public virtual IEnumerable<IDomainEvent<TKey>> LoadEventsSince(TKey aggregateID, DateTime stamp)
+		public virtual IEnumerable<IDomainEvent<TKey>> LoadEventsSince(TKey aggregateID, DateTime? stamp)
 		{
 			return _other.LoadEventsSince(aggregateID, stamp);
 		}
