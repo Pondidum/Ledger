@@ -68,6 +68,7 @@ namespace Ledger.Tests.Infrastructure
 		internal class Snap : ISnapshot<Guid>
 		{
 			public Guid AggregateID { get; set; }
+			public int Sequence { get; set; }
 			public DateTime Stamp { get; set; }
 		}
 

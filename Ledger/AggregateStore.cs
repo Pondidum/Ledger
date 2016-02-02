@@ -41,6 +41,7 @@ namespace Ledger
 			var changes = aggregate
 				.GetUncommittedEvents()
 				.Apply((e, i) => e.AggregateID = aggregate.ID)
+				.Apply((e, i) => e.Sequence = aggregate.Sequence + i + 1)
 				.ToList();
 
 			if (changes.None())
@@ -58,6 +59,7 @@ namespace Ledger
 				{
 					var snapshot = GetSnapshot(aggregate);
 					snapshot.AggregateID = aggregate.ID;
+					snapshot.Sequence = changes.Last().Sequence;
 					snapshot.Stamp = changes.Last().Stamp;
 
 					store.SaveSnapshot(snapshot);
@@ -72,11 +74,11 @@ namespace Ledger
 		private static void ThrowIfVersionsInconsistent<TAggregate>(IStoreWriter<TKey> store, TAggregate aggregate)
 			where TAggregate : AggregateRoot<TKey>
 		{
-			var lastStoredStamp = store.GetLatestStampFor(aggregate.ID);
+			var lastStoredSequence = store.GetLatestSequenceFor(aggregate.ID);
 
-			if (lastStoredStamp.HasValue && lastStoredStamp != aggregate.SequenceID)
+			if (lastStoredSequence.HasValue && lastStoredSequence != aggregate.Sequence)
 			{
-				throw new ConsistencyException(aggregate.GetType(), aggregate.ID.ToString(), aggregate.SequenceID, lastStoredStamp);
+				throw new ConsistencyException(aggregate.GetType(), aggregate.ID.ToString(), aggregate.Sequence, lastStoredSequence);
 			}
 		}
 

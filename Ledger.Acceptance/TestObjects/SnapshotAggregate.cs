@@ -39,14 +39,14 @@ namespace Ledger.Acceptance.TestObjects
 
 		public DateTime GetSequenceID()
 		{
-			return SequenceID;
+			return Stamp;
 		}
 	}
 
 	public class TestSnapshot : ISnapshot<Guid>
 	{
 		public Guid AggregateID { get; set; }
+		public int Sequence { get; set; }
 		public DateTime Stamp { get; set; }
-
 	}
 }

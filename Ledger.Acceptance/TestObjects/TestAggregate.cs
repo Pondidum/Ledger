@@ -29,7 +29,7 @@ namespace Ledger.Acceptance.TestObjects
 
 		public DateTime GetSequenceID()
 		{
-			return SequenceID;
+			return Stamp;
 		}
 	}
 }

@@ -106,6 +106,7 @@ namespace Ledger.Tests.Stores
 		public class TestSnapshot : ISnapshot<int>
 		{
 			public int AggregateID { get; set; }
+			public int Sequence { get; set; }
 			public DateTime Stamp { get; set; }
 		}
 	}

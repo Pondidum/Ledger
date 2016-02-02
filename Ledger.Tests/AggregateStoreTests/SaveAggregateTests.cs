@@ -257,7 +257,7 @@ namespace Ledger.Tests
 
 			public DateTime GetSequenceID()
 			{
-				return SequenceID;
+				return Stamp;
 			}
 		}
 	}

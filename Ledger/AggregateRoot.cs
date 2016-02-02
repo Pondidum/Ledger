@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Ledger.Infrastructure;
 
 namespace Ledger
@@ -8,7 +9,8 @@ namespace Ledger
 	public class AggregateRoot<TKey>
 	{
 		public TKey ID { get; protected set; }
-		protected internal DateTime SequenceID { get; set; }
+		protected internal DateTime Stamp { get; set; }
+		protected internal int Sequence { get; set; }
 
 		private readonly Func<DateTime> _getTimestamp;
 		private readonly LightweightCache<Type, List<Action<DomainEvent<TKey>>>> _handlers;
@@ -27,8 +29,10 @@ namespace Ledger
 			);
 
 			_events = new List<DomainEvent<TKey>>();
-			SequenceID = DateTime.MinValue;
+			Stamp = DateTime.MinValue;
+			Sequence = -1;
 
+			//BeforeApplyEvent<DomainEvent<TKey>>(e => e.Sequence = ++Sequence);
 			BeforeApplyEvent<DomainEvent<TKey>>(e => e.Stamp = _getTimestamp());
 		}
 
@@ -41,7 +45,8 @@ namespace Ledger
 		{
 			if (_events.Any())
 			{
-				SequenceID = _events.Last().Stamp;
+				Stamp = _events.Last().Stamp;
+				Sequence = _events.Last().Sequence;
 				_events.Clear();
 			}
 		}
@@ -57,7 +62,8 @@ namespace Ledger
 
 			if (last != null)
 			{
-				SequenceID = last.Stamp;
+				Stamp = last.Stamp;
+				Sequence = last.Sequence;
 			}
 		}
 
@@ -67,7 +73,8 @@ namespace Ledger
 			if (snapshot != null)
 			{
 				this.AsDynamic().ApplySnapshot(snapshot);
-				SequenceID = snapshot.Stamp;
+				Stamp = snapshot.Stamp;
+				Sequence = snapshot.Sequence;
 				ID = snapshot.AggregateID;
 			}
 

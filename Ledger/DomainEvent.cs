@@ -6,5 +6,6 @@ namespace Ledger
 	{
 		public DateTime Stamp { get; set; }
 		public TKey AggregateID { get; set; }
+		public int Sequence { get; set; }
 	}
 }

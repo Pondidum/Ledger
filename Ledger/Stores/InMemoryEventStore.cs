@@ -92,13 +92,13 @@ namespace Ledger.Stores
 					.OrderBy(e => e.Stamp);
 			}
 
-			public DateTime? GetLatestStampFor(TKey aggregateID)
+			public int? GetLatestSequenceFor(TKey aggregateID)
 			{
 				var last = LoadEvents(aggregateID).LastOrDefault();
 
 				return last != null
-					? last.Stamp
-					: (DateTime?)null;
+					? last.Sequence
+					: (int?)null;
 			}
 
 			public int GetNumberOfEventsSinceSnapshotFor(TKey aggregateID)

@@ -9,7 +9,7 @@ namespace Ledger
 		{
 		}
 
-		public ConsistencyException(Type aggregate, string id, DateTime sequenceID, DateTime? lastStoredSequence)
+		public ConsistencyException(Type aggregate, string id, int sequenceID, int? lastStoredSequence)
 			: base($"{aggregate.Name} {id} base sequence is {sequenceID}, but the store's is {lastStoredSequence}, so it cannot be saved.")
 		{
 		}
