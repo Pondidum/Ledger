@@ -3,6 +3,7 @@
   "version": "9.2.0",
   "dependencies": {
     "gulp": "^3.9.0",
+    "gulp-bump": "^1.0.0",
     "gulp-debug": "^2.1.2",
     "gulp-dotnet-assembly-info": "^0.1.11",
     "gulp-msbuild": "0.2.15",

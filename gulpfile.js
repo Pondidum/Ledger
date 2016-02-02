@@ -5,7 +5,8 @@ var fs = require("fs");
 var assemblyInfo = require('gulp-dotnet-assembly-info');
 var rename = require('gulp-rename');
 var msbuild = require('gulp-msbuild');
-var xunit =require('gulp-xunit-runner');
+var xunit = require('gulp-xunit-runner');
+var bump = require('gulp-bump');
 var debug = require('gulp-debug');
 
 var project = JSON.parse(fs.readFileSync("./package.json"));
@@ -74,3 +75,24 @@ gulp.task('pack', [ 'test' ], function () {
       templateData: config
     }));
 });
+
+gulp.task('bump:patch', function() {
+  return gulp
+    .src("./package.json")
+    .pipe(bump({ type: "patch" }))
+    .pipe(gulp.dest("./"));
+})
+
+gulp.task('bump:minor', function() {
+  return gulp
+    .src("./package.json")
+    .pipe(bump({ type: "minor" }))
+    .pipe(gulp.dest("./"));
+})
+
+gulp.task('bump:major', function() {
+  return gulp
+    .src("./package.json")
+    .pipe(bump({ type: "major" }))
+    .pipe(gulp.dest("./"));
+})
