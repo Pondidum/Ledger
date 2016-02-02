@@ -43,10 +43,10 @@ namespace Ledger.Acceptance.TestObjects
 		}
 	}
 
-	public class TestSnapshot : ISnapshot<Guid>
+	public class TestSnapshot : Snapshot<Guid>
 	{
-		public Guid AggregateID { get; set; }
-		public int Sequence { get; set; }
-		public DateTime Stamp { get; set; }
+		public override Guid AggregateID { get; set; }
+		public override int Sequence { get; set; }
+		public override DateTime Stamp { get; set; }
 	}
 }

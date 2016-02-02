@@ -103,11 +103,11 @@ namespace Ledger.Tests.Stores
 		{
 		}
 
-		public class TestSnapshot : ISnapshot<int>
+		public class TestSnapshot : Snapshot<int>
 		{
-			public int AggregateID { get; set; }
-			public int Sequence { get; set; }
-			public DateTime Stamp { get; set; }
+			public override int AggregateID { get; set; }
+			public override int Sequence { get; set; }
+			public override DateTime Stamp { get; set; }
 		}
 	}
 }

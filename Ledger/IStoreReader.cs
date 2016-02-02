@@ -7,7 +7,7 @@ namespace Ledger
 	{
 		IEnumerable<DomainEvent<TKey>> LoadEvents(TKey aggregateID);
 		IEnumerable<DomainEvent<TKey>> LoadEventsSince(TKey aggregateID, DateTime? stamp);
-		ISnapshot<TKey> LoadLatestSnapshotFor(TKey aggregateID);
+		Snapshot<TKey> LoadLatestSnapshotFor(TKey aggregateID);
 
 		IEnumerable<TKey> LoadAllKeys();
 		IEnumerable<DomainEvent<TKey>> LoadAllEvents();

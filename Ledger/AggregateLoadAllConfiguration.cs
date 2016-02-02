@@ -7,7 +7,7 @@ namespace Ledger
 	{
 		private readonly Dictionary<Type, Func<AggregateRoot<TKey>>> _bySnapshot;
 		private readonly Dictionary<Type, Func<AggregateRoot<TKey>>> _byEvent;
-		private Func<ISnapshot<TKey>, DomainEvent<TKey>, AggregateRoot<TKey>> _onUnconstructable;
+		private Func<Snapshot<TKey>, DomainEvent<TKey>, AggregateRoot<TKey>> _onUnconstructable;
 
 		public AggregateLoadAllConfiguration()
 		{
@@ -30,7 +30,7 @@ namespace Ledger
 		}
 
 		public void Snapshot<TSnapshot>(Func<AggregateRoot<TKey>> create)
-			where TSnapshot : ISnapshot<TKey>
+			where TSnapshot : Snapshot<TKey>
 		{
 			_bySnapshot.Add(typeof(TSnapshot), create);
 		}
@@ -41,12 +41,12 @@ namespace Ledger
 			_byEvent.Add(typeof(TEvent), create);
 		}
 
-		public void UnconstructableAggregate(Func<ISnapshot<TKey>, DomainEvent<TKey>, AggregateRoot<TKey>> action)
+		public void UnconstructableAggregate(Func<Snapshot<TKey>, DomainEvent<TKey>, AggregateRoot<TKey>> action)
 		{
 			_onUnconstructable = action;
 		}
 
-		public Func<AggregateRoot<TKey>> For(ISnapshot<TKey> snapshot, DomainEvent<TKey> firstEvent)
+		public Func<AggregateRoot<TKey>> For(Snapshot<TKey> snapshot, DomainEvent<TKey> firstEvent)
 		{
 			if (snapshot != null && _bySnapshot.ContainsKey(snapshot.GetType()))
 				return _bySnapshot[snapshot.GetType()];

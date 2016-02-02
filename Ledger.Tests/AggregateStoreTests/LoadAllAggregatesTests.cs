@@ -83,7 +83,7 @@ namespace Ledger.Tests
 			_store.Save(StreamName, input);
 
 			var unknownSeen = false;
-			var onUnknown = new Func<ISnapshot<Guid>, DomainEvent<Guid>, AggregateRoot<Guid>>((s, e) =>
+			var onUnknown = new Func<Snapshot<Guid>, DomainEvent<Guid>, AggregateRoot<Guid>>((s, e) =>
 			{
 				unknownSeen = true;
 				return null;

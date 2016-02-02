@@ -65,11 +65,11 @@ namespace Ledger.Tests.Infrastructure
 
 		}
 
-		internal class Snap : ISnapshot<Guid>
+		internal class Snap : Snapshot<Guid>
 		{
-			public Guid AggregateID { get; set; }
-			public int Sequence { get; set; }
-			public DateTime Stamp { get; set; }
+			public override Guid AggregateID { get; set; }
+			public override int Sequence { get; set; }
+			public override DateTime Stamp { get; set; }
 		}
 
 		private interface ITest

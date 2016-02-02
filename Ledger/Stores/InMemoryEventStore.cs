@@ -67,12 +67,12 @@ namespace Ledger.Stores
 					: events;
 			}
 
-			public ISnapshot<TKey> LoadLatestSnapshotFor(TKey aggregateID)
+			public Snapshot<TKey> LoadLatestSnapshotFor(TKey aggregateID)
 			{
 				List<Dto> snapshots;
 
 				return _snapshots.TryGetValue(aggregateID, out snapshots)
-					? snapshots.Select(s => s.Content).Cast<ISnapshot<TKey>>().LastOrDefault()
+					? snapshots.Select(s => s.Content).Cast<Snapshot<TKey>>().LastOrDefault()
 					: null;
 			}
 
@@ -115,7 +115,7 @@ namespace Ledger.Stores
 				changes.ForEach(change => _events[change.AggregateID].Add(new Dto { Stamp = change.Stamp, Content = change }));
 			}
 
-			public void SaveSnapshot(ISnapshot<TKey> snapshot)
+			public void SaveSnapshot(Snapshot<TKey> snapshot)
 			{
 				_snapshots[snapshot.AggregateID].Add(new Dto { Stamp = snapshot.Stamp, Content = snapshot });
 			}

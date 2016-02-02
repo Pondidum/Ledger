@@ -9,6 +9,6 @@ namespace Ledger
 		int GetNumberOfEventsSinceSnapshotFor(TKey aggregateID);
 
 		void SaveEvents(IEnumerable<DomainEvent<TKey>> changes);
-		void SaveSnapshot(ISnapshot<TKey> snapshot);
+		void SaveSnapshot(Snapshot<TKey> snapshot);
 	}
 }

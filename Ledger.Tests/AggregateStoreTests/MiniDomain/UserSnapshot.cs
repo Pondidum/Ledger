@@ -2,11 +2,11 @@ using System;
 
 namespace Ledger.Tests.AggregateStoreTests.MiniDomain
 {
-	public class UserSnapshot : ISnapshot<Guid>
+	public class UserSnapshot : Snapshot<Guid>
 	{
-		public Guid AggregateID { get; set; }
-		public int Sequence { get; set; }
-		public DateTime Stamp { get; set; }
+		public override Guid AggregateID { get; set; }
+		public override int Sequence { get; set; }
+		public override DateTime Stamp { get; set; }
 
 		public string Name { get; set; }
 	}

@@ -60,7 +60,7 @@
     <Compile Include="Infrastructure\LightweightCache.cs" />
     <Compile Include="Infrastructure\TypeInfo.cs" />
     <Compile Include="Infrastructure\PrivateReflectionDynamicObject.cs" />
-    <Compile Include="ISnapshot.cs" />
+    <Compile Include="Snapshot.cs" />
     <Compile Include="ISnapshotable.cs" />
     <Compile Include="ISnapshotControl.cs" />
     <Compile Include="IStoreReader.cs" />

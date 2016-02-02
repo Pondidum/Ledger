@@ -32,7 +32,7 @@ namespace Ledger.Tests
 			}
 		}
 
-		private void WriteSnapshots(InMemoryEventStore store, params ISnapshot<Guid>[] snapshots)
+		private void WriteSnapshots(InMemoryEventStore store, params Snapshot<Guid>[] snapshots)
 		{
 			var aggregateID = Guid.NewGuid();
 

@@ -177,18 +177,18 @@ namespace Ledger
 			}
 		}
 
-		private ISnapshot<TKey> GetSnapshot<TAggregate>(TAggregate aggregate) where TAggregate : AggregateRoot<TKey>
+		private Snapshot<TKey> GetSnapshot<TAggregate>(TAggregate aggregate) where TAggregate : AggregateRoot<TKey>
 		{
 			//you could replace this method with `return (IStamped)(aggregate as dynamic).CreateSnapshot();`
 			//but you loose the compiler checking the `CreateSnapshot` is the right method name etc.
 
-			var methodName = TypeInfo.GetMethodName<ISnapshotable<TKey, ISnapshot<TKey>>>(x => x.CreateSnapshot());
+			var methodName = TypeInfo.GetMethodName<ISnapshotable<TKey, Snapshot<TKey>>>(x => x.CreateSnapshot());
 
 			var createSnapshot = aggregate
 				.GetType()
 				.GetMethod(methodName);
 
-			return (ISnapshot<TKey>)createSnapshot.Invoke(aggregate, new object[] { });
+			return (Snapshot<TKey>)createSnapshot.Invoke(aggregate, new object[] { });
 		}
 
 		private class Iterator<T> : IEnumerable<T>
