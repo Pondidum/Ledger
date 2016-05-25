@@ -12,7 +12,7 @@ namespace Ledger.Tests
 {
 	public class MigratorTests
 	{
-		private static readonly EventStoreContext TestStream = new EventStoreContext("TestStream", Default.SerializerSettings, new DefaultTypeResolver());
+		private static readonly EventStoreContext TestStream = new EventStoreContext("TestStream", new DefaultTypeResolver());
 		private readonly IncrementingStamper _stamper;
 
 		public MigratorTests()

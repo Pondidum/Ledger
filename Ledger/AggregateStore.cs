@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Ledger.Infrastructure;
-using Newtonsoft.Json;
 
 namespace Ledger
 {
@@ -13,7 +12,6 @@ namespace Ledger
 		private readonly ITypeResolver _resolver;
 
 		public SnapshotPolicy SnapshotPolicy { get; }
-		public JsonSerializerSettings SerializerSettings { get; }
 
 		public AggregateStore(IEventStore eventStore)
 			: this(new LedgerConfiguration { EventStore = eventStore })
@@ -26,7 +24,6 @@ namespace Ledger
 			_resolver = config.TypeResolver ?? new DefaultTypeResolver();
 
 			SnapshotPolicy = config.SnapshotPolicy ?? new SnapshotPolicy();
-			SerializerSettings = config.SerializerSettings ?? Default.SerializerSettings;
 		}
 
 		/// <summary>
@@ -48,7 +45,7 @@ namespace Ledger
 				return;
 			}
 
-			var context = new EventStoreContext(stream, SerializerSettings, _resolver);
+			var context = new EventStoreContext(stream, _resolver);
 
 			using (var store = _eventStore.CreateWriter<TKey>(context))
 			{
@@ -90,7 +87,7 @@ namespace Ledger
 		public TAggregate Load<TAggregate>(string stream, TKey aggregateID, Func<TAggregate> createNew)
 			where TAggregate : AggregateRoot<TKey>
 		{
-			var context = new EventStoreContext(stream, SerializerSettings, _resolver);
+			var context = new EventStoreContext(stream, _resolver);
 
 			using (var store = _eventStore.CreateReader<TKey>(context))
 			{
@@ -127,7 +124,7 @@ namespace Ledger
 			var loader = new AggregateLoadAllConfiguration<TKey>();
 			configureMapper(loader);
 
-			var context = new EventStoreContext(stream, SerializerSettings, _resolver);
+			var context = new EventStoreContext(stream, _resolver);
 
 			using (var reader = _eventStore.CreateReader<TKey>(context))
 			{
@@ -168,7 +165,7 @@ namespace Ledger
 		/// <param name="stream">The stream to replay</param>
 		public IEnumerable<DomainEvent<TKey>> ReplayAll(string stream)
 		{
-			var context = new EventStoreContext(stream, SerializerSettings, _resolver);
+			var context = new EventStoreContext(stream, _resolver);
 
 			using (var reader = _eventStore.CreateReader<TKey>(context))
 			{

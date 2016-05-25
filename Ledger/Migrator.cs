@@ -1,7 +1,4 @@
-﻿using Ledger.Infrastructure;
-using Newtonsoft.Json;
-
-namespace Ledger
+﻿namespace Ledger
 {
 	public class Migrator
 	{

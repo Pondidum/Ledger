@@ -15,7 +15,7 @@ namespace Ledger.Tests
 {
 	public class SaveAggregateTests
 	{
-		private static readonly EventStoreContext Context = new EventStoreContext("someStream", new JsonSerializerSettings(), new DefaultTypeResolver());
+		private static readonly EventStoreContext Context = new EventStoreContext("someStream", new DefaultTypeResolver());
 
 		private readonly InMemoryEventStore _backing;
 		private readonly AggregateStore<Guid> _store;

@@ -1,17 +1,13 @@
-﻿using Newtonsoft.Json;
-
-namespace Ledger
+﻿namespace Ledger
 {
 	public class EventStoreContext
 	{
 		public string StreamName { get; }
-		public JsonSerializerSettings SerializerSettings { get; }
 		public ITypeResolver TypeResolver { get; }
 
-		public EventStoreContext(string streamName, JsonSerializerSettings serializerSettings, ITypeResolver typeResolver)
+		public EventStoreContext(string streamName, ITypeResolver typeResolver)
 		{
 			StreamName = streamName;
-			SerializerSettings = serializerSettings;
 			TypeResolver = typeResolver;
 		}
 	}
