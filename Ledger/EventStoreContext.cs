@@ -6,11 +6,13 @@ namespace Ledger
 	{
 		public string StreamName { get; }
 		public JsonSerializerSettings SerializerSettings { get; }
+		public ITypeResolver TypeResolver { get; }
 
-		public EventStoreContext(string streamName, JsonSerializerSettings serializerSettings)
+		public EventStoreContext(string streamName, JsonSerializerSettings serializerSettings, ITypeResolver typeResolver)
 		{
 			StreamName = streamName;
 			SerializerSettings = serializerSettings;
+			TypeResolver = typeResolver;
 		}
 	}
 }

@@ -10,6 +10,7 @@ namespace Ledger
 	public class AggregateStore<TKey>
 	{
 		private readonly IEventStore _eventStore;
+		private readonly ITypeResolver _resolver;
 		public SnapshotPolicy SnapshotPolicy { get; }
 		public JsonSerializerSettings SerializerSettings { get; }
 
@@ -28,6 +29,7 @@ namespace Ledger
 			_eventStore = eventStore;
 			SnapshotPolicy = policy;
 			SerializerSettings = serializerSettings;
+			_resolver = new DefaultTypeResolver();
 		}
 
 		/// <summary>
@@ -49,7 +51,7 @@ namespace Ledger
 				return;
 			}
 
-			var context = new EventStoreContext(stream, SerializerSettings);
+			var context = new EventStoreContext(stream, SerializerSettings, _resolver);
 
 			using (var store = _eventStore.CreateWriter<TKey>(context))
 			{
@@ -91,7 +93,7 @@ namespace Ledger
 		public TAggregate Load<TAggregate>(string stream, TKey aggregateID, Func<TAggregate> createNew)
 			where TAggregate : AggregateRoot<TKey>
 		{
-			var context = new EventStoreContext(stream, SerializerSettings);
+			var context = new EventStoreContext(stream, SerializerSettings, _resolver);
 
 			using (var store = _eventStore.CreateReader<TKey>(context))
 			{
@@ -128,7 +130,7 @@ namespace Ledger
 			var loader = new AggregateLoadAllConfiguration<TKey>();
 			configureMapper(loader);
 
-			var context = new EventStoreContext(stream, SerializerSettings);
+			var context = new EventStoreContext(stream, SerializerSettings, _resolver);
 
 			using (var reader = _eventStore.CreateReader<TKey>(context))
 			{
@@ -169,7 +171,7 @@ namespace Ledger
 		/// <param name="stream">The stream to replay</param>
 		public IEnumerable<DomainEvent<TKey>> ReplayAll(string stream)
 		{
-			var context = new EventStoreContext(stream, SerializerSettings);
+			var context = new EventStoreContext(stream, SerializerSettings, _resolver);
 
 			using (var reader = _eventStore.CreateReader<TKey>(context))
 			{
