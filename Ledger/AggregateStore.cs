@@ -11,25 +11,22 @@ namespace Ledger
 	{
 		private readonly IEventStore _eventStore;
 		private readonly ITypeResolver _resolver;
+
 		public SnapshotPolicy SnapshotPolicy { get; }
 		public JsonSerializerSettings SerializerSettings { get; }
 
 		public AggregateStore(IEventStore eventStore)
-			: this(eventStore, new SnapshotPolicy())
+			: this(new LedgerConfiguration { EventStore = eventStore })
 		{
 		}
 
-		public AggregateStore(IEventStore eventStore, SnapshotPolicy policy)
-			: this(eventStore, policy, Default.SerializerSettings)
+		public AggregateStore(LedgerConfiguration config)
 		{
-		}
+			_eventStore = config.EventStore;
+			_resolver = config.TypeResolver ?? new DefaultTypeResolver();
 
-		public AggregateStore(IEventStore eventStore, SnapshotPolicy policy, JsonSerializerSettings serializerSettings)
-		{
-			_eventStore = eventStore;
-			SnapshotPolicy = policy;
-			SerializerSettings = serializerSettings;
-			_resolver = new DefaultTypeResolver();
+			SnapshotPolicy = config.SnapshotPolicy ?? new SnapshotPolicy();
+			SerializerSettings = config.SerializerSettings ?? Default.SerializerSettings;
 		}
 
 		/// <summary>

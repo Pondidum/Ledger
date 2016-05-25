@@ -50,6 +50,7 @@
     <Compile Include="AggregateStore.cs" />
     <Compile Include="DefaultTypeResolver.cs" />
     <Compile Include="ITypeResolver.cs" />
+    <Compile Include="LedgerConfiguration.cs" />
     <Compile Include="Migrations\BlankDestinationStrategy.cs" />
     <Compile Include="ConsistencyException.cs" />
     <Compile Include="Default.cs" />
