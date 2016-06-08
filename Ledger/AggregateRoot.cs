@@ -51,7 +51,7 @@ namespace Ledger
 			}
 		}
 
-		internal void LoadFromEvents(IEnumerable<DomainEvent<TKey>> eventStream)
+		public void LoadFromEvents(IEnumerable<DomainEvent<TKey>> eventStream)
 		{
 			DomainEvent<TKey> last = null;
 			var dynamic = this.AsDynamic();
@@ -67,7 +67,7 @@ namespace Ledger
 			}
 		}
 
-		internal void LoadFromSnapshot<TSnapshot>(TSnapshot snapshot, IEnumerable<DomainEvent<TKey>> events)
+		public void LoadFromSnapshot<TSnapshot>(TSnapshot snapshot, IEnumerable<DomainEvent<TKey>> events)
 			where TSnapshot : Snapshot<TKey>
 		{
 			if (snapshot != null)
