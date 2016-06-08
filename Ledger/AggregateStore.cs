@@ -173,6 +173,16 @@ namespace Ledger
 			}
 		}
 
+		public IEnumerable<DomainEvent<TKey>> Replay(string stream, TKey aggregateID)
+		{
+			var context = new EventStoreContext(stream, _resolver);
+
+			using (var reader = _eventStore.CreateReader<TKey>(context))
+			{
+				return reader.LoadEvents(aggregateID);
+			}
+		}
+
 		private Snapshot<TKey> GetSnapshot<TAggregate>(TAggregate aggregate) where TAggregate : AggregateRoot<TKey>
 		{
 			//you could replace this method with `return (IStamped)(aggregate as dynamic).CreateSnapshot();`
