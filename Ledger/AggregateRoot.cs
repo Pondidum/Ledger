@@ -97,8 +97,15 @@ namespace Ledger
 				.SelectMany(p => p.Value)
 				.ForEach(handler => handler.Invoke(@event));
 
-			this.AsDynamic().Handle(@event);
-			_events.Add(@event);
+			try
+			{
+				this.AsDynamic().Handle(@event);
+				_events.Add(@event);
+			}
+			catch (MissingMethodException)
+			{
+				throw new MissingMethodException(GetType().Name, $"Handle({@eventType.Name} e)");
+			}
 		}
 	}
 }

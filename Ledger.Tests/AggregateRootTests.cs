@@ -47,6 +47,17 @@ namespace Ledger.Tests
 			e2.Key.ShouldBe("keyed");
 		}
 
+		[Fact]
+		public void When_there_is_no_handler_for_a_domainEvent()
+		{
+			var aggregate = new NonHandlingAggregate();
+			
+			Should
+				.Throw<MissingMethodException>(() => aggregate.PushEvent(new NonProcessedEvent()))
+				.Message
+				.ShouldContain(nameof(NonProcessedEvent));
+		}
+
 
 
 
@@ -73,6 +84,14 @@ namespace Ledger.Tests
 
 			private void Handle(NonProcessedEvent e)
 			{
+			}
+		}
+
+		private class NonHandlingAggregate : AggregateRoot<Guid>
+		{
+			public void PushEvent(DomainEvent<Guid> domainEvent)
+			{
+				ApplyEvent(domainEvent);
 			}
 		}
 
