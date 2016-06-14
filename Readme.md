@@ -4,7 +4,7 @@ Ledger is a lightweight eventsourcing library for .net.
 
 ## Configuration
 
-First you need to configure your AggregateStore with a backing event store.  In this example we are using the filesystem store (provided by [Ledger.Stores.Fs][nuget-ledger-store-fs]).  There are also packages available for [InMemory][nuget-ledger-store-mem] and [Postgres][nuget-ledger-store-postgres] based event stores.
+First you need to configure your AggregateStore with a backing event store.  In this example we are using the filesystem store (provided by [Ledger.Stores.Fs][nuget-ledger-store-fs]).  There are also packages available for [Postgres][nuget-ledger-store-postgres] based event stores, and a built in `InMemoryEventStore`.
 
 ```c#
 var eventStore = new FileEventStore<Guid>("..\\appdata\\eventstore");
@@ -123,5 +123,4 @@ private void Handle(RemoveEmailAddress e)
 
 
 [nuget-ledger-store-fs]: https://www.nuget.org/packages/Ledger.Stores.Fs/
-[nuget-ledger-store-mem]: https://www.nuget.org/packages/Ledger.Stores.Memory/
 [nuget-ledger-store-postgres]: https://www.nuget.org/packages/Ledger.Stores.Postgres/
