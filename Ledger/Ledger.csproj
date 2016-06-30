@@ -73,6 +73,7 @@
     <Compile Include="Stores\InterceptingWriter.cs" />
     <Compile Include="Stores\IProjectionist.cs" />
     <Compile Include="Stores\ProjectionStoreDecorator.cs" />
+    <Compile Include="Projector.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
