@@ -119,7 +119,32 @@ private void Handle(RemoveEmailAddress e)
 }
 ```
 
+## Usage: Projections
 
+If you wish to make use of projections, you can decorate the `IEventStore` of your choice with the `ProjectionStoreDecorator`, passing in an implementation of `IProjectionist`:
+
+```c#
+var eventStore = new FileEventStore<Guid>("..\\appdata\\eventstore");
+var wrapped = new ProjectionStoreDecorator(eventStore, projectionist)
+```
+
+```c#
+public class ProjectionDispatcher : IProjectionist
+{
+	private readonly Projector _projector;
+
+	public ProjectionDispatcher()
+	{
+		_projector = new Projector();
+
+		_projector.Register<RemoveEmailAddress>(e => { /* do something with the event */ });
+	}
+	public void Project<TKey>(DomainEvent<TKey> domainEvent)
+	{
+		_projector.Apply(domainEvent);
+	}
+}
+```
 
 
 [nuget-ledger-store-fs]: https://www.nuget.org/packages/Ledger.Stores.Fs/
