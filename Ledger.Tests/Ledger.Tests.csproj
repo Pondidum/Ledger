@@ -79,6 +79,7 @@
     <Compile Include="AggregateStoreTests\SaveAggregateTests.cs" />
     <Compile Include="Infrastructure\ExtensionsTests.cs" />
     <Compile Include="Migration\MigratorTests.cs" />
+    <Compile Include="ProjectorTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Scratchpad.cs" />
     <Compile Include="Stores\InMemoryEventStoreTests.cs" />

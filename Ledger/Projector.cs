@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using Ledger.Infrastructure;
 
 namespace Ledger
 {
@@ -21,10 +23,10 @@ namespace Ledger
 
 		public void Apply(DomainEvent<TKey> e)
 		{
-			Action<DomainEvent<TKey>> projection;
-
-			if (_projections.TryGetValue(e.GetType(), out projection))
-				projection(e);
+			_projections
+				.Where(p => p.Key.IsInstanceOfType(e))
+				.Select(p => p.Value)
+				.ForEach(project => project(e));
 		}
 	}
 }
