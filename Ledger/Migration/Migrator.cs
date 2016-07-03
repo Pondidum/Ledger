@@ -1,4 +1,4 @@
-﻿namespace Ledger
+﻿namespace Ledger.Migration
 {
 	public class Migrator
 	{

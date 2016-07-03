@@ -3,12 +3,12 @@ using System.Linq;
 using Ledger.Acceptance;
 using Ledger.Acceptance.TestObjects;
 using Ledger.Infrastructure;
-using Ledger.Migrations;
+using Ledger.Migration;
 using Ledger.Stores;
 using Shouldly;
 using Xunit;
 
-namespace Ledger.Tests
+namespace Ledger.Tests.Migration
 {
 	public class MigratorTests
 	{

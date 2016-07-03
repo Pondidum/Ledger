@@ -1,4 +1,4 @@
-namespace Ledger.Migrations
+namespace Ledger.Migration
 {
 	public class BlankDestinationStrategy : IMigrationStrategy
 	{
