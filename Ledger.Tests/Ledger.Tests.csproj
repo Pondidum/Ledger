@@ -83,6 +83,7 @@
     <Compile Include="Scratchpad.cs" />
     <Compile Include="Stores\InMemoryEventStoreTests.cs" />
     <Compile Include="Stores\InterceptingEventStoreTests.cs" />
+    <Compile Include="Stores\ProjectionStoreDecoratorTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Ledger.Acceptance\Ledger.Acceptance.csproj">
