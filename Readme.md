@@ -131,17 +131,18 @@ var wrapped = new ProjectionStoreDecorator(eventStore, projectionist)
 ```c#
 public class ProjectionDispatcher : IProjectionist
 {
-	private readonly Projector _projector;
+	private readonly Projector<Guid> _projector;
 
 	public ProjectionDispatcher()
 	{
-		_projector = new Projector();
+		_projector = new Projector<Guid>();
 
 		_projector.Register<RemoveEmailAddress>(e => { /* do something with the event */ });
 	}
+
 	public void Project<TKey>(DomainEvent<TKey> domainEvent)
 	{
-		_projector.Apply(domainEvent);
+		_projector.Apply(domainEvent as DomainEvent<Guid>);
 	}
 }
 ```
