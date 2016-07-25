@@ -8,5 +8,6 @@ namespace Ledger
 		public DateTime Stamp { get; set; }
 		public TKey AggregateID { get; set; }
 		public Sequence Sequence { get; set; }
+		public GlobalSequence GlobalSequence { get; set; }
 	}
 }

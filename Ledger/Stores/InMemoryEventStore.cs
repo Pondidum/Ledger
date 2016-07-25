@@ -19,8 +19,8 @@ namespace Ledger.Stores
 				key => new List<Dto>());
 		}
 
-		public IEnumerable<object> AllEvents => _events.SelectMany(events => events).OrderBy(e => e.Stamp).Select(e => e.Content);
-		public IEnumerable<object> AllSnapshots => _snapshots.SelectMany(events => events).OrderBy(e => e.Stamp).Select(e => e.Content);
+		public IEnumerable<object> AllEvents => _events.SelectMany(events => events).OrderBy(e => e.GlobalSequence).Select(e => e.Content);
+		public IEnumerable<object> AllSnapshots => _snapshots.SelectMany(events => events).OrderBy(e => e.GlobalSequence).Select(e => e.Content);
 
 		public IStoreReader<TKey> CreateReader<TKey>(EventStoreContext context)
 		{
@@ -34,7 +34,7 @@ namespace Ledger.Stores
 
 		private struct Dto
 		{
-			public DateTime Stamp { get; set; }
+			public GlobalSequence GlobalSequence { get; set; }
 			public object Content { get; set; }
 		}
 
@@ -112,12 +112,31 @@ namespace Ledger.Stores
 
 			public void SaveEvents(IEnumerable<DomainEvent<TKey>> changes)
 			{
-				changes.ForEach(change => _events[change.AggregateID].Add(new Dto { Stamp = change.Stamp, Content = change }));
+				var total = _events.Sum(e => e.Count);
+
+				changes.ForEach((change, i) =>
+				{
+					change.GlobalSequence = new GlobalSequence(total + i);
+
+					var dto = new Dto
+					{
+						GlobalSequence = change.GlobalSequence,
+						Content = change
+					};
+
+					_events[change.AggregateID].Add(dto);
+				});
 			}
 
 			public void SaveSnapshot(Snapshot<TKey> snapshot)
 			{
-				_snapshots[snapshot.AggregateID].Add(new Dto { Stamp = snapshot.Stamp, Content = snapshot });
+				var total = _snapshots.Sum(s => s.Count);
+
+				_snapshots[snapshot.AggregateID].Add(new Dto
+				{
+					GlobalSequence = new GlobalSequence(total),
+					Content = snapshot
+				});
 			}
 
 			public void Dispose()

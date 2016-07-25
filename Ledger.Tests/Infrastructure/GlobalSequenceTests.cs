@@ -4,7 +4,7 @@ using Xunit;
 
 namespace Ledger.Tests.Infrastructure
 {
-	public class SequenceTests
+	public class GlobalSequenceTests
 	{
 		[Theory]
 		[InlineData(1, 1, true)]
@@ -16,8 +16,8 @@ namespace Ledger.Tests.Infrastructure
 		[InlineData(null, null, true)]
 		public void When_checking_equality(int? v1, int? v2, bool same)
 		{
-			var s1 = v1.HasValue ? new Sequence(v1.Value) : (Sequence?)null;
-			var s2 = v2.HasValue ? new Sequence(v2.Value) : (Sequence?)null;
+			var s1 = v1.HasValue ? new GlobalSequence(v1.Value) : (GlobalSequence?)null;
+			var s2 = v2.HasValue ? new GlobalSequence(v2.Value) : (GlobalSequence?)null;
 
 			if (same)
 				s1.ShouldBe(s2);
@@ -35,8 +35,8 @@ namespace Ledger.Tests.Infrastructure
 		[InlineData(null, null, false)]
 		public void When_checking_non_equality(int? v1, int? v2, bool same)
 		{
-			var s1 = v1.HasValue ? new Sequence(v1.Value) : (Sequence?)null;
-			var s2 = v2.HasValue ? new Sequence(v2.Value) : (Sequence?)null;
+			var s1 = v1.HasValue ? new GlobalSequence(v1.Value) : (GlobalSequence?)null;
+			var s2 = v2.HasValue ? new GlobalSequence(v2.Value) : (GlobalSequence?)null;
 
 			if (same)
 				s1.ShouldNotBe(s2);
@@ -54,8 +54,8 @@ namespace Ledger.Tests.Infrastructure
 		[InlineData(null, null, false)]
 		public void When_checking_less_than(int? v1, int? v2, bool same)
 		{
-			var s1 = v1.HasValue ? new Sequence(v1.Value) : (Sequence?)null;
-			var s2 = v2.HasValue ? new Sequence(v2.Value) : (Sequence?)null;
+			var s1 = v1.HasValue ? new GlobalSequence(v1.Value) : (GlobalSequence?)null;
+			var s2 = v2.HasValue ? new GlobalSequence(v2.Value) : (GlobalSequence?)null;
 
 			if (same)
 				(s1 < s2).ShouldBeTrue();
@@ -73,8 +73,8 @@ namespace Ledger.Tests.Infrastructure
 		[InlineData(null, null, false)]
 		public void When_checking_greater_than(int? v1, int? v2, bool same)
 		{
-			var s1 = v1.HasValue ? new Sequence(v1.Value) : (Sequence?)null;
-			var s2 = v2.HasValue ? new Sequence(v2.Value) : (Sequence?)null;
+			var s1 = v1.HasValue ? new GlobalSequence(v1.Value) : (GlobalSequence?)null;
+			var s2 = v2.HasValue ? new GlobalSequence(v2.Value) : (GlobalSequence?)null;
 
 			if (same)
 				(s1 > s2).ShouldBeTrue();

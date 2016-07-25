@@ -215,10 +215,10 @@ namespace Ledger.Tests
 
 			_backing.AllEvents.Select(e => e.GetType()).ShouldBe(new []
 			{
-				typeof(PermissionCreatedEvent),
 				typeof(RoleCreatedEvent),
+				typeof(RoleNameChangedEvent),
+				typeof(PermissionCreatedEvent),
 				typeof(PermissionNameChangedEvent),
-				typeof(RoleNameChangedEvent)
 			});
 
 		}

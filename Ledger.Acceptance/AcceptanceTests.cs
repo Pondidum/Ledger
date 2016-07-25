@@ -40,6 +40,35 @@ namespace Ledger.Acceptance
 
 		[Fact]
 		[Trait("acceptance", "true")]
+		public void When_events_are_saved_globalSequence_is_set()
+		{
+			var id = Guid.NewGuid();
+			var t1 = DateTime.UtcNow;
+			var t2 = t1.AddSeconds(5);
+
+			using (var writer = _eventStore.CreateWriter<Guid>(DefaultStream))
+			{
+				writer.SaveEvents(new[]
+				{
+					new TestEvent {AggregateID = id, Stamp = t1},
+					new TestEvent {AggregateID = id, Stamp = t2},
+				});
+			}
+
+			using (var reader = _eventStore.CreateReader<Guid>(DefaultStream))
+			{
+				var events = reader.LoadAllEvents().ToList();
+
+				events.ShouldSatisfyAllConditions(
+					() => events[0].GlobalSequence.ShouldBe(new GlobalSequence(0)),
+					() => events[1].GlobalSequence.ShouldBe(new GlobalSequence(1))
+				);
+			}
+
+		}
+
+		[Fact]
+		[Trait("acceptance", "true")]
 		public void When_the_event_store_has_newer_events()
 		{
 			var aggregate = new SnapshotAggregate(DefaultStamper.Now);
