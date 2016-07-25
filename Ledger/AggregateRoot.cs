@@ -10,7 +10,7 @@ namespace Ledger
 	{
 		public TKey ID { get; protected set; }
 		protected internal DateTime Stamp { get; set; }
-		protected internal int Sequence { get; set; }
+		protected internal Sequence Sequence { get; set; }
 
 		private readonly Func<DateTime> _getTimestamp;
 		private readonly LightweightCache<Type, List<Action<DomainEvent<TKey>>>> _handlers;
@@ -30,7 +30,7 @@ namespace Ledger
 
 			_events = new List<DomainEvent<TKey>>();
 			Stamp = DateTime.MinValue;
-			Sequence = -1;
+			Sequence = Sequence.Start;
 
 			//BeforeApplyEvent<DomainEvent<TKey>>(e => e.Sequence = ++Sequence);
 			BeforeApplyEvent<DomainEvent<TKey>>(e => e.Stamp = _getTimestamp());

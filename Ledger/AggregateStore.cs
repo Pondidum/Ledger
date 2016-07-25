@@ -37,7 +37,7 @@ namespace Ledger
 			var changes = aggregate
 				.GetUncommittedEvents()
 				.Apply((e, i) => e.AggregateID = aggregate.ID)
-				.Apply((e, i) => e.Sequence = aggregate.Sequence + i + 1)
+				.Apply((e, i) => e.Sequence = new Sequence(aggregate.Sequence, i + 1))
 				.ToList();
 
 			if (changes.None())
@@ -96,9 +96,9 @@ namespace Ledger
 				if (typeof(TAggregate).ImplementsSnapshottable())
 				{
 					var snapshot = store.LoadLatestSnapshotFor(aggregateID);
-					int? since = snapshot != null
+					Sequence? since = snapshot != null
 						? snapshot.Sequence
-						: (int?)null;
+						: (Sequence?)null;
 
 					var events = store.LoadEventsSince(aggregateID, since);
 
@@ -133,9 +133,9 @@ namespace Ledger
 				foreach (var id in ids)
 				{
 					var snapshot = reader.LoadLatestSnapshotFor(id);
-					int? sequence = snapshot != null
+					Sequence? sequence = snapshot != null
 						? snapshot.Sequence
-						: (int?)null;
+						: (Sequence?)null;
 
 					var events = reader.LoadEventsSince(id, sequence).GetEnumerator();
 					var allEvents = Enumerable.Empty<DomainEvent<TKey>>();

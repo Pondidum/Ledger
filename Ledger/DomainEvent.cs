@@ -1,4 +1,5 @@
 ﻿using System;
+using Ledger.Infrastructure;
 
 namespace Ledger
 {
@@ -6,6 +7,6 @@ namespace Ledger
 	{
 		public DateTime Stamp { get; set; }
 		public TKey AggregateID { get; set; }
-		public int Sequence { get; set; }
+		public Sequence Sequence { get; set; }
 	}
 }

@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
+using Ledger.Infrastructure;
 
 namespace Ledger
 {
 	public interface IStoreWriter<TKey> : IDisposable
 	{
-		int? GetLatestSequenceFor(TKey aggregateID);
+		Sequence? GetLatestSequenceFor(TKey aggregateID);
 		int GetNumberOfEventsSinceSnapshotFor(TKey aggregateID);
 
 		void SaveEvents(IEnumerable<DomainEvent<TKey>> changes);

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Ledger.Infrastructure;
 
 namespace Ledger.Stores
 {
@@ -12,7 +13,7 @@ namespace Ledger.Stores
 			_other = other;
 		}
 
-		public virtual int? GetLatestSequenceFor(TKey aggregateID)
+		public virtual Sequence? GetLatestSequenceFor(TKey aggregateID)
 		{
 			return _other.GetLatestSequenceFor(aggregateID);
 		}

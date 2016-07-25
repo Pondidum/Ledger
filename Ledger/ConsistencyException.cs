@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.Serialization;
+using Ledger.Infrastructure;
 
 namespace Ledger
 {
@@ -9,7 +10,7 @@ namespace Ledger
 		{
 		}
 
-		public ConsistencyException(Type aggregate, string id, int sequenceID, int? lastStoredSequence)
+		public ConsistencyException(Type aggregate, string id, Sequence sequenceID, Sequence? lastStoredSequence)
 			: base($"{aggregate.Name} {id} base sequence is {sequenceID}, but the store's is {lastStoredSequence}, so it cannot be saved.")
 		{
 		}

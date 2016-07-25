@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Ledger.Infrastructure;
 using Ledger.Stores;
 using Shouldly;
 using Xunit;
@@ -106,7 +107,7 @@ namespace Ledger.Tests.Stores
 		public class TestSnapshot : Snapshot<int>
 		{
 			public override int AggregateID { get; set; }
-			public override int Sequence { get; set; }
+			public override Sequence Sequence { get; set; }
 			public override DateTime Stamp { get; set; }
 		}
 	}
