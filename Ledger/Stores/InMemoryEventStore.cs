@@ -58,12 +58,12 @@ namespace Ledger.Stores
 					: Enumerable.Empty<DomainEvent<TKey>>();
 			}
 
-			public IEnumerable<DomainEvent<TKey>> LoadEventsSince(TKey aggregateID, DateTime? stamp)
+			public IEnumerable<DomainEvent<TKey>> LoadEventsSince(TKey aggregateID, int? sequence)
 			{
 				var events = LoadEvents(aggregateID);
 
-				return stamp.HasValue
-					? events.Where(e => e.Stamp > stamp)
+				return sequence.HasValue
+					? events.Where(e => e.Sequence > sequence)
 					: events;
 			}
 

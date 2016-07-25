@@ -96,9 +96,9 @@ namespace Ledger
 				if (typeof(TAggregate).ImplementsSnapshottable())
 				{
 					var snapshot = store.LoadLatestSnapshotFor(aggregateID);
-					DateTime? since = snapshot != null
-						? snapshot.Stamp
-						: (DateTime?)null;
+					int? since = snapshot != null
+						? snapshot.Sequence
+						: (int?)null;
 
 					var events = store.LoadEventsSince(aggregateID, since);
 
@@ -133,11 +133,11 @@ namespace Ledger
 				foreach (var id in ids)
 				{
 					var snapshot = reader.LoadLatestSnapshotFor(id);
-					DateTime? since = snapshot != null
-						? snapshot.Stamp
-						: (DateTime?)null;
+					int? sequence = snapshot != null
+						? snapshot.Sequence
+						: (int?)null;
 
-					var events = reader.LoadEventsSince(id, since).GetEnumerator();
+					var events = reader.LoadEventsSince(id, sequence).GetEnumerator();
 					var allEvents = Enumerable.Empty<DomainEvent<TKey>>();
 
 					if (events.MoveNext())
