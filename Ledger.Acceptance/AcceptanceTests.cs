@@ -10,7 +10,7 @@ namespace Ledger.Acceptance
 {
 	public abstract class AcceptanceTests
 	{
-		public readonly EventStoreContext SnapshotStream = new EventStoreContext( "SnapshotAggregateStream", new DefaultTypeResolver());
+		public readonly EventStoreContext SnapshotStream = new EventStoreContext("SnapshotAggregateStream", new DefaultTypeResolver());
 		public readonly EventStoreContext DefaultStream = new EventStoreContext("TestAggregateStream", new DefaultTypeResolver());
 
 		private readonly IEventStore _eventStore;
@@ -40,7 +40,7 @@ namespace Ledger.Acceptance
 
 		[Fact]
 		[Trait("acceptance", "true")]
-		public void When_events_are_saved_globalSequence_is_set()
+		public void When_events_are_saved_streamSequence_is_set()
 		{
 			var id = Guid.NewGuid();
 			var t1 = DateTime.UtcNow;
@@ -59,10 +59,10 @@ namespace Ledger.Acceptance
 			{
 				var events = reader.LoadAllEvents().ToList();
 
-				events.ShouldSatisfyAllConditions(
-					() => events[0].StreamSequence.ShouldBe(new StreamSequence(0)),
-					() => events[1].StreamSequence.ShouldBe(new StreamSequence(1))
-				);
+				var first = events[0].StreamSequence;
+				var second = events[1].StreamSequence;
+
+				second.ShouldBeGreaterThan(first);
 			}
 
 		}
