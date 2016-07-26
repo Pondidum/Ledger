@@ -57,5 +57,10 @@ namespace Ledger.Infrastructure
 		{
 			return s1._value > s2._value;
 		}
+
+		public static explicit operator int(Sequence sequence)
+		{
+			return sequence._value;
+		}
 	}
 }
