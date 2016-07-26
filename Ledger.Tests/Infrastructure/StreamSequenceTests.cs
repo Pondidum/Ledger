@@ -4,7 +4,7 @@ using Xunit;
 
 namespace Ledger.Tests.Infrastructure
 {
-	public class GlobalSequenceTests
+	public class StreamSequenceTests
 	{
 		[Theory]
 		[InlineData(1, 1, true)]
@@ -80,6 +80,15 @@ namespace Ledger.Tests.Infrastructure
 				(s1 > s2).ShouldBeTrue();
 			else
 				(s1 > s2).ShouldBeFalse();
+		}
+
+
+		[Fact]
+		public void When_casting_to_int()
+		{
+			var i = (int)new StreamSequence(123);
+
+			i.ShouldBe(123);
 		}
 	}
 }

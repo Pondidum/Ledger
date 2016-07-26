@@ -81,5 +81,13 @@ namespace Ledger.Tests.Infrastructure
 			else
 				(s1 > s2).ShouldBeFalse();
 		}
+
+		[Fact]
+		public void When_casting_to_int()
+		{
+			var i = (int)new Sequence(123);
+
+			i.ShouldBe(123);
+		}
 	}
 }
