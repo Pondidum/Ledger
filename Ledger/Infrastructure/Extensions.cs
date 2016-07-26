@@ -54,5 +54,15 @@ namespace Ledger.Infrastructure
 				.Where(i => i.IsGenericType)
 				.Any(i => i.GetGenericTypeDefinition() == typeof(ISnapshotable<,>));
 		}
+
+		public static Sequence AsSequence(this int self)
+		{
+			return new Sequence(self);
+		}
+
+		public static StreamSequence AsStreamSequence(this int self)
+		{
+			return new StreamSequence(self);
+		}
 	}
 }
