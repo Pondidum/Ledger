@@ -60,8 +60,8 @@ namespace Ledger.Acceptance
 				var events = reader.LoadAllEvents().ToList();
 
 				events.ShouldSatisfyAllConditions(
-					() => events[0].GlobalSequence.ShouldBe(new GlobalSequence(0)),
-					() => events[1].GlobalSequence.ShouldBe(new GlobalSequence(1))
+					() => events[0].StreamSequence.ShouldBe(new StreamSequence(0)),
+					() => events[1].StreamSequence.ShouldBe(new StreamSequence(1))
 				);
 			}
 

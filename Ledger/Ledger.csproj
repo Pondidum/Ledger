@@ -45,7 +45,7 @@
     <Compile Include="AggregateRoot.cs" />
     <Compile Include="AggregateStore.cs" />
     <Compile Include="DefaultTypeResolver.cs" />
-    <Compile Include="Infrastructure\GlobalSequence.cs" />
+    <Compile Include="Infrastructure\StreamSequence.cs" />
     <Compile Include="Infrastructure\Sequence.cs" />
     <Compile Include="ITypeResolver.cs" />
     <Compile Include="LedgerConfiguration.cs" />

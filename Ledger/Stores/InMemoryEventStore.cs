@@ -19,8 +19,8 @@ namespace Ledger.Stores
 				key => new List<Dto>());
 		}
 
-		public IEnumerable<object> AllEvents => _events.SelectMany(events => events).OrderBy(e => e.GlobalSequence).Select(e => e.Content);
-		public IEnumerable<object> AllSnapshots => _snapshots.SelectMany(events => events).OrderBy(e => e.GlobalSequence).Select(e => e.Content);
+		public IEnumerable<object> AllEvents => _events.SelectMany(events => events).OrderBy(e => e.StreamSequence).Select(e => e.Content);
+		public IEnumerable<object> AllSnapshots => _snapshots.SelectMany(events => events).OrderBy(e => e.StreamSequence).Select(e => e.Content);
 
 		public IStoreReader<TKey> CreateReader<TKey>(EventStoreContext context)
 		{
@@ -34,7 +34,7 @@ namespace Ledger.Stores
 
 		private struct Dto
 		{
-			public GlobalSequence GlobalSequence { get; set; }
+			public StreamSequence StreamSequence { get; set; }
 			public object Content { get; set; }
 		}
 
@@ -116,11 +116,11 @@ namespace Ledger.Stores
 
 				changes.ForEach((change, i) =>
 				{
-					change.GlobalSequence = new GlobalSequence(total + i);
+					change.StreamSequence = new StreamSequence(total + i);
 
 					var dto = new Dto
 					{
-						GlobalSequence = change.GlobalSequence,
+						StreamSequence = change.StreamSequence,
 						Content = change
 					};
 
@@ -134,7 +134,7 @@ namespace Ledger.Stores
 
 				_snapshots[snapshot.AggregateID].Add(new Dto
 				{
-					GlobalSequence = new GlobalSequence(total),
+					StreamSequence = new StreamSequence(total),
 					Content = snapshot
 				});
 			}
