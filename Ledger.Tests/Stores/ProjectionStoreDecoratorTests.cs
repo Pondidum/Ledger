@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Ledger.Acceptance.TestDomain;
 using Ledger.Acceptance.TestDomain.Events;
 using Ledger.Stores;
@@ -14,7 +15,9 @@ namespace Ledger.Tests.Stores
 		[Fact]
 		public void When_colleting_all_events()
 		{
-			var projectionist = new Projectionist();
+			var reset  = new AutoResetEvent(false);
+
+			var projectionist = new Projectionist(reset);
 			var memoryStore = new InMemoryEventStore();
 			var wrapped = new ProjectionStoreDecorator(memoryStore, projectionist);
 
@@ -23,16 +26,20 @@ namespace Ledger.Tests.Stores
 			var user = Candidate.Create("test", "test@home.com");
 			aggregateStore.Save("Users", user);
 
+			reset.WaitOne();
+
 			memoryStore.AllEvents.Single().ShouldBeOfType<CandidateCreated>();
 			projectionist.SeenEvents.Single().ShouldBeOfType<CandidateCreated>();
 		}
 
 		private class Projectionist : IProjectionist
 		{
+			private readonly AutoResetEvent _reset;
 			private readonly List<DomainEvent<Guid>> _seenEvents;
 			 
-			public Projectionist()
+			public Projectionist(AutoResetEvent reset)
 			{
+				_reset = reset;
 				_seenEvents = new List<DomainEvent<Guid>>();
 			}
 
@@ -41,6 +48,7 @@ namespace Ledger.Tests.Stores
 			public void Project<TKey>(DomainEvent<TKey> domainEvent)
 			{
 				_seenEvents.Add(domainEvent as DomainEvent<Guid>);
+				_reset.Set();
 			}
 		}
 	}
