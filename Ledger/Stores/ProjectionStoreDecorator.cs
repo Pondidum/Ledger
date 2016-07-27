@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Threading.Tasks.Dataflow;
 using Ledger.Infrastructure;
 
 namespace Ledger.Stores
@@ -9,7 +11,7 @@ namespace Ledger.Stores
 	{
 		private readonly IProjectionist _projectionist;
 
-		public ProjectionStoreDecorator(IEventStore other, IProjectionist projectionist ) : base(other)
+		public ProjectionStoreDecorator(IEventStore other, IProjectionist projectionist) : base(other)
 		{
 			_projectionist = projectionist;
 		}
@@ -23,25 +25,42 @@ namespace Ledger.Stores
 
 		private class AsyncWriter<T> : InterceptingWriter<T>
 		{
-			private readonly Action<DomainEvent<T>> _projection;
+			private readonly BufferBlock<DomainEvent<T>> _events;
+			private readonly CancellationTokenSource _task;
 
 			public AsyncWriter(IStoreWriter<T> other, Action<DomainEvent<T>> projection)
 				: base(other)
 			{
-				_projection = projection;
+				_events = new BufferBlock<DomainEvent<T>>();
+				_task = new CancellationTokenSource();
+
+				Task.Run(
+					async () =>
+					{
+						while (await _events.OutputAvailableAsync(_task.Token))
+							projection(_events.Receive());
+					},
+					_task.Token
+				);
 			}
 
 			public override void SaveEvents(IEnumerable<DomainEvent<T>> changes)
 			{
-				var toRaise = new List<DomainEvent<T>>();
+				base.SaveEvents(changes.Apply(e => _events.Post(e)));
+			}
 
-				base.SaveEvents(changes.Apply(e => toRaise.Add(e)));
-
-				Task.Run(() =>
+			public override void Dispose()
+			{
+				try
 				{
-					foreach (var domainEvent in toRaise)
-						_projection(domainEvent);
-				});
+					_task.Cancel();
+				}
+				catch (OperationCanceledException)
+				{
+				}
+
+				_task.Dispose();
+				base.Dispose();
 			}
 		}
 	}
