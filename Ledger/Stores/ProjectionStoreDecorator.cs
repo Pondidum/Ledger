@@ -1,8 +1,8 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Threading.Tasks.Dataflow;
 using Ledger.Infrastructure;
 
 namespace Ledger.Stores
@@ -25,20 +25,20 @@ namespace Ledger.Stores
 
 		private class AsyncWriter<T> : InterceptingWriter<T>
 		{
-			private readonly BufferBlock<DomainEvent<T>> _events;
+			private readonly BlockingCollection<DomainEvent<T>> _events;
 			private readonly CancellationTokenSource _task;
 
 			public AsyncWriter(IStoreWriter<T> other, Action<DomainEvent<T>> projection)
 				: base(other)
 			{
-				_events = new BufferBlock<DomainEvent<T>>();
+				_events = new BlockingCollection<DomainEvent<T>>();
 				_task = new CancellationTokenSource();
 
 				Task.Run(
-					async () =>
+					() =>
 					{
-						while (await _events.OutputAvailableAsync(_task.Token))
-							projection(_events.Receive());
+						while (_task.IsCancellationRequested == false)
+							projection(_events.Take());
 					},
 					_task.Token
 				);
@@ -46,7 +46,7 @@ namespace Ledger.Stores
 
 			public override void SaveEvents(IEnumerable<DomainEvent<T>> changes)
 			{
-				base.SaveEvents(changes.Apply(e => _events.Post(e)));
+				base.SaveEvents(changes.Apply(e => _events.Add(e)));
 			}
 
 			public override void Dispose()
