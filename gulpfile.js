@@ -70,7 +70,8 @@ gulp.task('pack', [ 'test' ], function () {
     .src('**/*.nuspec', { read: false })
     .pipe(rename({ extname: ".csproj" }))
     .pipe(shell([
-      '"tools/nuget/nuget.exe" pack <%= file.path %> -version <%= version %> -prop configuration=<%= mode %> -o <%= output%>'
+      '"tools/nuget/nuget.exe" pack <%= file.path %> -version <%= version %> -prop configuration=<%= mode %> -o <%= output%>',
+      '"tools/nuget/nuget.exe" pack <%= file.path %> -version <%= version %> -prop configuration=<%= mode %> -o <%= output%> -symbols'
     ], {
       templateData: config
     }));
