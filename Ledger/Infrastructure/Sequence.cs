@@ -2,7 +2,7 @@
 
 namespace Ledger.Infrastructure
 {
-	public struct Sequence : IEquatable<Sequence>
+	public struct Sequence : IEquatable<Sequence>, IComparable<Sequence>
 	{
 		public static readonly Sequence Start = new Sequence(-1);
 		private readonly int _value;
@@ -31,6 +31,11 @@ namespace Ledger.Infrastructure
 		public override int GetHashCode()
 		{
 			return _value;
+		}
+
+		public int CompareTo(Sequence other)
+		{
+			return _value.CompareTo(other._value);
 		}
 
 		public override string ToString()
