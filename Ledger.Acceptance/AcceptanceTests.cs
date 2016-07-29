@@ -220,7 +220,47 @@ namespace Ledger.Acceptance
 					() => storeSnapshot.Stamp.ShouldBe(events.Last().Stamp)
 				);
 			}
+		}
 
+
+		[Fact]
+		[Trait("acceptance", "true")]
+		public void When_reading_from_the_beginning()
+		{
+			var id = Guid.NewGuid();
+			using (var writer = _eventStore.CreateWriter<Guid>(DefaultStream))
+			{
+				writer.SaveEvents(Enumerable
+					.Range(0, 50)
+					.Select(i => new TestEvent { AggregateID = id, Sequence = new Sequence(i) }));
+			}
+
+			using (var reader = _eventStore.CreateReader<Guid>(DefaultStream))
+			{
+				var events = reader.LoadAllEventsSince(StreamSequence.Start);
+				events.First().StreamSequence.ShouldBe(new StreamSequence(0));
+			}
+		}
+
+		[Fact]
+		[Trait("acceptance", "true")]
+		public void When_reading_from_a_random_point()
+		{
+			var id = Guid.NewGuid();
+			using (var writer = _eventStore.CreateWriter<Guid>(DefaultStream))
+			{
+				writer.SaveEvents(Enumerable
+					.Range(0, 50)
+					.Select(i => new TestEvent { AggregateID = id, Sequence = new Sequence(i) }));
+			}
+
+			var lastSeen = 20;
+
+			using (var reader = _eventStore.CreateReader<Guid>(DefaultStream))
+			{
+				var events = reader.LoadAllEventsSince(new StreamSequence(lastSeen));
+				events.First().StreamSequence.ShouldBe(new StreamSequence(lastSeen + 1));
+			}
 		}
 	}
 }
