@@ -81,6 +81,7 @@
     <Compile Include="Infrastructure\StreamSequenceTests.cs" />
     <Compile Include="Infrastructure\SequenceTests.cs" />
     <Compile Include="Migration\MigratorTests.cs" />
+    <Compile Include="ProjectionResumeTests.cs" />
     <Compile Include="ProjectorTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Scratchpad.cs" />

@@ -12,5 +12,6 @@ namespace Ledger
 
 		IEnumerable<TKey> LoadAllKeys();
 		IEnumerable<DomainEvent<TKey>> LoadAllEvents();
+		IEnumerable<DomainEvent<TKey>> LoadAllEventsSince(StreamSequence streamSequence);
 	}
 }

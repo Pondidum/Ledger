@@ -92,6 +92,12 @@ namespace Ledger.Stores
 					.OrderBy(e => e.Stamp);
 			}
 
+			public IEnumerable<DomainEvent<TKey>> LoadAllEventsSince(StreamSequence streamSequence)
+			{
+				return LoadAllEvents()
+					.Where(e => e.StreamSequence > streamSequence);
+			}
+
 			public Sequence? GetLatestSequenceFor(TKey aggregateID)
 			{
 				var last = LoadEvents(aggregateID).LastOrDefault();

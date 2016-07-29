@@ -28,14 +28,19 @@ namespace Ledger.Stores
 			return _other.LoadLatestSnapshotFor(aggregateID);
 		}
 
-		public IEnumerable<TKey> LoadAllKeys()
+		public virtual IEnumerable<TKey> LoadAllKeys()
 		{
 			return _other.LoadAllKeys();
 		}
 
-		public IEnumerable<DomainEvent<TKey>> LoadAllEvents()
+		public virtual IEnumerable<DomainEvent<TKey>> LoadAllEvents()
 		{
 			return _other.LoadAllEvents();
+		}
+
+		public virtual IEnumerable<DomainEvent<TKey>> LoadAllEventsSince(StreamSequence streamSequence)
+		{
+			return _other.LoadAllEventsSince(streamSequence);
 		}
 
 		public virtual void Dispose()
