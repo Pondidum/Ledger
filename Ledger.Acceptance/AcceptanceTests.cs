@@ -238,7 +238,7 @@ namespace Ledger.Acceptance
 			using (var reader = _eventStore.CreateReader<Guid>(DefaultStream))
 			{
 				var events = reader.LoadAllEventsSince(StreamSequence.Start);
-				events.First().StreamSequence.ShouldBe(new StreamSequence(0));
+				events.First().Sequence.ShouldBe(new Sequence(0));
 			}
 		}
 
