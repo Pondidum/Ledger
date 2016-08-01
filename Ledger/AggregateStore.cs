@@ -178,6 +178,19 @@ namespace Ledger
 			}
 		}
 
+		/// <summary>Yeilds all events in the store in order</summary>
+		/// <param name="stream">The stream to replay</param>
+		/// <param name="startAfter">Get all events AFTER this event sequence.</param>
+		public IEnumerable<DomainEvent<TKey>> ReplayAllSince(string stream, StreamSequence startAfter)
+		{
+			var context = CreateContext(stream);
+
+			using (var reader = _eventStore.CreateReader<TKey>(context))
+			{
+				return reader.LoadAllEventsSince(startAfter);
+			}
+		}
+
 		public IEnumerable<DomainEvent<TKey>> Replay(string stream, TKey aggregateID)
 		{
 			var context = CreateContext(stream);
