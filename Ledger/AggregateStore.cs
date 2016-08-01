@@ -26,6 +26,11 @@ namespace Ledger
 			SnapshotPolicy = config.SnapshotPolicy ?? new SnapshotPolicy();
 		}
 
+		public EventStoreContext CreateContext(string stream)
+		{
+			return new EventStoreContext(stream, _resolver);
+		}
+
 		/// <summary>
 		/// Save an aggregate
 		/// </summary>
@@ -45,7 +50,7 @@ namespace Ledger
 				return;
 			}
 
-			var context = new EventStoreContext(stream, _resolver);
+			var context = CreateContext(stream);
 
 			using (var store = _eventStore.CreateWriter<TKey>(context))
 			{
@@ -87,7 +92,7 @@ namespace Ledger
 		public TAggregate Load<TAggregate>(string stream, TKey aggregateID, Func<TAggregate> createNew)
 			where TAggregate : AggregateRoot<TKey>
 		{
-			var context = new EventStoreContext(stream, _resolver);
+			var context = CreateContext(stream);
 
 			using (var store = _eventStore.CreateReader<TKey>(context))
 			{
@@ -124,7 +129,7 @@ namespace Ledger
 			var loader = new AggregateLoadAllConfiguration<TKey>();
 			configureMapper(loader);
 
-			var context = new EventStoreContext(stream, _resolver);
+			var context = CreateContext(stream);
 
 			using (var reader = _eventStore.CreateReader<TKey>(context))
 			{
@@ -165,7 +170,7 @@ namespace Ledger
 		/// <param name="stream">The stream to replay</param>
 		public IEnumerable<DomainEvent<TKey>> ReplayAll(string stream)
 		{
-			var context = new EventStoreContext(stream, _resolver);
+			var context = CreateContext(stream);
 
 			using (var reader = _eventStore.CreateReader<TKey>(context))
 			{
@@ -175,7 +180,7 @@ namespace Ledger
 
 		public IEnumerable<DomainEvent<TKey>> Replay(string stream, TKey aggregateID)
 		{
-			var context = new EventStoreContext(stream, _resolver);
+			var context = CreateContext(stream);
 
 			using (var reader = _eventStore.CreateReader<TKey>(context))
 			{
