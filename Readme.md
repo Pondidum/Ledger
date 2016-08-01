@@ -147,6 +147,55 @@ public class ProjectionDispatcher : IProjectionist
 }
 ```
 
+# Projections
+
+When using projecitons you will often need them to be persistent - and to resume processing events from where they left off (in the event of service restarts/crashes etc.)
+
+There are two main options for doing this, either in-process or out-of-process.  Personally I prefer out-of-process as I can have multiple services doing projections, or move the projection service to a separate host if resource usage becomes an issue.
+
+## In Process
+
+The readmodel building service is fairly straight forward.  On startup
+
+1. get all events since the last seen, store in `_preload` (just an `IEnumerable<DomainEvent<T>>`)
+2. start listening to new events, appending to `_events` (which is a `BlockingCollection<DomainEvent<T>>`)
+3. start the processing task which:
+	1. processes all events in `_preload`
+	2. enters infinite loop of poping events off `_events` and processing them
+
+The two important methods to this class are as follows:
+
+```CSharp
+public void Start(string streamName, StreamSequence lastSeen)
+{
+	_lastSeen = lastSeen;
+	_preload = _store.ReplayAllSince(streamName, _lastSeen);
+
+	Task.Run(() => Process(), _task.Token);
+}
+
+
+private void Process()
+{
+	foreach (var e in _preload)
+	{
+		_projector.Apply(e);
+		_lastSeen = e.StreamSequence;
+	}
+
+	while (_task.IsCancellationRequested == false)
+	{
+		var e = _events.Take();
+		_projector.Apply(e);
+		_lastSeen = e.StreamSequence;
+	}
+}
+```
+
+The only other thing to bear in mind with this method is that you must store the `_lastSeen` value somewhere where it will survive process restarts.  It could be written to disk, or as an extra value in wherever your readmodel is being stored.
+
+## Out Of Process
+
 
 [nuget-ledger-store-fs]: https://www.nuget.org/packages/Ledger.Stores.Fs/
 [nuget-ledger-store-postgres]: https://www.nuget.org/packages/Ledger.Stores.Postgres/
