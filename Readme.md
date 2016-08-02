@@ -174,7 +174,6 @@ public void Start(string streamName, StreamSequence lastSeen)
 	Task.Run(() => Process(), _task.Token);
 }
 
-
 private void Process()
 {
 	foreach (var e in _preload)
@@ -196,6 +195,97 @@ The only other thing to bear in mind with this method is that you must store the
 
 ## Out Of Process
 
+To ensure no events are missed when using an Out Of Process projector, I use a queuing/messagebroker, such as RabbitMQ.  The queue we use within RabbitMQ only removes a message from the tip of the queue when it's acknowledged, so service/restart resume code is not required.
+
+To send messages to RabbitMQ we implement an `IEventStore` decorator which forwards messages.
+
+```CSharp
+public class RabbitMqStoreDecorator : IEventStore
+{
+	private readonly IEventStore _other;
+	private readonly IConnectionFactory _factory;
+	private readonly string _queueName;
+
+	public RabbitMqStoreDecorator(IEventStore other, IConnectionFactory factory, string queueName)
+	{
+		_other = other;
+		_factory = factory;
+		_queueName = queueName;
+	}
+
+	public IStoreReader<TKey> CreateReader<TKey>(EventStoreContext context)
+	{
+		return _other.CreateReader<TKey>(context);
+	}
+
+	public IStoreWriter<TKey> CreateWriter<TKey>(EventStoreContext context)
+	{
+		return new RabbitMqWriter<TKey>(
+			_other.CreateWriter<TKey>(context),
+			_factory,
+			_queueName
+		);
+	}
+}
+
+public class RabbitMqWriter<TKey> : InterceptingWriter<TKey>
+{
+	private readonly IConnectionFactory _factory;
+	private readonly string _queueName;
+	private readonly IConnection _connection;
+	private readonly IModel _model;
+
+	public RabbitMqWriter(IStoreWriter<TKey> other, IConnectionFactory factory, string queueName) : base(other)
+	{
+		_factory = factory;
+		_queueName = queueName;
+		_connection = _factory.CreateConnection();
+		_model = _connection.CreateModel();
+	}
+
+	public override void SaveEvents(IEnumerable<DomainEvent<TKey>> changes)
+	{
+		base.SaveEvents(changes.Apply(SendToRabbit));
+	}
+
+	private void SendToRabbit(DomainEvent<TKey> domainEvent)
+	{
+		var queue = _model.QueueDeclare(_queueName, durable: true, exclusive: false, autoDelete: false, arguments: null);
+		var body = Encoding.UTF8.GetBytes(Serializer.Serialize(domainEvent));
+
+		_model.BasicPublish("", queue.QueueName, _model.CreateBasicProperties(), body);
+	}
+
+	public override void Dispose()
+	{
+		base.Dispose();
+
+		_model.Dispose();
+		_connection.Dispose();
+	}
+}
+```
+
+To process the messages, we write a second application which listens to the queue:
+
+```CSharp
+using (var connetion = factory.CreateConnection())
+using (var model = connetion.CreateModel())
+{
+	var listener = new EventingBasicConsumer(model);
+
+	listener.Received += (s, e) =>
+	{
+		var domainEvent = Serializer.Deserialize<TestEvent>(Encoding.UTF8.GetString(e.Body));
+
+		_projector.Apply(domainEvent);
+
+		model.BasicAck(e.DeliveryTag, multiple: false);
+	};
+
+	model.BasicConsume(QueueName, noAck: false, consumer: listener);
+}
+```
 
 [nuget-ledger-store-fs]: https://www.nuget.org/packages/Ledger.Stores.Fs/
 [nuget-ledger-store-postgres]: https://www.nuget.org/packages/Ledger.Stores.Postgres/
