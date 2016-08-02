@@ -84,6 +84,12 @@
     <Compile Include="Examples\InProcessProjection\BridgingProjectionist.cs" />
     <Compile Include="Examples\InProcessProjection\ExampleTests.cs" />
     <Compile Include="Examples\InProcessProjection\ReadModelBuilderService.cs" />
+    <Compile Include="Examples\OutOfProcessProjection\ExampleTests.cs" />
+    <Compile Include="Examples\OutOfProcessProjection\IgnoreStreamSequenceContractResolver.cs" />
+    <Compile Include="Examples\OutOfProcessProjection\RabbitMqStoreDecorator.cs" />
+    <Compile Include="Examples\OutOfProcessProjection\RabbitMqWriter.cs" />
+    <Compile Include="Examples\OutOfProcessProjection\SequenceJsonConverter.cs" />
+    <Compile Include="Examples\OutOfProcessProjection\Serializer.cs" />
     <Compile Include="Infrastructure\ExtensionsTests.cs" />
     <Compile Include="Infrastructure\StreamSequenceTests.cs" />
     <Compile Include="Infrastructure\SequenceTests.cs" />
@@ -108,9 +114,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Examples\OutOfProcessProjection\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
