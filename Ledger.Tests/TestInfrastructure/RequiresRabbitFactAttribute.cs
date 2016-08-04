@@ -10,7 +10,7 @@ namespace Ledger.Tests.TestInfrastructure
 		{
 			if (IsRabbitAvailable.Value == false)
 			{
-				Skip = "Postgres is not available";
+				Skip = "RabbitMQ is not available";
 			}
 		}
 
