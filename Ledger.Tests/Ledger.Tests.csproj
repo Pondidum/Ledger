@@ -99,7 +99,7 @@
     <Compile Include="Scratchpad.cs" />
     <Compile Include="Stores\InMemoryEventStoreTests.cs" />
     <Compile Include="Stores\InterceptingEventStoreTests.cs" />
-    <Compile Include="Projection\ProjectionStoreDecoratorTests.cs" />
+    <Compile Include="Projection\ProjectionStoreTests.cs" />
     <Compile Include="TestInfrastructure\RequiresRabbitFactAttribute.cs" />
   </ItemGroup>
   <ItemGroup>

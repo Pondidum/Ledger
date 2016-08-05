@@ -8,20 +8,28 @@ using Ledger.Stores;
 
 namespace Ledger.Projection
 {
-	public class ProjectionStoreDecorator : InterceptingEventStore
+	public class ProjectionStore : IEventStore
 	{
-		private readonly IProjectionist _projectionist;
+		private readonly IEventStore _other;
+		private readonly ProjectorConfig _configuration;
 
-		public ProjectionStoreDecorator(IEventStore other, IProjectionist projectionist) : base(other)
+		public ProjectionStore(IEventStore other, Action<ProjectorConfig> configure)
 		{
-			_projectionist = projectionist;
+			_other = other;
+			_configuration = new ProjectorConfig();
+			configure(_configuration);
 		}
 
-		public override IStoreWriter<TKey> CreateWriter<TKey>(EventStoreContext context)
+		public IStoreReader<TKey> CreateReader<TKey>(EventStoreContext context)
 		{
-			var other = base.CreateWriter<TKey>(context);
+			return _other.CreateReader<TKey>(context);
+		}
 
-			return new AsyncWriter<TKey>(other, e => _projectionist.Project(e));
+		public IStoreWriter<TKey> CreateWriter<TKey>(EventStoreContext context)
+		{
+			var other = _other.CreateWriter<TKey>(context);
+
+			return new AsyncWriter<TKey>(other, e => _configuration.Project(e));
 		}
 
 		private class AsyncWriter<T> : InterceptingWriter<T>

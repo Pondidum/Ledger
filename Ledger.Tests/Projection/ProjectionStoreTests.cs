@@ -11,7 +11,7 @@ using Xunit;
 
 namespace Ledger.Tests.Projection
 {
-	public class ProjectionStoreDecoratorTests
+	public class ProjectionStoreTests
 	{
 		[Fact]
 		public void When_colleting_all_events()
@@ -20,7 +20,10 @@ namespace Ledger.Tests.Projection
 
 			var projectionist = new Projectionist(reset);
 			var memoryStore = new InMemoryEventStore();
-			var wrapped = new ProjectionStoreDecorator(memoryStore, projectionist);
+			var wrapped = new ProjectionStore(memoryStore, config =>
+			{
+				config.ProjectTo(projectionist);
+			});
 
 			var aggregateStore = new AggregateStore<Guid>(wrapped);
 

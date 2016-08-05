@@ -23,7 +23,10 @@ namespace Ledger.Tests.Examples.InProcessProjection
 			_projectionist = new BridgingProjectionist();
 
 			var backing = new InMemoryEventStore();
-			var wrapped = new ProjectionStoreDecorator(backing, _projectionist);
+			var wrapped = new ProjectionStore(backing, config =>
+			{
+				config.ProjectTo(_projectionist);
+			});
 
 			_store = new AggregateStore<Guid>(wrapped);
 
