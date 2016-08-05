@@ -60,6 +60,7 @@
     <Compile Include="Infrastructure\LightweightCache.cs" />
     <Compile Include="Infrastructure\TypeInfo.cs" />
     <Compile Include="Infrastructure\PrivateReflectionDynamicObject.cs" />
+    <Compile Include="Projection\MethodProjector.cs" />
     <Compile Include="Snapshot.cs" />
     <Compile Include="ISnapshotable.cs" />
     <Compile Include="ISnapshotControl.cs" />
@@ -73,9 +74,9 @@
     <Compile Include="Stores\InterceptingEventStore.cs" />
     <Compile Include="Stores\InterceptingReader.cs" />
     <Compile Include="Stores\InterceptingWriter.cs" />
-    <Compile Include="Stores\IProjectionist.cs" />
-    <Compile Include="Stores\ProjectionStoreDecorator.cs" />
-    <Compile Include="Projector.cs" />
+    <Compile Include="Projection\IProjectionist.cs" />
+    <Compile Include="Projection\ProjectionStoreDecorator.cs" />
+    <Compile Include="Projection\Projector.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using Ledger.Acceptance.TestObjects;
 using Ledger.Infrastructure;
+using Ledger.Projection;
 using Ledger.Stores;
 using Shouldly;
 using Xunit;

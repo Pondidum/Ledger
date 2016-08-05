@@ -4,11 +4,12 @@ using System.Linq;
 using System.Threading;
 using Ledger.Acceptance.TestDomain;
 using Ledger.Acceptance.TestDomain.Events;
+using Ledger.Projection;
 using Ledger.Stores;
 using Shouldly;
 using Xunit;
 
-namespace Ledger.Tests.Stores
+namespace Ledger.Tests.Projection
 {
 	public class ProjectionStoreDecoratorTests
 	{

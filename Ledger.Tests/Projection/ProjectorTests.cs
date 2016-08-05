@@ -1,9 +1,10 @@
 ﻿using System;
 using Ledger.Acceptance.TestDomain.Events;
+using Ledger.Projection;
 using Shouldly;
 using Xunit;
 
-namespace Ledger.Tests
+namespace Ledger.Tests.Projection
 {
 	public class ProjectorTests
 	{

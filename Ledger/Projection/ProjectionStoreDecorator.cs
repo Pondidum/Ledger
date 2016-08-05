@@ -4,8 +4,9 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Ledger.Infrastructure;
+using Ledger.Stores;
 
-namespace Ledger.Stores
+namespace Ledger.Projection
 {
 	public class ProjectionStoreDecorator : InterceptingEventStore
 	{

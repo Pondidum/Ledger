@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Ledger.Infrastructure;
 
-namespace Ledger
+namespace Ledger.Projection
 {
 	public class Projector<TKey>
 	{

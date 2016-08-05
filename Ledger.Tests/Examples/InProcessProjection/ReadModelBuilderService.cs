@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Ledger.Infrastructure;
+using Ledger.Projection;
 
 namespace Ledger.Tests.Examples.InProcessProjection
 {

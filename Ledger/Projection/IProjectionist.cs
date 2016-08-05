@@ -1,4 +1,4 @@
-﻿namespace Ledger.Stores
+﻿namespace Ledger.Projection
 {
 	public interface IProjectionist
 	{
