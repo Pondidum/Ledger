@@ -2,11 +2,11 @@
 
 namespace Ledger.Projection
 {
-	public class ProjectorConfig
+	public class ProjectionConfig
 	{
 		private readonly List<IProjectionist> _projections;
 
-		public ProjectorConfig()
+		public ProjectionConfig()
 		{
 			_projections = new List<IProjectionist>();
 		}

@@ -61,7 +61,7 @@
     <Compile Include="Infrastructure\TypeInfo.cs" />
     <Compile Include="Infrastructure\PrivateReflectionDynamicObject.cs" />
     <Compile Include="Projection\Projection.cs" />
-    <Compile Include="Projection\ProjectorConfig.cs" />
+    <Compile Include="Projection\ProjectionConfig.cs" />
     <Compile Include="Snapshot.cs" />
     <Compile Include="ISnapshotable.cs" />
     <Compile Include="ISnapshotControl.cs" />
@@ -77,7 +77,6 @@
     <Compile Include="Stores\InterceptingWriter.cs" />
     <Compile Include="Projection\IProjectionist.cs" />
     <Compile Include="Projection\ProjectionStore.cs" />
-    <Compile Include="Projection\Projector.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

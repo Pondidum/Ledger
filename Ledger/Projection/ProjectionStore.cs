@@ -11,12 +11,12 @@ namespace Ledger.Projection
 	public class ProjectionStore : IEventStore
 	{
 		private readonly IEventStore _other;
-		private readonly ProjectorConfig _configuration;
+		private readonly ProjectionConfig _configuration;
 
-		public ProjectionStore(IEventStore other, Action<ProjectorConfig> configure)
+		public ProjectionStore(IEventStore other, Action<ProjectionConfig> configure)
 		{
 			_other = other;
-			_configuration = new ProjectorConfig();
+			_configuration = new ProjectionConfig();
 			configure(_configuration);
 		}
 
