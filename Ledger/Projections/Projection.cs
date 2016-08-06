@@ -1,7 +1,7 @@
 ﻿using System;
 using Ledger.Infrastructure;
 
-namespace Ledger.Projection
+namespace Ledger.Projections
 {
 	public class Projection : IProjectionist
 	{

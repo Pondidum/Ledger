@@ -1,5 +1,5 @@
 ﻿using System;
-using Ledger.Projection;
+using Ledger.Projections;
 using Ledger.Stores;
 
 namespace Ledger.Tests.Examples.InProcessProjection

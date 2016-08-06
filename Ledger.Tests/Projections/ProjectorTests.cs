@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using Ledger.Acceptance.TestDomain.Events;
-using Ledger.Projection;
+using Ledger.Projections;
 using Shouldly;
 using Xunit;
 
-namespace Ledger.Tests.Projection
+namespace Ledger.Tests.Projections
 {
 	public class ProjectorTests
 	{
@@ -65,11 +65,11 @@ namespace Ledger.Tests.Projection
 		private class ParentEvent : DomainEvent<Guid> { }
 		private class ChildEvent : ParentEvent { }
 
-		private class EmptyProjection : Ledger.Projection.Projection
+		private class EmptyProjection : Projection
 		{
 		}
 
-		private class CreateOnlyProjection : Ledger.Projection.Projection
+		private class CreateOnlyProjection : Projection
 		{
 			public List<DomainEvent<Guid>> Events { get; set; } = new List<DomainEvent<Guid>>();
 
@@ -79,7 +79,7 @@ namespace Ledger.Tests.Projection
 			}
 		}
 
-		private class ParentOnlyProjection : Ledger.Projection.Projection
+		private class ParentOnlyProjection : Projection
 		{
 			public List<DomainEvent<Guid>> Events { get; set; } = new List<DomainEvent<Guid>>();
 
@@ -89,7 +89,7 @@ namespace Ledger.Tests.Projection
 			}
 		}
 
-		private class ParentAndChildProjection : Ledger.Projection.Projection
+		private class ParentAndChildProjection : Projection
 		{
 			public List<DomainEvent<Guid>> ParentEvents { get; set; } = new List<DomainEvent<Guid>>();
 			public List<DomainEvent<Guid>> ChildEvents { get; set; } = new List<DomainEvent<Guid>>();

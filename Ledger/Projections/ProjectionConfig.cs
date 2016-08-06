@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Ledger.Projection
+namespace Ledger.Projections
 {
 	public class ProjectionConfig
 	{

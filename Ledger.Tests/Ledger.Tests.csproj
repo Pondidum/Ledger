@@ -94,12 +94,12 @@
     <Compile Include="Infrastructure\StreamSequenceTests.cs" />
     <Compile Include="Infrastructure\SequenceTests.cs" />
     <Compile Include="Migration\MigratorTests.cs" />
-    <Compile Include="Projection\ProjectorTests.cs" />
+    <Compile Include="Projections\ProjectorTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Scratchpad.cs" />
     <Compile Include="Stores\InMemoryEventStoreTests.cs" />
     <Compile Include="Stores\InterceptingEventStoreTests.cs" />
-    <Compile Include="Projection\ProjectionStoreTests.cs" />
+    <Compile Include="Projections\ProjectionStoreTests.cs" />
     <Compile Include="TestInfrastructure\RequiresRabbitFactAttribute.cs" />
   </ItemGroup>
   <ItemGroup>

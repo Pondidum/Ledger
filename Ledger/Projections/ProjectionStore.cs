@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Ledger.Infrastructure;
 using Ledger.Stores;
 
-namespace Ledger.Projection
+namespace Ledger.Projections
 {
 	public class ProjectionStore : IEventStore
 	{

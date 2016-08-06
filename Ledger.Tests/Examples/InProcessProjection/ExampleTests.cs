@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading;
 using Ledger.Acceptance.TestObjects;
 using Ledger.Infrastructure;
-using Ledger.Projection;
+using Ledger.Projections;
 using Ledger.Stores;
 using Shouldly;
 using Xunit;
@@ -76,7 +76,7 @@ namespace Ledger.Tests.Examples.InProcessProjection
 			});
 		}
 
-		private class TestProjection : Ledger.Projection.Projection
+		private class TestProjection : Projection
 		{
 			private readonly AutoResetEvent _reset = new AutoResetEvent(false);
 			private readonly List<TestEvent> _events = new List<TestEvent>();
