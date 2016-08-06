@@ -2,6 +2,6 @@
 {
 	public interface IProjectionist
 	{
-		void Project<TKey>(DomainEvent<TKey> domainEvent);
+		void Apply<TKey>(DomainEvent<TKey> domainEvent);
 	}
 }

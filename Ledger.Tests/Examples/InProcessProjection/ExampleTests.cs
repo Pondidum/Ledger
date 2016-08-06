@@ -46,26 +46,12 @@ namespace Ledger.Tests.Examples.InProcessProjection
 		[Fact]
 		public void When_reading_from_the_beginning()
 		{
-			var reset = new AutoResetEvent(false);
-			var seen = new List<StreamSequence>();
-
-			var projector = new Projector<Guid>();
-			projector.Register<TestEvent>(e =>
-			{
-				seen.Add(e.StreamSequence);
-
-				if (e.Sequence == new Sequence(4))
-					reset.Set();
-			});
-
-			var rmb = new ReadModelBuilderService<Guid>(_store, _projectionist, projector);
+			var projection = new TestProjection();
+			var rmb = new ReadModelBuilderService<Guid>(_store, _projectionist, projection);
 
 			rmb.Start(StreamName, StreamSequence.Start);
 
-			//async funsies
-			reset.WaitOne();
-
-			seen.ShouldBe(new[]
+			projection.Seen().ShouldBe(new[]
 			{
 				new StreamSequence(0),
 				new StreamSequence(1),
@@ -78,30 +64,36 @@ namespace Ledger.Tests.Examples.InProcessProjection
 		[Fact]
 		public void When_reading_from_a_mid_point()
 		{
-			var reset = new AutoResetEvent(false);
-			var seen = new List<StreamSequence>();
-
-			var projector = new Projector<Guid>();
-			projector.Register<TestEvent>(e =>
-			{
-				seen.Add(e.StreamSequence);
-
-				if (e.Sequence == new Sequence(4))
-					reset.Set();
-			});
-
-			var rmb = new ReadModelBuilderService<Guid>(_store, _projectionist, projector);
+			var projection = new TestProjection();
+			var rmb = new ReadModelBuilderService<Guid>(_store, _projectionist, projection);
 
 			rmb.Start(StreamName, new StreamSequence(2));
 
-			//async funsies
-			reset.WaitOne();
-
-			seen.ShouldBe(new[]
+			projection.Seen().ShouldBe(new[]
 			{
 				new StreamSequence(3),
 				new StreamSequence(4)
 			});
+		}
+
+		private class TestProjection : Ledger.Projection.Projection
+		{
+			private readonly AutoResetEvent _reset = new AutoResetEvent(false);
+			private readonly List<TestEvent> _events = new List<TestEvent>();
+
+			private void Handle(TestEvent e)
+			{
+				_events.Add(e);
+
+				if (e.Sequence == new Sequence(4))
+					_reset.Set();
+			}
+
+			public IEnumerable<StreamSequence> Seen()
+			{
+				_reset.WaitOne();
+				return _events.Select(e => e.StreamSequence);
+			}
 		}
 	}
 }

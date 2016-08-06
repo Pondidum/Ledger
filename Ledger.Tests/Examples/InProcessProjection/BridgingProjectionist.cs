@@ -8,7 +8,7 @@ namespace Ledger.Tests.Examples.InProcessProjection
 	{
 		private Action<object> _handler;
 
-		public void Project<TKey>(DomainEvent<TKey> domainEvent)
+		public void Apply<TKey>(DomainEvent<TKey> domainEvent)
 		{
 			_handler(domainEvent);
 		}

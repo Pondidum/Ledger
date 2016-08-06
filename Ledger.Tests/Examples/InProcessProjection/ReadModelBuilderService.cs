@@ -14,11 +14,11 @@ namespace Ledger.Tests.Examples.InProcessProjection
 		private IEnumerable<DomainEvent<T>> _preload;
 
 		private readonly AggregateStore<T> _store;
-		private readonly Projector<T> _projector;
+		private readonly IProjectionist _projector;
 		private readonly BlockingCollection<DomainEvent<T>> _events;
 		private readonly CancellationTokenSource _task;
 
-		public ReadModelBuilderService(AggregateStore<T> store, BridgingProjectionist projectionist, Projector<T> projector)
+		public ReadModelBuilderService(AggregateStore<T> store, BridgingProjectionist projectionist, IProjectionist projector)
 		{
 			_store = store;
 			_projector = projector;

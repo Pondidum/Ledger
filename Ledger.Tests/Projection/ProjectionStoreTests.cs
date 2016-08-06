@@ -49,7 +49,7 @@ namespace Ledger.Tests.Projection
 
 			public IEnumerable<DomainEvent<Guid>> SeenEvents => _seenEvents;
 			 
-			public void Project<TKey>(DomainEvent<TKey> domainEvent)
+			public void Apply<TKey>(DomainEvent<TKey> domainEvent)
 			{
 				_seenEvents.Add(domainEvent as DomainEvent<Guid>);
 				_reset.Set();

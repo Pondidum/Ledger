@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Ledger.Acceptance.TestDomain.Events;
 using Ledger.Projection;
 using Shouldly;
@@ -8,81 +9,100 @@ namespace Ledger.Tests.Projection
 {
 	public class ProjectorTests
 	{
-		private readonly Projector<Guid> _projector;
-
-		public ProjectorTests()
-		{
-			_projector = new Projector<Guid>();
-		}
-
 		[Fact]
 		public void When_nothing_is_registered()
 		{
-			Should.NotThrow(() => _projector.Apply(new CandidateCreated()));
+			var projection = new EmptyProjection();
 
-			_projector.RegisteredEvents.ShouldBeEmpty();
+			Should.NotThrow(() => projection.Apply(new CandidateCreated()));
 		}
 
 		[Fact]
 		public void When_one_event_is_registered_and_it_is_applied()
 		{
 			var sent = new CandidateCreated { AggregateID = Guid.NewGuid() };
-			DomainEvent<Guid> projected = null;
 
-			_projector.Register<CandidateCreated>(e => projected = e);
-			_projector.Apply(sent);
+			var projection = new CreateOnlyProjection();
+			projection.Apply(sent);
 
-			projected.ShouldBe(sent);
+			projection.Events.ShouldBe(new[] { sent });
 		}
 
 		[Fact]
 		public void When_one_event_is_registered_and_it_is_not_applied()
 		{
-			var sent = new  AddEmailAddress { AggregateID = Guid.NewGuid() };
-			DomainEvent<Guid> projected = null;
+			var sent = new AddEmailAddress { AggregateID = Guid.NewGuid() };
 
-			_projector.Register<CandidateCreated>(e => projected = e);
-			_projector.Apply(sent);
+			var projection = new CreateOnlyProjection();
+			projection.Apply(sent);
 
-			projected.ShouldBeNull();
+			projection.Events.ShouldBeEmpty();
 		}
 
 		[Fact]
 		public void When_an_inherited_event_is_registered_and_applied()
 		{
 			var sent = new ChildEvent();
-			DomainEvent<Guid> projected = null;
 
-			_projector.Register<ParentEvent>(e => projected = e);
-			_projector.Apply(sent);
+			var projection = new ParentOnlyProjection();
+			projection.Apply(sent);
 
-			projected.ShouldBe(sent);
+			projection.Events.ShouldBe(new[] { sent });
 		}
 
 		[Fact]
 		public void When_an_inherited_event_is_registered_directly_and_inherited()
 		{
 			var sent = new ChildEvent();
-			DomainEvent<Guid> projectedParent = null;
-			DomainEvent<Guid> projectedChild = null;
 
-			_projector.Register<ParentEvent>(e => projectedParent = e);
-			_projector.Register<ChildEvent>(e => projectedChild= e);
-			_projector.Apply(sent);
+			var projection = new ParentAndChildProjection();
+			projection.Apply(sent);
 
-			projectedParent.ShouldBe(sent);
-			projectedChild.ShouldBe(sent);
+			projection.ParentEvents.ShouldBeEmpty();
+			projection.ChildEvents.ShouldBe(new[] { sent });
 		}
 
-		private class ParentEvent : DomainEvent<Guid>
+		private class ParentEvent : DomainEvent<Guid> { }
+		private class ChildEvent : ParentEvent { }
+
+		private class EmptyProjection : Ledger.Projection.Projection
 		{
-			
 		}
 
-		private class ChildEvent : ParentEvent
+		private class CreateOnlyProjection : Ledger.Projection.Projection
 		{
-			
-		} 
+			public List<DomainEvent<Guid>> Events { get; set; } = new List<DomainEvent<Guid>>();
 
+			private void Handle(CandidateCreated e)
+			{
+				Events.Add(e);
+			}
+		}
+
+		private class ParentOnlyProjection : Ledger.Projection.Projection
+		{
+			public List<DomainEvent<Guid>> Events { get; set; } = new List<DomainEvent<Guid>>();
+
+			private void Handle(ParentEvent e)
+			{
+				Events.Add(e);
+			}
+		}
+
+		private class ParentAndChildProjection : Ledger.Projection.Projection
+		{
+			public List<DomainEvent<Guid>> ParentEvents { get; set; } = new List<DomainEvent<Guid>>();
+			public List<DomainEvent<Guid>> ChildEvents { get; set; } = new List<DomainEvent<Guid>>();
+
+			private void Handle(ParentEvent e)
+			{
+				ParentEvents.Add(e);
+			}
+
+			private void Handle(ChildEvent e)
+			{
+				ChildEvents.Add(e);
+			}
+		}
 	}
 }
