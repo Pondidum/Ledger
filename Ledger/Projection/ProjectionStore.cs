@@ -11,13 +11,14 @@ namespace Ledger.Projection
 	public class ProjectionStore : IEventStore
 	{
 		private readonly IEventStore _other;
-		private readonly ProjectionConfig _configuration;
+		private readonly List<IProjectionist> _projectionists;
 
 		public ProjectionStore(IEventStore other, Action<ProjectionConfig> configure)
 		{
 			_other = other;
-			_configuration = new ProjectionConfig();
-			configure(_configuration);
+			_projectionists = new List<IProjectionist>();
+
+			configure(new ProjectionConfig(_projectionists));
 		}
 
 		public IStoreReader<TKey> CreateReader<TKey>(EventStoreContext context)
@@ -29,7 +30,12 @@ namespace Ledger.Projection
 		{
 			var other = _other.CreateWriter<TKey>(context);
 
-			return new AsyncWriter<TKey>(other, e => _configuration.Project(e));
+			return new AsyncWriter<TKey>(other, RunProjections);
+		}
+
+		private void RunProjections<TKey>(DomainEvent<TKey> domainEvent)
+		{
+			_projectionists.ForEach(p => p.Apply(domainEvent));
 		}
 
 		private class AsyncWriter<T> : InterceptingWriter<T>
