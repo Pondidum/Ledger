@@ -1,6 +1,6 @@
 {
   "name": "Ledger",
-  "version": "12.0.0",
+  "version": "13.0.0",
   "dependencies": {
     "gulp": "^3.9.0",
     "gulp-bump": "^1.0.0",
