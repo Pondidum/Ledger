@@ -9,7 +9,7 @@ namespace Ledger.Projections
 		{
 			try
 			{
-				this.AsDynamic().Handle(domainEvent);
+				this.Handle(domainEvent);
 			}
 			catch (MissingMethodException)
 			{

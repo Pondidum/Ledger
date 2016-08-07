@@ -46,7 +46,6 @@
     <Compile Include="AggregateStore.cs" />
     <Compile Include="DefaultTypeResolver.cs" />
     <Compile Include="Infrastructure\DynamicInvocation.cs" />
-    <Compile Include="Infrastructure\PrivateReflectionDynamicObject.cs" />
     <Compile Include="Infrastructure\StreamSequence.cs" />
     <Compile Include="Infrastructure\Sequence.cs" />
     <Compile Include="ITypeResolver.cs" />
