@@ -14,7 +14,7 @@ namespace Ledger.Tests.Projections
 	public class ProjectionStoreTests
 	{
 		[Fact]
-		public void When_colleting_all_events()
+		public void When_collecting_all_events()
 		{
 			var reset  = new AutoResetEvent(false);
 
