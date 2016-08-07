@@ -8,6 +8,11 @@ namespace Ledger.Infrastructure
 	{
 		public static void Handle<TEvent>(this object self, TEvent domainEvent)
 		{
+			self.Handle(domainEvent, true);
+		}
+
+		public static void Handle<TEvent>(this object self, TEvent domainEvent, bool throwOnMissing)
+		{
 			var allHandlers = self
 				.GetType()
 				.GetMethods(BindingFlags.NonPublic | BindingFlags.Instance)
@@ -30,7 +35,8 @@ namespace Ledger.Infrastructure
 				parameterType = parameterType.BaseType;
 			}
 
-			throw new MissingMethodException(self.GetType().Name, $"Handles({domainEvent.GetType().Name} e)");
+			if (throwOnMissing)
+				throw new MissingMethodException(self.GetType().Name, $"Handles({domainEvent.GetType().Name} e)");
 		}
 
 		public static void ApplySnapshot<TKey>(this object self, Snapshot<TKey> snapshot)

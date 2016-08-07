@@ -1,5 +1,4 @@
-﻿using System;
-using Ledger.Infrastructure;
+﻿using Ledger.Infrastructure;
 
 namespace Ledger.Projections
 {
@@ -7,14 +6,7 @@ namespace Ledger.Projections
 	{
 		public void Apply<TKey>(DomainEvent<TKey> domainEvent)
 		{
-			try
-			{
-				this.Handle(domainEvent);
-			}
-			catch (MissingMethodException)
-			{
-				//do nothing, as this is a projection not an aggregate
-			}
+			this.Handle(domainEvent, throwOnMissing: false);
 		}
 	}
 }
