@@ -49,14 +49,12 @@ namespace Ledger.Projections
 				_events = new BlockingCollection<DomainEvent<T>>();
 				_task = new CancellationTokenSource();
 
-				Task.Run(
-					() =>
-					{
-						while (_task.IsCancellationRequested == false)
-							projection(_events.Take());
-					},
-					_task.Token
-				);
+				Task.Run(() =>
+				{
+					while (_task.IsCancellationRequested == false)
+						projection(_events.Take());
+
+				}, _task.Token);
 			}
 
 			public override void SaveEvents(IEnumerable<DomainEvent<T>> changes)

@@ -16,9 +16,7 @@ namespace Ledger.Tests.Projections
 		[Fact]
 		public void When_collecting_all_events()
 		{
-			var reset  = new AutoResetEvent(false);
-
-			var projectionist = new Projectionist(reset);
+			var projectionist = new Projectionist();
 			var memoryStore = new InMemoryEventStore();
 			var wrapped = new ProjectionStore(memoryStore, config =>
 			{
@@ -30,8 +28,6 @@ namespace Ledger.Tests.Projections
 			var user = Candidate.Create("test", "test@home.com");
 			aggregateStore.Save("Users", user);
 
-			reset.WaitOne();
-
 			memoryStore.AllEvents.Single().ShouldBeOfType<CandidateCreated>();
 			projectionist.SeenEvents.Single().ShouldBeOfType<CandidateCreated>();
 		}
@@ -40,15 +36,22 @@ namespace Ledger.Tests.Projections
 		{
 			private readonly AutoResetEvent _reset;
 			private readonly List<DomainEvent<Guid>> _seenEvents;
-			 
-			public Projectionist(AutoResetEvent reset)
+
+			public Projectionist()
 			{
-				_reset = reset;
+				_reset = new AutoResetEvent(false); ;
 				_seenEvents = new List<DomainEvent<Guid>>();
 			}
 
-			public IEnumerable<DomainEvent<Guid>> SeenEvents => _seenEvents;
-			 
+			public IEnumerable<DomainEvent<Guid>> SeenEvents
+			{
+				get
+				{
+					_reset.WaitOne();
+					return _seenEvents;
+				}
+			}
+
 			public void Apply<TKey>(DomainEvent<TKey> domainEvent)
 			{
 				_seenEvents.Add(domainEvent as DomainEvent<Guid>);
