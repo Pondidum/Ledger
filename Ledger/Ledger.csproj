@@ -45,6 +45,8 @@
     <Compile Include="AggregateRoot.cs" />
     <Compile Include="AggregateStore.cs" />
     <Compile Include="DefaultTypeResolver.cs" />
+    <Compile Include="Infrastructure\DynamicInvocation.cs" />
+    <Compile Include="Infrastructure\PrivateReflectionDynamicObject.cs" />
     <Compile Include="Infrastructure\StreamSequence.cs" />
     <Compile Include="Infrastructure\Sequence.cs" />
     <Compile Include="ITypeResolver.cs" />
@@ -59,7 +61,6 @@
     <Compile Include="Infrastructure\Extensions.cs" />
     <Compile Include="Infrastructure\LightweightCache.cs" />
     <Compile Include="Infrastructure\TypeInfo.cs" />
-    <Compile Include="Infrastructure\PrivateReflectionDynamicObject.cs" />
     <Compile Include="Projections\Projection.cs" />
     <Compile Include="Projections\ProjectionConfig.cs" />
     <Compile Include="Snapshot.cs" />

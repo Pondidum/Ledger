@@ -54,11 +54,10 @@ namespace Ledger
 		public void LoadFromEvents(IEnumerable<DomainEvent<TKey>> eventStream)
 		{
 			DomainEvent<TKey> last = null;
-			var dynamic = this.AsDynamic();
 
 			eventStream
 				.Apply(e => last = e)
-				.ForEach(e => dynamic.Handle(e));
+				.ForEach(this.Handle);
 
 			if (last != null)
 			{
@@ -99,7 +98,7 @@ namespace Ledger
 
 			try
 			{
-				this.AsDynamic().Handle(@event);
+				this.Handle(@event);
 				_events.Add(@event);
 			}
 			catch (MissingMethodException)

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Ledger.Infrastructure;
@@ -14,14 +15,14 @@ namespace Ledger.Tests
 		[Fact]
 		public void When_invoking_a_parent_class()
 		{
-			_target.AsDynamic().Handle(new Parent());
+			_target.Handle(new Parent());
 			_target.Invoked.ShouldBe("parent");
 		}
 
 		[Fact]
 		public void When_invoking_a_child_class()
 		{
-			_target.AsDynamic().Handle(new Child());
+			_target.Handle(new Child());
 			_target.Invoked.ShouldBe("child");
 		}
 
@@ -29,8 +30,14 @@ namespace Ledger.Tests
 		[MemberData("Targets")]
 		public void When_invoking_as_cast_to_object(object arg, string expected)
 		{
-			_target.AsDynamic().Handle(arg);
+			_target.Handle(arg);
 			_target.Invoked.ShouldBe(expected);
+		}
+
+		[Fact]
+		public void When_there_is_no_handler()
+		{
+			Should.Throw<MissingMethodException>(() => _target.Handle(new Unhandled()));
 		}
 
 		public static IEnumerable<object[]> Targets
@@ -68,5 +75,6 @@ namespace Ledger.Tests
 		public class Child : Parent { }
 		public class GrandChild : Child { }
 		public class OtherChild : Parent { }
+		public class Unhandled { }
 	}
 }
