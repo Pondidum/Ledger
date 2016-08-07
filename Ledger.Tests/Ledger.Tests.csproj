@@ -81,6 +81,7 @@
     <Compile Include="AggregateStoreTests\MiniDomain\User.cs" />
     <Compile Include="AggregateStoreTests\MiniDomain\UserSnapshot.cs" />
     <Compile Include="AggregateStoreTests\SaveAggregateTests.cs" />
+    <Compile Include="DynamicInvocationTests.cs" />
     <Compile Include="Examples\InProcessProjection\BridgingProjectionist.cs" />
     <Compile Include="Examples\InProcessProjection\ExampleTests.cs" />
     <Compile Include="Examples\InProcessProjection\ReadModelBuilderService.cs" />
