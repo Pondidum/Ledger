@@ -32,5 +32,24 @@ namespace Ledger.Infrastructure
 
 			throw new MissingMethodException(self.GetType().Name, $"Handles({domainEvent.GetType().Name} e)");
 		}
+
+		public static void ApplySnapshot<TKey>(this object self, Snapshot<TKey> snapshot)
+		{
+			var snapshotType = snapshot.GetType();
+
+			// ReSharper disable once ReplaceWithSingleCallToSingleOrDefault
+			var handler = self
+				.GetType()
+				.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+				.Where(method => method.Name == "ApplySnapshot")
+				.Where(method => method.GetParameters().Length == 1)
+				.Where(method => method.GetParameters().Single().ParameterType == snapshotType)
+				.SingleOrDefault();
+
+			if (handler == null)
+				throw new MissingMethodException(self.GetType().Name, $"ApplySnapshot({snapshot.GetType().Name} e)");
+
+			handler.Invoke(self, new object[] { snapshot });
+		}
 	}
 }

@@ -71,7 +71,7 @@ namespace Ledger
 		{
 			if (snapshot != null)
 			{
-				this.AsDynamic().ApplySnapshot(snapshot);
+				this.ApplySnapshot(snapshot);
 				Stamp = snapshot.Stamp;
 				Sequence = snapshot.Sequence;
 				ID = snapshot.AggregateID;
